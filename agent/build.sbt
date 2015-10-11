@@ -6,6 +6,9 @@ organization := "ru.maizy"
 scalaVersion := "2.11.7"
 git.baseVersion := "0.0.1"
 
+libraryDependencies ++= Seq(
+  "net.java.dev.jna" % "jna" % "4.1.0"
+)
 
 scalacOptions ++= Seq(
   "-target:jvm-1.7",

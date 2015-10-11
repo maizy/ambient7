@@ -1,0 +1,353 @@
+DECODE ======
+before swap
+print buf [f8 a4 8a b7 68 9a 9c 90 ]
+after swap
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after magic_table
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after decode
+print buf [f1 4d 1f 12 14 93 93 56 ]
+after magic word
+print buf [6d 06 c9 3c 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [47 a4 95 b7 35 9a 9c a8 ]
+after swap
+print buf [95 35 47 a8 a4 9c 9a b7 ]
+after magic_table
+print buf [95 35 47 a8 a4 9c 9a b7 ]
+after decode
+print buf [f2 a6 a8 f5 14 93 93 56 ]
+after magic word
+print buf [6e 5f 52 1f 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [f5 a4 aa b7 4d 9a 9c 88 ]
+after swap
+print buf [aa 4d f5 88 a4 9c 9a b7 ]
+after magic_table
+print buf [aa 4d f5 88 a4 9c 9a b7 ]
+after decode
+print buf [f5 49 be b1 14 93 93 56 ]
+after magic word
+print buf [71 02 68 db 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [86 a4 a2 b6 4f 9a 9c 10 ]
+after swap
+print buf [a2 4f 86 10 a4 9c 9a b6 ]
+after magic_table
+print buf [a2 4f 86 10 a4 9c 9a b6 ]
+after decode
+print buf [d4 49 f0 c2 14 93 93 56 ]
+after magic word
+print buf [50 02 9a ec 0d 00 00 00 ]
+========
+CntR	666
+
+
+DECODE ======
+before swap
+print buf [f1 a4 db b6 21 9a 9c 90 ]
+after swap
+print buf [db 21 f1 90 a4 9c 9a b6 ]
+after magic_table
+print buf [db 21 f1 90 a4 9c 9a b6 ]
+after decode
+print buf [db 64 3e 32 14 93 93 56 ]
+after magic word
+print buf [57 1d e8 5c 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [30 a4 d3 b6 58 9a 9c 00 ]
+after swap
+print buf [d3 58 30 00 a4 9c 9a b6 ]
+after magic_table
+print buf [d3 58 30 00 a4 9c 9a b6 ]
+after decode
+print buf [da 6b 06 00 14 93 93 56 ]
+after magic word
+print buf [56 24 b0 2a 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [b0 a4 2a b6 3a 9a 9c b8 ]
+after swap
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after magic_table
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after decode
+print buf [c5 47 56 17 14 93 93 56 ]
+after magic word
+print buf [41 00 00 41 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [21 a4 3a b6 a3 9a 9c a0 ]
+after swap
+print buf [3a a3 21 a0 a4 9c 9a b6 ]
+after magic_table
+print buf [3a a3 21 a0 a4 9c 9a b6 ]
+after decode
+print buf [c7 54 64 34 14 93 93 56 ]
+after magic word
+print buf [43 0d 0e 5e 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [bd a4 32 b6 ce 9a 9c 58 ]
+after swap
+print buf [32 ce bd 58 a4 9c 9a b6 ]
+after magic_table
+print buf [32 ce bd 58 a4 9c 9a b6 ]
+after decode
+print buf [c6 59 d7 ab 14 93 93 56 ]
+after magic word
+print buf [42 12 81 d5 0d 00 00 00 ]
+========
+Tamb	22.9125
+
+
+DECODE ======
+before swap
+print buf [f8 a4 8a b7 68 9a 9c 90 ]
+after swap
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after magic_table
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after decode
+print buf [f1 4d 1f 12 14 93 93 56 ]
+after magic word
+print buf [6d 06 c9 3c 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [4f a4 95 b7 35 9a 9c b0 ]
+after swap
+print buf [95 35 4f b0 a4 9c 9a b7 ]
+after magic_table
+print buf [95 35 4f b0 a4 9c 9a b7 ]
+after decode
+print buf [f2 a6 a9 f6 14 93 93 56 ]
+after magic word
+print buf [6e 5f 53 20 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [ed a4 aa b7 4d 9a 9c 80 ]
+after swap
+print buf [aa 4d ed 80 a4 9c 9a b7 ]
+after magic_table
+print buf [aa 4d ed 80 a4 9c 9a b7 ]
+after decode
+print buf [f5 49 bd b0 14 93 93 56 ]
+after magic word
+print buf [71 02 67 da 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [7e a4 a2 b6 4f 9a 9c 08 ]
+after swap
+print buf [a2 4f 7e 08 a4 9c 9a b6 ]
+after magic_table
+print buf [a2 4f 7e 08 a4 9c 9a b6 ]
+after decode
+print buf [d4 49 ef c1 14 93 93 56 ]
+after magic word
+print buf [50 02 99 eb 0d 00 00 00 ]
+========
+CntR	665
+
+
+DECODE ======
+before swap
+print buf [e6 a4 9b b6 0e 9a 9c 28 ]
+after swap
+print buf [9b 0e e6 28 a4 9c 9a b6 ]
+after magic_table
+print buf [9b 0e e6 28 a4 9c 9a b6 ]
+after decode
+print buf [d3 61 dc c5 14 93 93 56 ]
+after magic word
+print buf [4f 1a 86 ef 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [97 a4 b3 b6 5f 9a 9c 40 ]
+after swap
+print buf [b3 5f 97 40 a4 9c 9a b6 ]
+after magic_table
+print buf [b3 5f 97 40 a4 9c 9a b6 ]
+after decode
+print buf [d6 6b f2 e8 14 93 93 56 ]
+after magic word
+print buf [52 24 9c 12 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [b0 a4 2a b6 3a 9a 9c b8 ]
+after swap
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after magic_table
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after decode
+print buf [c5 47 56 17 14 93 93 56 ]
+after magic word
+print buf [41 00 00 41 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [29 a4 3a b6 a3 9a 9c a8 ]
+after swap
+print buf [3a a3 29 a8 a4 9c 9a b6 ]
+after magic_table
+print buf [3a a3 29 a8 a4 9c 9a b6 ]
+after decode
+print buf [c7 54 65 35 14 93 93 56 ]
+after magic word
+print buf [43 0d 0f 5f 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [c5 a4 32 b6 ce 9a 9c 60 ]
+after swap
+print buf [32 ce c5 60 a4 9c 9a b6 ]
+after magic_table
+print buf [32 ce c5 60 a4 9c 9a b6 ]
+after decode
+print buf [c6 59 d8 ac 14 93 93 56 ]
+after magic word
+print buf [42 12 82 d6 0d 00 00 00 ]
+========
+Tamb	22.9750
+
+
+DECODE ======
+before swap
+print buf [f8 a4 8a b7 68 9a 9c 90 ]
+after swap
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after magic_table
+print buf [8a 68 f8 90 a4 9c 9a b7 ]
+after decode
+print buf [f1 4d 1f 12 14 93 93 56 ]
+after magic word
+print buf [6d 06 c9 3c 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [4f a4 95 b7 35 9a 9c b0 ]
+after swap
+print buf [95 35 4f b0 a4 9c 9a b7 ]
+after magic_table
+print buf [95 35 4f b0 a4 9c 9a b7 ]
+after decode
+print buf [f2 a6 a9 f6 14 93 93 56 ]
+after magic word
+print buf [6e 5f 53 20 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [ed a4 aa b7 4d 9a 9c 80 ]
+after swap
+print buf [aa 4d ed 80 a4 9c 9a b7 ]
+after magic_table
+print buf [aa 4d ed 80 a4 9c 9a b7 ]
+after decode
+print buf [f5 49 bd b0 14 93 93 56 ]
+after magic word
+print buf [71 02 67 da 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [7e a4 a2 b6 4f 9a 9c 08 ]
+after swap
+print buf [a2 4f 7e 08 a4 9c 9a b6 ]
+after magic_table
+print buf [a2 4f 7e 08 a4 9c 9a b6 ]
+after decode
+print buf [d4 49 ef c1 14 93 93 56 ]
+after magic word
+print buf [50 02 99 eb 0d 00 00 00 ]
+========
+CntR	665
+
+
+DECODE ======
+before swap
+print buf [d1 a4 db b6 21 9a 9c 70 ]
+after swap
+print buf [db 21 d1 70 a4 9c 9a b6 ]
+after magic_table
+print buf [db 21 d1 70 a4 9c 9a b6 ]
+after decode
+print buf [db 64 3a 2e 14 93 93 56 ]
+after magic word
+print buf [57 1d e4 58 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [2f a4 d3 b6 58 9a 9c f8 ]
+after swap
+print buf [d3 58 2f f8 a4 9c 9a b6 ]
+after magic_table
+print buf [d3 58 2f f8 a4 9c 9a b6 ]
+after decode
+print buf [da 6b 05 ff 14 93 93 56 ]
+after magic word
+print buf [56 24 af 29 0d 00 00 00 ]
+========
+
+
+DECODE ======
+before swap
+print buf [b0 a4 2a b6 3a 9a 9c b8 ]
+after swap
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after magic_table
+print buf [2a 3a b0 b8 a4 9c 9a b6 ]
+after decode
+print buf [c5 47 56 17 14 93 93 56 ]
+after magic word
+print buf [41 00 00 41 0d 00 00 00 ]
+========

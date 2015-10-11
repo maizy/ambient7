@@ -18,7 +18,6 @@ Desktop.ini
 
 # scala
 *.class
-*.log
 
 # sbt
 dist/*
@@ -27,3 +26,5 @@ lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
+
+.vagrant/
