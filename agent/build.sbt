@@ -6,6 +6,10 @@ organization := "ru.maizy"
 scalaVersion := "2.11.7"
 git.baseVersion := "0.0.1"
 
+libraryDependencies ++= Seq(
+  "org.usb4java" % "usb4java" % "1.2.0",
+  "org.usb4java" % "usb4java-javax" % "1.2.0"
+)
 
 scalacOptions ++= Seq(
   "-target:jvm-1.7",
