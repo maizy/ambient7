@@ -21,7 +21,7 @@ class MessageDecoderSpec extends AbstractBaseSpec with TryValues {
     val expectedTemp = 22.9125
   }
 
-  "Message decoder" should "fails if data isn't 8 bytes length" in {
+  "MessageDecoder.decode" should "fails if data isn't 8 bytes length" in {
     (MessageDecoder.decode(Array(0xbd, 0xa4, 0x32, 0xb6).map(_.toByte)).failure.exception
       shouldBe a[IllegalArgumentException])
   }
@@ -51,6 +51,26 @@ class MessageDecoderSpec extends AbstractBaseSpec with TryValues {
   it should "do all work together" in {
     new TempSample {
       MessageDecoder.decode(raw).success.value shouldBe result
+    }
+  }
+
+  "MessageDecoder.checkCRC" should "check only array length >= 4" in {
+    MessageDecoder.checkCRC(new Array[Byte](3)) shouldBe false
+  }
+
+  it should "return true on positive data" in {
+    new TempSample {
+      MessageDecoder.checkCRC(result) shouldBe true
+    }
+  }
+
+  it should "return false on negative data" in {
+    new TempSample {
+      for (i <- 0 to 3) {
+        val data = result.clone()
+        data(i) = 0xFF.toByte
+        MessageDecoder.checkCRC(data) shouldBe false
+      }
     }
   }
 }

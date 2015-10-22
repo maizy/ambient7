@@ -76,7 +76,13 @@ object MessageDecoder {
     }
   }
 
-  def checkCRC(data: Array[Byte]): Boolean = ???
+  def checkCRC(data: Array[Byte]): Boolean = {
+    if (data.length < 5) {
+      false
+    } else {
+      data(4) == 0x0d.toByte && (data(0) + data(1) + data(2)).toByte == data(3)
+    }
+  }
 
   def parseValue(data: Array[Byte]): Try[ResultValue] = ???
 
