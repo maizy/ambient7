@@ -7,7 +7,8 @@ scalaVersion := "2.11.7"
 git.baseVersion := "0.0.1"
 
 libraryDependencies ++= Seq(
-  "net.java.dev.jna" % "jna" % "4.1.0"
+  "net.java.dev.jna" % "jna" % "4.1.0",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 scalacOptions ++= Seq(
