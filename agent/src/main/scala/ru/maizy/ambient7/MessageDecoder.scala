@@ -9,17 +9,27 @@ package ru.maizy.ambient7
  * * https://github.com/Lokis92/h1/blob/a292d85cf35b07e2ae945d49be2b1dfb904b0fb8/co2java/src/Co2mon.java#L183-L202
  */
 
-import scala.util.Try
+import scala.util.{ Success, Failure, Try }
+
 
 sealed trait ResultValue
 case class Temp(celsus: Double) extends ResultValue
-case class Co2(ppm: Double) extends ResultValue
+case class Co2(ppm: Integer) extends ResultValue
+
+
+class ParseError(message: String) extends Exception(message)
+class UnknownDataCode(message: String) extends ParseError(message)
+
 
 object MessageDecoder {
 
-  val MAGIC_WORD = Array(0x48, 0x74, 0x65, 0x6d, 0x70, 0x39, 0x39, 0x65).map(_.toByte)  // Htemp99e
-  val MAGIC_WORD_SHIFTED = MAGIC_WORD.map(i => i << 4 | i >> 4).map(_.toByte)
-
+  private val MAGIC_WORD = Array(0x48, 0x74, 0x65, 0x6d, 0x70, 0x39, 0x39, 0x65).map(_.toByte)  // Htemp99e
+  private val MAGIC_WORD_SHIFTED = MAGIC_WORD.map(i => i << 4 | i >> 4).map(_.toByte)
+  private val CO2_CODE = 0x50.toByte
+  private val TEMP_CODE = 0x42.toByte
+  private val ABS_ZERO_TEMP = 273.15
+  private val TEMP_FACTOR = 0.0625
+  private val EXPECTED_CO2_BOUND = 0 until 3000
 
   def decode(rawData: Array[Byte]): Try[Array[Byte]] = {
     Try {
@@ -84,6 +94,33 @@ object MessageDecoder {
     }
   }
 
-  def parseValue(data: Array[Byte]): Try[ResultValue] = ???
+  def parseValue(data: Array[Byte]): Try[ResultValue] = {
+
+    def bytesToLong(b1: Byte, b2: Byte): Long = {
+      val r1 = (b1 + 256) % 256
+      val r2 = (b2 + 256) % 256
+      (r1 << 8) + r2
+    }
+
+    if (data.length < 5) {
+      Failure(new IllegalArgumentException(s"wrong data length ${data.length} but should be >= 5"))
+    } else {
+      data match {
+        case Array(CO2_CODE, b1, b2, _*) =>
+          val ppm = bytesToLong(b1, b2).toInt
+          // according to ZG01C spec expected value in range of 0..3000
+          if (!(EXPECTED_CO2_BOUND contains ppm)) {
+            Failure(new ParseError(s"co2 value not in expected $EXPECTED_CO2_BOUND"))
+          } else {
+            Success(Co2(ppm))
+          }
+        case Array(TEMP_CODE, b1, b2, _*) => Success(Temp(decodeTemperature(bytesToLong(b1, b2))))
+        case Array(u, _*) => Failure(new ParseError(s"unknown data code $u"))
+      }
+    }
+  }
+
+  private def decodeTemperature(value: Long): Double = value.toDouble * TEMP_FACTOR - ABS_ZERO_TEMP
+
 
 }
