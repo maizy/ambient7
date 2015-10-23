@@ -5,6 +5,7 @@ name := "ambient7-agent"
 organization := "ru.maizy"
 scalaVersion := "2.11.7"
 git.baseVersion := "0.0.1"
+fork in run := true
 
 libraryDependencies ++= Seq(
   "net.java.dev.jna" % "jna" % "4.1.0",

@@ -14,7 +14,7 @@ import scala.util.{ Success, Failure, Try }
 
 sealed trait ResultValue
 case class Temp(celsus: Double) extends ResultValue
-case class Co2(ppm: Integer) extends ResultValue
+case class Co2(ppm: Integer, high: Boolean = false) extends ResultValue
 
 
 class ParseError(message: String) extends Exception(message)
@@ -109,8 +109,11 @@ object MessageDecoder {
         case Array(CO2_CODE, b1, b2, _*) =>
           val ppm = bytesToLong(b1, b2).toInt
           // according to ZG01C spec expected value in range of 0..3000
-          if (!(EXPECTED_CO2_BOUND contains ppm)) {
+          // device may send higher values, but them not precise
+          if (ppm < EXPECTED_CO2_BOUND.min) {
             Failure(new ParseError(s"co2 value not in expected $EXPECTED_CO2_BOUND"))
+          } else if (ppm > EXPECTED_CO2_BOUND.max) {
+            Success(Co2(EXPECTED_CO2_BOUND.max, high = true))
           } else {
             Success(Co2(ppm))
           }
