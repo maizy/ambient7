@@ -9,6 +9,7 @@ fork in run := true
 
 libraryDependencies ++= Seq(
   "net.java.dev.jna" % "jna" % "4.1.0",
+  "com.google.guava" % "guava" % "18.0",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
