@@ -29,7 +29,7 @@ object MessageDecoder {
   private val TEMP_CODE = 0x42.toByte
   private val ABS_ZERO_TEMP = 273.15
   private val TEMP_FACTOR = 0.0625
-  private val EXPECTED_CO2_BOUND = 0 until 3000
+  private val EXPECTED_CO2_BOUND = 0 to 3000
 
   def decode(rawData: Array[Byte]): Try[Array[Byte]] = {
     Try {
