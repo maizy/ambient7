@@ -29,7 +29,7 @@ class MT8057Service (
   private var state: States.State = States.Unknown
   private var device: Option[HidDevice] = None
 
-  def currentNanoTime: Long = System.currentTimeMillis * 1000000
+  def currentNanoTime(): Long = System.currentTimeMillis * 1000000
 
   def run(): Unit = {
     state = Wait
@@ -39,7 +39,7 @@ class MT8057Service (
   private def deviceLoop(): Unit = {
     device = findDevice()
     if(device.isDefined) {
-      queue.add(DeviceUp(currentNanoTime))
+      queue.add(DeviceUp(currentNanoTime()))
     }
     val standardDelay = 500
     var delay = standardDelay  // ms
@@ -136,8 +136,8 @@ class MT8057Service (
                 case false => System.err.println("bad CRC")
                 case true =>
                   MessageDecoder.parseValue(decoded).foreach {
-                    case v: Co2 => queue.add(Co2Updated(v, currentNanoTime))
-                    case v: Temp => queue.add(TempUpdated(v, currentNanoTime))
+                    case v: Co2 => queue.add(Co2Updated(v, currentNanoTime()))
+                    case v: Temp => queue.add(TempUpdated(v, currentNanoTime()))
                   }
               }
           }
@@ -150,7 +150,7 @@ class MT8057Service (
 
   override def hidDeviceDetached(event: HidServicesEvent): Unit = {
     if (isMatchedDevice(event.getHidDevice)) {
-      queue.add(DeviceDown(currentNanoTime))
+      queue.add(DeviceDown(currentNanoTime()))
       closeDevice()
     }
   }
@@ -158,7 +158,7 @@ class MT8057Service (
   override def hidDeviceAttached(event: HidServicesEvent): Unit = {
     if (isMatchedDevice(event.getHidDevice)) {
       // just fire event, device loop will find device on next step
-      queue.add(DeviceUp(currentNanoTime))
+      queue.add(DeviceUp(currentNanoTime()))
     }
   }
 
