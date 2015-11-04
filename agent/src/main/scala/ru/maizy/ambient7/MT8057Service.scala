@@ -11,7 +11,7 @@ import scala.collection.JavaConversions.asScalaBuffer
 import org.hid4java.{ HidServices, HidManager, HidDevice, HidServicesListener }
 import org.hid4java.event.HidServicesEvent
 
-// TODO logging
+// TODO send usb errors as separate events type
 class MT8057Service (
     private val queue: JavaQueue[Event],
     private val hidServices: HidServices)
@@ -68,7 +68,7 @@ class MT8057Service (
             state = Read
             delay = 50
           } else {
-            System.err.println(s"init error")
+            // System.err.println(s"init error")
             closeDevice()
             state = Wait
             delay = standardDelay * 2
@@ -76,7 +76,7 @@ class MT8057Service (
 
         case Read =>
           if (device.isEmpty || !readData()) {
-            System.err.println(s"read error")
+            // System.err.println(s"read error")
             closeDevice()
             state = Wait
             delay = standardDelay * 2
@@ -91,7 +91,7 @@ class MT8057Service (
   private def findDevice(): Option[HidDevice] = {
     val matched = asScalaBuffer(hidServices.getAttachedHidDevices).filter(isMatchedDevice).toSeq
     if (matched.size > 1) {
-      System.err.println("More than one matched USB HID devices")
+      // System.err.println("More than one matched USB HID devices")
       None
     } else if (matched.isEmpty) {
       None
@@ -130,10 +130,12 @@ class MT8057Service (
           true
         case _ =>
           MessageDecoder.decode(data) match {
-            case Failure(e) => System.err.println(s"Decode problem $e")
+            case Failure(e) =>
+              // System.err.println(s"Decode problem $e")
             case Success(decoded) =>
               MessageDecoder.checkCRC(decoded) match {
-                case false => System.err.println("bad CRC")
+                case false =>
+                  // System.err.println("bad CRC")
                 case true =>
                   MessageDecoder.parseValue(decoded).foreach {
                     case v: Co2 => queue.add(Co2Updated(v, currentNanoTime()))
@@ -164,7 +166,7 @@ class MT8057Service (
 
   override def hidFailure(event: HidServicesEvent): Unit = {
     val message = Option(event.getHidDevice).map(_.getLastErrorMessage)
-    System.err.println("HidError " + message.getOrElse("<unknown>"))  // TODO:logging
+    // System.err.println("HidError " + message.getOrElse("<unknown>"))
   }
 }
 
