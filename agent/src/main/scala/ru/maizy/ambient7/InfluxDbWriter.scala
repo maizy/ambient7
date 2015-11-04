@@ -8,4 +8,8 @@ class InfluxDbWriter(opts: AppOptions) extends Writer {
   override def write(event: Event): Unit = {
     print(s"TODO (influxdb writer): $event")
   }
+
+  override def onInit(): Unit = {
+    print(s"TODO (influxdb writer): init")
+  }
 }

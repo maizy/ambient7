@@ -5,5 +5,6 @@ package ru.maizy.ambient7
  * See LICENSE.txt for details.
  */
 trait Writer {
+  def onInit(): Unit
   def write(event: Event): Unit
 }

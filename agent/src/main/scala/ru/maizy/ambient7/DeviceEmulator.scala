@@ -18,9 +18,9 @@ class DeviceEmulator(private val queue: JavaQueue[Event]) {
     queue.add(DeviceUp(currentNanoTime()))
     while(true) {
       val switch = if (enabled) {
-        randomGen.nextInt(100) == 1
+        randomGen.nextInt(30) == 1
       } else {
-        randomGen.nextInt(5) == 1
+        randomGen.nextInt(10) == 1
       }
       if (switch && enabled) {
         queue.add(DeviceDown(currentNanoTime()))

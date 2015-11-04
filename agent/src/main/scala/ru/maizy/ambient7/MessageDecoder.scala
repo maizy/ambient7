@@ -14,7 +14,7 @@ import scala.util.{ Success, Failure, Try }
 
 sealed trait ResultValue
 case class Temp(celsus: Double) extends ResultValue
-case class Co2(ppm: Integer, high: Boolean = false) extends ResultValue
+case class Co2(ppm: Int, high: Boolean = false) extends ResultValue
 
 
 class ParseError(message: String) extends Exception(message)
@@ -46,7 +46,7 @@ object MessageDecoder {
    * swap in place
    */
   private[ambient7] def swap(data: Array[Byte]): Unit = {
-    def byteSwap(index1: Integer, index2: Integer): Unit =  {
+    def byteSwap(index1: Int, index2: Int): Unit =  {
       val tmp = data(index2)
       data(index2) = data(index1)
       data(index1) = tmp
@@ -62,7 +62,7 @@ object MessageDecoder {
    */
   private[ambient7] def shift(data: Array[Byte]): Array[Byte] = {
 
-    def byteShift(index1: Integer, index2: Integer): Byte =
+    def byteShift(index1: Int, index2: Int): Byte =
       (((data(index1) << 5).toByte & 0xe0) | ((data(index2) >> 3).toByte & 0x1f)).toByte
 
     val res = new Array[Byte](8)

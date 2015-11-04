@@ -20,6 +20,7 @@ object AgentApp extends App  {
       )
 
       val writers = opts.writers.map(writersMap.apply).map(_(opts))
+      writers.foreach(_.onInit())
       val MAX_QUEUE_SIZE = 100
       val queue = Queues.synchronizedQueue(EvictingQueue.create[Event](MAX_QUEUE_SIZE))
       val consumerThread  = new Thread {

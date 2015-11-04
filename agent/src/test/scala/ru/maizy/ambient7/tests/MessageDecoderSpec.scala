@@ -23,7 +23,7 @@ class MessageDecoderSpec
     val tempSamples = Seq[(Array[Byte], Double)](
       (raw, 22.9125)
     )
-    val co2Samples = Seq[(Array[Byte], Integer)](
+    val co2Samples = Seq[(Array[Byte], Int)](
       (Array(0x7e, 0xa4, 0xa2, 0xb6, 0x4f, 0x9a, 0x9c, 0x08).map(_.toByte), 665)
     )
 

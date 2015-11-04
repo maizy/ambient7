@@ -1,7 +1,7 @@
 package ru.maizy.ambient7
 
 import java.text.SimpleDateFormat
-import java.util.{ Calendar, Date }
+import java.util.Date
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
@@ -15,16 +15,19 @@ class ConsoleWriter(opts: AppOptions) extends Writer {
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)
   }
 
+
+  override def onInit(): Unit = {}
+
   override def write(event: Event): Unit = {
     event match {
       case Co2Updated(Co2(co2, _), ts) =>
-        println(s"${convertTimestamp(ts)}: co2=$co2")
+        Console.println(s"${convertTimestamp(ts)}: co2=$co2")
       case TempUpdated(Temp(temp), ts) =>
-        println(f"${convertTimestamp(ts)}: temp=$temp%.2f")
+        Console.println(f"${convertTimestamp(ts)}: temp=$temp%.2f")
       case DeviceUp(ts) =>
-        System.err.println(f"${convertTimestamp(ts)}: device connected")
+        Console.err.println(f"${convertTimestamp(ts)}: device connected")
       case DeviceDown(ts) =>
-        System.err.println(f"${convertTimestamp(ts)}: device disconnected")
+        Console.err.println(f"${convertTimestamp(ts)}: device disconnected")
     }
   }
 }
