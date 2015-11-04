@@ -6,12 +6,17 @@ package ru.maizy.ambient7.tests
  * See LICENSE.txt for details.
  */
 
+import java.text.SimpleDateFormat
+import java.util.Date
 import org.scalatest.{ FlatSpec, Matchers }
 import ru.maizy.ambient7.{ Event, Writer }
 
 abstract class AbstractBaseSpec extends FlatSpec with Matchers
 
 trait WritersTestUtils {
+
+  val time = 1445785424583000000L
+  val formatedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time / 1000000))
 
   def checkWriterEvent(writer: Writer, event: Event): (String, String) = {
     checkWriterOutput(writer)(_.write(event))

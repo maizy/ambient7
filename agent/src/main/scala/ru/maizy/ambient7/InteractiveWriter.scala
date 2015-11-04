@@ -42,7 +42,7 @@ class InteractiveWriter(opts: AppOptions) extends StatefullWriter {
     val status = if (connected) "    " else s" ${red}ø$reset  "
 
     val co2Val = co2.map(_.ppm).map { v => f"$co2Color$v%4s ppm$co2Reset" }.getOrElse("----    ")
-    val tempVal = temp.map(_.celsus).map { v => f"$v%2.2f °C" }.getOrElse("-----   ")
+    val tempVal = temp.map(_.celsus).map { v => f"$v%2.2f °C".replace(',', '.') }.getOrElse("-----   ")
     s"${status}co2: $co2Val    temp: $tempVal    "
   }
 }

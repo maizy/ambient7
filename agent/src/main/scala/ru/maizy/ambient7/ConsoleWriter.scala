@@ -23,7 +23,7 @@ class ConsoleWriter(opts: AppOptions) extends Writer {
       case Co2Updated(Co2(co2, _), ts) =>
         Console.println(s"${convertTimestamp(ts)}: co2=$co2")
       case TempUpdated(Temp(temp), ts) =>
-        Console.println(f"${convertTimestamp(ts)}: temp=$temp%.2f")
+        Console.println(f"${convertTimestamp(ts)}: temp=$temp%.2f".replace(',', '.'))
       case DeviceUp(ts) =>
         Console.err.println(f"${convertTimestamp(ts)}: device connected")
       case DeviceDown(ts) =>

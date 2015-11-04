@@ -6,7 +6,7 @@ import ru.maizy.ambient7._
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
-class StatefullWriterSpec extends AbstractBaseSpec {
+class StatefullWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
   class TestWriter extends StatefullWriter {
     var lastEvent: Option[Event] = None
@@ -22,7 +22,6 @@ class StatefullWriterSpec extends AbstractBaseSpec {
 
   val w = new TestWriter
   w.onInit()
-  val time = 1445785424583000000L
 
   "StatefullWriter" should "init in proper state" in {
     w.connectedTest shouldBe false

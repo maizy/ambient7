@@ -9,7 +9,6 @@ import ru.maizy.ambient7._
 class InteractiveWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
   val w = new InteractiveWriter(AppOptions())
-  val time = 1445785424583000000L
 
   val co2 = Co2(1123)
   val temp = Temp(33.33)
@@ -18,7 +17,7 @@ class InteractiveWriterSpec extends AbstractBaseSpec with WritersTestUtils {
   val co2Set = s"co2: ${Console.YELLOW}1123 ppm${Console.RESET}"
 
   val tempNotSet = "temp: -----   "
-  val tempSet = s"temp: 33,33 °C"
+  val tempSet = s"temp: 33.33 °C"
 
   val div = "    "
 
