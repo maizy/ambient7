@@ -18,6 +18,11 @@ Supports various result writers:
 * InfluxDB API (*TODO*)
 
 
+### Download
+
+[ambient7-mt8057-agent-0.0.1.jar](https://github.com/maizy/ambient7/releases/download/mt8057-agent-0.0.1/ambient7-mt8057-agent-0.0.1.jar)
+
+
 ### Platforms
 
 Supported platforms:
