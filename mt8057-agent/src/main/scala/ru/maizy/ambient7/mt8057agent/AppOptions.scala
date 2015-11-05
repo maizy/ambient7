@@ -1,4 +1,4 @@
-package ru.maizy.ambient7
+package ru.maizy.ambient7.mt8057agent
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
@@ -34,7 +34,7 @@ object AppOptions {
 
 object OptionParser {
 
-  private val parser = new scopt.OptionParser[AppOptions]("java -jar ambient7-agent.jar") {
+  private val parser = new scopt.OptionParser[AppOptions]("java -jar ambient7-mt8057-agent.jar") {
 
     private def allInEnum(enum: EnumerationMap, values: Set[String]): Either[String, Unit] = {
       if (values.exists(!enum.valuesMap.contains(_))) {
@@ -47,7 +47,7 @@ object OptionParser {
 
     private def enumValues(enum: EnumerationMap) = enum.valuesMap.keys.mkString("|")
 
-    head("ambient7 co2 agent", "0.0.1")
+    head("ambient7 agent for MT8057 CO2 detector", "0.0.1")
     help("help")
     version("version")
 

@@ -1,11 +1,13 @@
-package ru.maizy.ambient7.tests
-
-import ru.maizy.ambient7._
+package ru.maizy.ambient7.mt8057agent.tests
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.mt8057agent.{ StatefullWriter, Co2, Temp }
+import ru.maizy.ambient7.mt8057agent.{ DeviceDown, DeviceUp, TempUpdated, Co2Updated, Event }
+
 class StatefullWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
   class TestWriter extends StatefullWriter {

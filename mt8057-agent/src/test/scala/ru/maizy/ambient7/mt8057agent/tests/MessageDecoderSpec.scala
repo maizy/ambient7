@@ -1,8 +1,8 @@
-package ru.maizy.ambient7.tests
+package ru.maizy.ambient7.mt8057agent.tests
 
 import org.scalactic.Tolerance
 import org.scalatest.TryValues
-import ru.maizy.ambient7.{ MessageDecoder, Temp, Co2 }
+import ru.maizy.ambient7.mt8057agent.{ MessageDecoder, Co2, Temp }
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015

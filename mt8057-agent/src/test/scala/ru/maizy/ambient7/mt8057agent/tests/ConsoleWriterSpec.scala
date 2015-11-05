@@ -1,11 +1,13 @@
-package ru.maizy.ambient7.tests
-
-import ru.maizy.ambient7._
+package ru.maizy.ambient7.mt8057agent.tests
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.mt8057agent.{ AppOptions, Co2, Temp, ConsoleWriter}
+import ru.maizy.ambient7.mt8057agent.{ DeviceDown, DeviceUp, TempUpdated, Co2Updated }
+
 class ConsoleWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
   "ConsoleWriter" should "do nothing on init" in {

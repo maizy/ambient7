@@ -1,10 +1,19 @@
 enablePlugins(GitVersioning)
 enablePlugins(JavaAppPackaging)
 
-name := "ambient7-agent"
+name := "ambient7-mt8057-agent"
 organization := "ru.maizy"
 scalaVersion := "2.11.7"
+
 git.baseVersion := "0.0.1"
+git.useGitDescribe := true
+git.gitTagToVersionNumber := { tag: String =>
+  val mask = "mt8057-agent-([0-9\\.])".r
+  tag match {
+    case mask(v) => Some(v)
+    case _ => None
+  }
+}
 
 fork in run := true
 outputStrategy := Some(StdoutOutput)
@@ -17,7 +26,6 @@ libraryDependencies ++= Seq(
 )
 
 scalacOptions ++= Seq(
-  "-target:jvm-1.7",
   "-encoding", "UTF-8",
   "-deprecation",
   "-unchecked",

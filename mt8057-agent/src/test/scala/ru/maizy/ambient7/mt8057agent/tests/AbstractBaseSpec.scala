@@ -1,5 +1,4 @@
-package ru.maizy.ambient7.tests
-
+package ru.maizy.ambient7.mt8057agent.tests
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
@@ -9,7 +8,7 @@ package ru.maizy.ambient7.tests
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.scalatest.{ FlatSpec, Matchers }
-import ru.maizy.ambient7.{ Event, Writer }
+import ru.maizy.ambient7.mt8057agent.{ Event, Writer }
 
 abstract class AbstractBaseSpec extends FlatSpec with Matchers
 

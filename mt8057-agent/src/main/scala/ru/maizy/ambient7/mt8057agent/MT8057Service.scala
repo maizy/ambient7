@@ -1,4 +1,4 @@
-package ru.maizy.ambient7
+package ru.maizy.ambient7.mt8057agent
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015

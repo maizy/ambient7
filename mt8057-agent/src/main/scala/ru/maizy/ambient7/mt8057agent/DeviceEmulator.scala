@@ -1,4 +1,4 @@
-package ru.maizy.ambient7
+package ru.maizy.ambient7.mt8057agent
 
 import java.util.{Queue => JavaQueue}
 import scala.util.Random

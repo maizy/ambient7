@@ -1,11 +1,12 @@
-package ru.maizy.ambient7.tests
-
-import ru.maizy.ambient7._
+package ru.maizy.ambient7.mt8057agent.tests
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.mt8057agent.{ AppOptions, Co2, Temp, InteractiveWriter, DeviceUp, TempUpdated, Co2Updated }
+
 class InteractiveWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
   val w = new InteractiveWriter(AppOptions())
