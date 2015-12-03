@@ -7,3 +7,7 @@
   * decoder for MT8057 USB HID messages
   * interactive mode
   * console mode
+
+## 0.0.2 (2015-12-03)
+
+* grafana & influxdb docker setup scripts
