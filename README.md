@@ -1,7 +1,14 @@
 # ambient7
 
-_TBA_
+Components:
 
+* [influxdb](influxdb/README.md) as timeseries db
+* [grafana](grafana/README.md) for data explorations (optional)
+* [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
+  measurements. Can be used sepparatly.
+
+
+<a name="mt8057-agent" />
 ## mt8057-agent
 
 Agent for sending results from
