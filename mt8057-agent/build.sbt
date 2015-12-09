@@ -5,10 +5,10 @@ name := "ambient7-mt8057-agent"
 organization := "ru.maizy"
 scalaVersion := "2.11.7"
 
-git.baseVersion := "0.0.2"
+git.baseVersion := "0.0.3"
 git.useGitDescribe := true
 git.gitTagToVersionNumber := { tag: String =>
-  val mask = "mt8057-agent-([0-9\\.]+)".r
+  val mask = "([0-9\\.]+)".r
   tag match {
     case mask(v) => Some(v)
     case _ => None
