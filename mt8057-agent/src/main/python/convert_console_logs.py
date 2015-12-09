@@ -37,8 +37,8 @@ def convert(f, agent):
                 print(converter(value, tags, ts))
 
 
-def format_temp(celsus, tags, ts):
-    return 'temp{t},device=mt8057 celsius={c:.4f} {ts}'.format(c=celsus, t=tags, ts=ts)
+def format_temp(celsius, tags, ts):
+    return 'temp{t},device=mt8057 celsius={c:.4f} {ts}'.format(c=celsius, t=tags, ts=ts)
 
 
 def format_co2(ppm, tags, ts):

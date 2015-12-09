@@ -88,7 +88,7 @@ class MessageDecoderSpec
         val decoded = MessageDecoder.decode(sample).success.value
         MessageDecoder.checkCRC(decoded) shouldBe true
         MessageDecoder.parseValue(decoded).success.value match {
-          case v: Temp => v.celsus shouldBe (expected +- 0.1)
+          case v: Temp => v.celsius shouldBe (expected +- 0.1)
           case _ => throw new AssertionError("not expected value")
         }
       }
