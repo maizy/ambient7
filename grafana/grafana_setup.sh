@@ -22,4 +22,5 @@ docker run -d -p "${PORT}:3000" \
     -v "${DATADIR}:/var/lib/grafana" \
     -e "GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
     --name=ambient7-grafana \
+    --link=ambient7-influxdb:influxdb \
     grafana/grafana:latest
