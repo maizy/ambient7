@@ -22,6 +22,7 @@ libraryDependencies ++= Seq(
   "net.java.dev.jna" % "jna" % "4.1.0",
   "com.google.guava" % "guava" % "18.0",
   "com.github.scopt" %% "scopt" % "3.3.0",
+  "org.scalaj" %% "scalaj-http" % "2.2.0",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 

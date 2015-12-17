@@ -22,6 +22,8 @@ case class AppOptions(
     writers: Set[Writers.Writer] = Set.empty,
     influxDbBaseUrl: String = AppOptions.DEFAULT_INFLUXDB_BASEURL,
     influxDbDatabase: Option[String] = None,
+    influxDbUser: Option[String] = None,
+    influxDbPassword: Option[String] = None,
     influxDbAgentName: Option[String] = None,
     influxDbTags: String = "",
     useEmulator: Boolean = false
@@ -30,6 +32,7 @@ case class AppOptions(
 object AppOptions {
   val DEFAULT_INFLUXDB_BASEURL = "http://localhost:8086/write"
   val DEFAULT_AGENT_NAME = "main"
+  val APP_VERSION = "0.0.3"  // TODO: auto generate on build
 }
 
 object OptionParser {
@@ -47,7 +50,7 @@ object OptionParser {
 
     private def enumValues(enum: EnumerationMap) = enum.valuesMap.keys.mkString("|")
 
-    head("ambient7 agent for MT8057 CO2 detector", "0.0.1")
+    head("ambient7 agent for MT8057 CO2 detector", AppOptions.APP_VERSION)
     help("help")
     version("version")
 
@@ -69,9 +72,15 @@ object OptionParser {
     opt[String]("influxdb-database")
       .action { (value, opts) => opts.copy(influxDbDatabase = Some(value)) }
 
+    opt[String]("influxdb-user")
+      .action { (value, opts) => opts.copy(influxDbUser = Some(value)) }
+
+    opt[String]("influxdb-password")
+      .action { (value, opts) => opts.copy(influxDbPassword = Some(value)) }
+
     opt[String]("influxdb-tags")
-      .valueName { "position=outdoor,altitude=200m" }
-      .action { (value, opts) => opts.copy(influxDbDatabase = Some(value)) }
+      .valueName { "position=outdoor,altitude=200,some=val\\,ue" }
+      .action { (value, opts) => opts.copy(influxDbTags = value) }
       .text { "Any additional InfluxDB record tags"}
 
     opt[Unit]("emulator")
