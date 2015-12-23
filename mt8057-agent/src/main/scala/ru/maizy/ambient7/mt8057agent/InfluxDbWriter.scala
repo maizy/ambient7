@@ -1,7 +1,8 @@
 package ru.maizy.ambient7.mt8057agent
 
 import scala.collection.mutable
-import scalaj.http.{ BaseHttp, HttpRequest }
+import scala.util.{ Success, Failure, Try }
+import scalaj.http.{ HttpOptions, HttpResponse, BaseHttp, HttpRequest }
 import com.typesafe.scalalogging.LazyLogging
 
 /**
@@ -14,10 +15,16 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
 
   override def write(event: Event): Unit = {
     formatLine(event).foreach { data =>
-      val response = buildWriteRequest(data).asString
-      if (response.code != OK_NO_CONTENT) {
-        // TODO: buffer for N events (iss #14)
-        logger.warn("Unable to write event to influxdb")
+      val request = buildWriteRequest(data)
+      val responseRes = performRequest(request)
+      // TODO: buffer for N events if a failure happens (iss #14)
+      responseRes match {
+        case Failure(e) =>
+          logger.warn(s"Unable to perform influxdb request: ${e.getClass}")
+          logger.debug(s"Request error", e)
+        case Success(response) if response.code != OK_NO_CONTENT =>
+          logger.warn(s"Unable to write event to influxdb: HTTP ${response.code} ${response.body}")
+        case _ =>
       }
     }
   }
@@ -57,6 +64,9 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
       .mkString(",")
   }
 
+  protected def performRequest(request: HttpRequest): Try[HttpResponse[String]] =
+    Try(request.asString)
+
   private def buildWriteRequest(data: String): HttpRequest = {
     var request = HttpClient(opts.influxDbBaseUrl)
       .postData(data)
@@ -80,6 +90,11 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
 
 object InfluxDbWriter {
   object HttpClient extends BaseHttp (
-    userAgent = "ambient7/" + AppOptions.APP_VERSION
+    userAgent = "ambient7/" + AppOptions.APP_VERSION,
+    options = Seq(
+      HttpOptions.connTimeout(200),
+      HttpOptions.readTimeout(200),
+      HttpOptions.followRedirects(false)
+    )
   )
 }
