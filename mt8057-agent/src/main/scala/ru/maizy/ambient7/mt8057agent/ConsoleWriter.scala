@@ -2,19 +2,19 @@ package ru.maizy.ambient7.mt8057agent
 
 import java.text.SimpleDateFormat
 import java.util.Date
+import com.typesafe.scalalogging.LazyLogging
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
-class ConsoleWriter(opts: AppOptions) extends Writer {
+class ConsoleWriter(opts: AppOptions) extends Writer with LazyLogging {
 
   private def convertTimestamp(nanos: Long): String = {
     val millis = nanos / 1000000
     val date = new Date(millis)
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)
   }
-
 
   override def onInit(): Unit = {}
 

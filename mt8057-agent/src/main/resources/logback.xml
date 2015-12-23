@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- configured rogrammatically at ru.maizy.ambient7.mt8057agent.AgentApp#setupLogging -->
+
+    <root level="DEBUG">
+    </root>
+
+</configuration>

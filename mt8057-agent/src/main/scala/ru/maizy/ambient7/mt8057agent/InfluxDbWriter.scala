@@ -2,20 +2,23 @@ package ru.maizy.ambient7.mt8057agent
 
 import scala.collection.mutable
 import scalaj.http.{ BaseHttp, HttpRequest }
+import com.typesafe.scalalogging.LazyLogging
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
  */
-class InfluxDbWriter(opts: AppOptions) extends Writer {
+class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
   import InfluxDbWriter._
+  val OK_NO_CONTENT = 204
 
   override def write(event: Event): Unit = {
     formatLine(event).foreach { data =>
-      buildWriteRequest(data).asString
-      // if (responce.code != 204) {  // TODO: logging
-      //
-      // }
+      val response = buildWriteRequest(data).asString
+      if (response.code != OK_NO_CONTENT) {
+        // TODO: buffer for N events (iss #14)
+        logger.warn("Unable to write event to influxdb")
+      }
     }
   }
 

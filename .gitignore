@@ -28,3 +28,4 @@ project/boot/
 project/plugins/project/
 
 .vagrant/
+*.log

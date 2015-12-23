@@ -1,5 +1,7 @@
 package ru.maizy.ambient7.mt8057agent
 
+import java.io.File
+
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
  * See LICENSE.txt for details.
@@ -26,7 +28,9 @@ case class AppOptions(
     influxDbPassword: Option[String] = None,
     influxDbAgentName: Option[String] = None,
     influxDbTags: String = "",
-    useEmulator: Boolean = false
+    useEmulator: Boolean = false,
+    logFile: Option[File] = None,
+    verboseLogging: Boolean = false
 )
 
 object AppOptions {
@@ -88,6 +92,12 @@ object OptionParser {
         "Emulator mode. Generate random data instead of device support." +
         "Do not use with the real DBs, because you will write a lots of crap to them."}
       .action { (_, opts) => opts.copy(useEmulator = true) }
+
+    opt[File]("log-file")
+      .action { (file, opts) => opts.copy(logFile = Some(file)) }
+
+    opt[Unit]("verbose")
+      .action { (_, opts) => opts.copy(verboseLogging = true) }
 
   }
 
