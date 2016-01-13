@@ -31,7 +31,7 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
 
   override def onInit(): Unit = {}
 
-  private def formatLine(event: Event): Option[String] = {
+  private[mt8057agent] def formatLine(event: Event): Option[String] = {
     event match {
       case Co2Updated(Co2(co2, high), ts) =>
         Some(s"co2$tags ppm=${co2}i,high=$high $ts")
@@ -64,7 +64,7 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
       .mkString(",")
   }
 
-  protected def performRequest(request: HttpRequest): Try[HttpResponse[String]] =
+  private[mt8057agent] def performRequest(request: HttpRequest): Try[HttpResponse[String]] =
     Try(request.asString)
 
   private def buildWriteRequest(data: String): HttpRequest = {
