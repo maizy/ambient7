@@ -5,7 +5,7 @@ name := "ambient7-mt8057-agent"
 organization := "ru.maizy"
 scalaVersion := "2.11.7"
 
-git.baseVersion := "0.0.3"
+git.baseVersion := "0.1.0"
 git.useGitDescribe := true
 git.gitTagToVersionNumber := { tag: String =>
   val mask = "([0-9\\.]+)".r

@@ -22,12 +22,12 @@ Supports various result writers:
 
 * console
 * interactive
-* InfluxDB API (*TODO*)
+* InfluxDB API
 
 
 ### Download
 
-[ambient7-mt8057-agent-0.0.3.jar](https://github.com/maizy/ambient7/releases/download/0.0.3/ambient7-mt8057-agent-0.0.3.jar)
+[ambient7-mt8057-agent-0.1.0.jar](https://github.com/maizy/ambient7/releases/download/0.1.0/ambient7-mt8057-agent-0.1.0.jar)
 
 
 ### Platforms
@@ -51,7 +51,13 @@ Theoretically supported but never tested (all platforms supported by
 
 ```
 java -jar ambient7-mt8057-agent-x.x.x.jar --writers console
+
 java -jar ambient7-mt8057-agent-x.x.x.jar --writers interactive
+
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers influxdb \
+    --influxdb-database ambient7 \
+    --influxdb-baseurl http://localhost:8086/write \
+    --influxdb-user user --influxdb-password 123
 ```
 
 For more options:
