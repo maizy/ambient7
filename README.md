@@ -50,14 +50,14 @@ Theoretically supported but never tested (all platforms supported by
 ### Usage
 
 ```
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers console
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=console
 
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers interactive
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=interactive
 
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers influxdb \
-    --influxdb-database ambient7 \
-    --influxdb-baseurl http://localhost:8086/write \
-    --influxdb-user user --influxdb-password 123
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=influxdb \
+    --influxdb-database=ambient7 \
+    --influxdb-baseurl=http://localhost:8086/write \
+    --influxdb-user=user --influxdb-password=123
 ```
 
 For more options:
