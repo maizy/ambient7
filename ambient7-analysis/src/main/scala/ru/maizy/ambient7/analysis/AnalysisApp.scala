@@ -7,6 +7,7 @@ package ru.maizy.ambient7.analysis
 
 import org.slf4j.LoggerFactory
 import com.typesafe.scalalogging.Logger
+import ru.maizy.ambient7.analysis.command.{ InitDbCommand, ReturnStatus }
 
 
 object AnalysisApp extends App {
@@ -18,14 +19,20 @@ object AnalysisApp extends App {
       logger.error("Wrong app options, exiting")
       System.exit(2)
 
-    case Some(opts) if opts.command.isEmpty =>
-      logger.error("Unknown command, exiting")
-      System.exit(2)
-
     case Some(opts) =>
-      val command = opts.command.get
-      logger.info(s"Command: $command")
-      logger.info(s"DB url: ${opts.dbUrl}")
+      val res: ReturnStatus = opts.command match {
+        case Some("init-db") =>
+          InitDbCommand.run(opts.dbUrl, opts.dbUser, opts.dbPassword)
+
+        case Some("aggregate-co2") =>
+          // FIXME
+          ReturnStatus.success
+
+        case _ =>
+          println("Unknown command")
+          ReturnStatus(2)
+      }
+      System.exit(res.systemExitCode)
 
   }
 }

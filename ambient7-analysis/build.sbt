@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   "com.github.scopt" %% "scopt" % "3.5.0",
   "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
   "com.h2database" % "h2" % "1.4.192",
+  "org.flywaydb" % "flyway-core" % "4.0.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
