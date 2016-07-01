@@ -37,7 +37,7 @@ object AggregateCo2Command {
         readTimeout = 10.seconds
       )
 
-      def printRes(q: String) {
+      def printRes(q: String): Unit = {
         val res = influxDbClient.rawDataQuery(q)
         val utf8Res = new String(res, "utf-8")
         println(utf8Res)

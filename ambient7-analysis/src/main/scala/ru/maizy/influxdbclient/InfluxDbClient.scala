@@ -36,8 +36,8 @@ class InfluxDbClient(
 
   def rawDataQuery(query: String): Array[Byte] = {
     val request = buildBaseRequest("query", influxDbReadonlySettings)
-        .param("db", influxDbReadonlySettings.db)
-        .param("q", query)
+      .param("db", influxDbReadonlySettings.db)
+      .param("q", query)
 
     request.asBytes.body
   }

@@ -6,8 +6,8 @@ package ru.maizy.influxdbclient
  */
 
 case class InfluxDbConnectionSettings(
-  baseUrl: String,
-  db: String,
-  user: Option[String],
-  password: Option[String]
+    baseUrl: String,
+    db: String,
+    user: Option[String],
+    password: Option[String]
 )
