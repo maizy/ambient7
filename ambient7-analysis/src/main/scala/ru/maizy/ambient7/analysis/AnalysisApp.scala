@@ -7,7 +7,7 @@ package ru.maizy.ambient7.analysis
 
 import org.slf4j.LoggerFactory
 import com.typesafe.scalalogging.Logger
-import ru.maizy.ambient7.analysis.command.{ InitDbCommand, ReturnStatus }
+import ru.maizy.ambient7.analysis.command.{ AggregateCo2Command, InitDbCommand, ReturnStatus }
 
 
 object AnalysisApp extends App {
@@ -25,8 +25,7 @@ object AnalysisApp extends App {
           InitDbCommand.run(opts.dbUrl, opts.dbUser, opts.dbPassword)
 
         case Some("aggregate-co2") =>
-          // FIXME
-          ReturnStatus.success
+          AggregateCo2Command.run(opts)
 
         case _ =>
           println("Unknown command")
