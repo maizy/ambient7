@@ -15,6 +15,8 @@ sealed trait Value {
   type T <: Any
   def valueType: ValueType.Value
   def value: T
+
+  override def toString: String = s"Value(${value.toString})"
 }
 
 // TODO: is there any better way?

@@ -38,9 +38,8 @@ object AggregateCo2Command {
       )
 
       def printRes(q: String): Unit = {
-        val res = influxDbClient.rawDataQuery(q)
-        val utf8Res = new String(res, "utf-8")
-        println(utf8Res)
+        val res = influxDbClient.query(q)
+        println(s"q\n:$res\n\n")
       }
 
       printRes("make an error")
