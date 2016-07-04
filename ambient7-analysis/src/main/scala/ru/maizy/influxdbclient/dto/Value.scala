@@ -5,8 +5,10 @@ package ru.maizy.influxdbclient.dto
  * See LICENSE.txt for details.
  */
 
+import scala.math.BigDecimal
+
 object ValueType extends Enumeration {
-  val String, Int, Double = Value
+  val Null, String, Number = Value
 }
 
 sealed trait Value {
@@ -15,11 +17,44 @@ sealed trait Value {
   def value: T
 }
 
-abstract class SimpleValue[C](v: C, val valueType: ValueType.Value) {
-  type T = C
-  val value: C = v
+// TODO: is there any better way?
+object NullValue extends Value {
+  type T = Option[Any]
+  val valueType = ValueType.Null
+  val value: Option[Any] = None
 }
 
-class StringValue(v: String) extends SimpleValue[String](v, ValueType.Int)
-class IntValue(v: Int) extends SimpleValue[Int](v, ValueType.Int)
-class DoubleValue(v: Double) extends SimpleValue[Double](v, ValueType.Double)
+abstract class SimpleValue[C](v: C, val valueType: ValueType.Value) extends Value {
+  type T = C
+  val value: C = v
+
+
+  def canEqual(other: Any): Boolean =
+    other.isInstanceOf[SimpleValue[C]]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: SimpleValue[C] =>
+      (that canEqual this) &&
+        value == that.value
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(value)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
+}
+
+class StringValue(v: String) extends SimpleValue[String](v, ValueType.String)
+
+object StringValue {
+  def apply(str: String): StringValue = new StringValue(str)
+}
+
+class NumberValue(v: BigDecimal) extends SimpleValue[BigDecimal](v, ValueType.Number)
+
+object NumberValue {
+  def apply(v: BigDecimal): NumberValue = new NumberValue(v)
+  def apply(v: Int): NumberValue = apply(BigDecimal(v))
+  def apply(v: Double): NumberValue = apply((BigDecimal(v)))
+}

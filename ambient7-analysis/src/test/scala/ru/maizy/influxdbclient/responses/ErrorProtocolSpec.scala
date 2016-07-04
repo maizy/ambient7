@@ -8,14 +8,13 @@ package ru.maizy.influxdbclient.responses
 import spray.json._
 import ru.maizy.influxdbclient.BaseSpec
 import ru.maizy.influxdbclient.dto.ErrorDto
-import ru.maizy.influxdbclient.dto.IntValue
 
 class ErrorProtocolSpec extends BaseSpec {
 
   import ru.maizy.influxdbclient.responses.ErrorProtocol._
 
   "ErrorProtocol" should "deserialize error" in {
-    val body = """{"error": "error parsing query: found ..."}""".getBytes
+    val body = """{"error": "error parsing query: found ..."}"""
     JsonParser(ParserInput(body)).convertTo[ErrorDto] shouldBe ErrorDto("error parsing query: found ...")
   }
 
