@@ -7,7 +7,7 @@ package ru.maizy.influxdbclient.responses
 
 import spray.json._
 import ru.maizy.influxdbclient.BaseSpec
-import ru.maizy.influxdbclient.dto.ErrorDto
+import ru.maizy.influxdbclient.data.ErrorDto
 
 class ErrorProtocolSpec extends BaseSpec {
 

@@ -5,7 +5,7 @@ package ru.maizy.influxdbclient.responses
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.influxdbclient.dto.ErrorDto
+import ru.maizy.influxdbclient.data.ErrorDto
 import spray.json.{ JsObject, JsString, JsValue, RootJsonFormat, deserializationError }
 
 

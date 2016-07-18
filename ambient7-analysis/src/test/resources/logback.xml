@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -9,7 +9,6 @@
     </appender>
 
     <logger name="ru.maizy.ambient7" level="INFO"/>
-    <logger name="ru.maizy.influxdbclient" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

@@ -1,7 +1,7 @@
-package ru.maizy.influxdbclient.dto
+package ru.maizy.influxdbclient.data
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
  * See LICENSE.txt for details.
  */
-case class Result(series: IndexedSeq[SeriesItem])
+case class SeriesError(error: String)

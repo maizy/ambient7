@@ -1,4 +1,4 @@
-package ru.maizy.influxdbclient.dto
+package ru.maizy.influxdbclient.data
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016

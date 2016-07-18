@@ -5,7 +5,7 @@ package ru.maizy.influxdbclient
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.influxdbclient.dto.{ NumberValue, StringValue }
+import ru.maizy.influxdbclient.data.{ NumberValue, StringValue }
 
 class SimpleValueSpec extends BaseSpec {
 

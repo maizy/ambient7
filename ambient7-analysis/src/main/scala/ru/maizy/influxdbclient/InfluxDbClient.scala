@@ -11,7 +11,8 @@ import java.net.URLEncoder
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 import scala.util.{ Failure, Success, Try }
 import scalaj.http.{ BaseHttp, HttpOptions, HttpResponse }
-import ru.maizy.influxdbclient.dto.{ ErrorDto, QueryResult }
+import com.typesafe.scalalogging.LazyLogging
+import ru.maizy.influxdbclient.data.{ ErrorDto, QueryResult }
 import ru.maizy.influxdbclient.responses.QueryResultsProtocol._
 import spray.json.{ DeserializationException, JsonParser, ParserInput }
 
@@ -21,7 +22,7 @@ class InfluxDbClient(
     val connectTimeout: FiniteDuration = 200.millis,
     val readTimeout: FiniteDuration = 2000.millis,
     private val _influxDbReadonlySettings: Option[InfluxDbConnectionSettings] = None
-  ) {
+  ) extends LazyLogging {
 
   require(connectTimeout.toMillis < Int.MaxValue)
   require(readTimeout.toMillis < Int.MaxValue)
@@ -39,6 +40,7 @@ class InfluxDbClient(
     )
 
   def rawDataQuery(query: String): Either[ErrorDto, HttpResponse[Array[Byte]]] = {
+    logger.debug(s"db: ${influxDbReadonlySettings.db}, query: $query")
     val request = buildBaseRequest("query", influxDbReadonlySettings)
       .param("db", influxDbReadonlySettings.db)
       .param("q", query)
