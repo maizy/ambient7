@@ -8,4 +8,6 @@ case class ReturnStatus(systemExitCode: Int)
 
 object ReturnStatus {
   def success: ReturnStatus = ReturnStatus(0)
+  def paramsError: ReturnStatus = ReturnStatus(1)
+  def computeError: ReturnStatus = ReturnStatus(2)
 }

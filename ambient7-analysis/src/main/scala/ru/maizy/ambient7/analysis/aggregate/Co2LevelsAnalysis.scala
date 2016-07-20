@@ -26,6 +26,9 @@ case class Co2LevelsAggregate(
 ) {
   override def toString: String = s"Co2LevelsAggregate(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
     s"unknown=$unknownLevel, $from->$to, agent=$agentName, tags=$tags)"
+
+  def hasAnyResult: Boolean =
+    lowLevel > 0 || mediumLevel > 0 || highLevel > 0
 }
 
 object Co2LevelsAnalysis {

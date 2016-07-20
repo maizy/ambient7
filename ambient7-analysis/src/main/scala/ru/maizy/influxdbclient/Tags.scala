@@ -23,7 +23,9 @@ class Tags private(tags: IndexedSeq[Tag]) {
 
 object Tags {
 
-  def apply(): Tags = new Tags(IndexedSeq.empty)
+  def apply(): Tags = empty
+
+  def empty: Tags = new Tags(IndexedSeq.empty)
 
   def apply(tags: Seq[Tag]): Tags =
     new Tags(
