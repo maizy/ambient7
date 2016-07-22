@@ -6,9 +6,18 @@ package ru.maizy.influxdbclient.util
  */
 
 import java.time.format.DateTimeFormatter
-import java.time.{ ZoneOffset, ZonedDateTime }
+import java.time.{ Instant, ZoneId, ZoneOffset, ZonedDateTime }
+import scala.util.Try
 
 object Dates {
+
+  val INFLUXDB_TIMEZONE = ZoneOffset.UTC
+  val INFLUXDB_DATETIME_FORMAT = DateTimeFormatter.ISO_INSTANT
+
   def toInfluxDbFormat(date: ZonedDateTime): String =
-    date.withZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT)
+    date.withZoneSameInstant(INFLUXDB_TIMEZONE).format(INFLUXDB_DATETIME_FORMAT)
+
+  def fromInfluxDbToZonedDateTime(dateTime: String): Try[ZonedDateTime] =
+    Try(INFLUXDB_DATETIME_FORMAT.parse(dateTime))
+      .map(Instant.from(_).atZone(INFLUXDB_TIMEZONE).withZoneSameInstant(ZoneId.systemDefault()))
 }

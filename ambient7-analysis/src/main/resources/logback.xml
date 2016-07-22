@@ -9,6 +9,7 @@
     </appender>
 
     <logger name="ru.maizy.ambient7" level="INFO"/>
+    <logger name="scalikejdbc" level="INFO"/>
     <logger name="ru.maizy.influxdbclient" level="INFO"/>
 
     <root level="INFO">

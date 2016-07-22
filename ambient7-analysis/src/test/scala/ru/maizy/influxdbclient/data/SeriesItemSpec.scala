@@ -18,13 +18,13 @@ class SeriesItemSpec extends BaseSpec {
   )
 
   "SeriesItem" should "return values column" in {
-    sample.getColumn("label") shouldBe Right(IndexedSeq(
+    sample.getColumnValues("label") shouldBe Right(IndexedSeq(
       StringValue("red"), StringValue("green"), StringValue("blue")
     ))
   }
 
   it should "return number column" in {
-    sample.getNumberColumn("val") shouldBe Right(IndexedSeq(
+    sample.getColumnNumberValues("val") shouldBe Right(IndexedSeq(
       BigDecimal(1), BigDecimal(2), BigDecimal(3)
     ))
   }
@@ -41,7 +41,7 @@ class SeriesItemSpec extends BaseSpec {
         IndexedSeq(NumberValue(1))
       )
     )
-    withNull.getNumberColumn("val") shouldBe Right(IndexedSeq(
+    withNull.getColumnNumberValues("val") shouldBe Right(IndexedSeq(
       BigDecimal(3), BigDecimal(2), BigDecimal(1)
     ))
   }

@@ -13,7 +13,7 @@ object QueryResultsProtocol extends ErrorProtocol {
 
   implicit object ValueFormat extends RootJsonFormat[Value] {
 
-    def write(value: Value): JsValue = ???  // FIXME: implements
+    def write(value: Value): JsValue = ???  // TODO: implements
 
     def read(json: JsValue): Value = json match {
       case JsString(name) => new StringValue(name)

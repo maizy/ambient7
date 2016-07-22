@@ -7,8 +7,10 @@ package ru.maizy.influxdbclient.data
 
 case class SeriesItem(name: String, columns: IndexedSeq[Column], values: IndexedSeq[IndexedSeq[Value]]) {
 
-  def getNumberColumn(columnName: String, ignoreErrors: Boolean = false): Either[String, IndexedSeq[BigDecimal]] = {
-    getColumn(columnName)
+  def getColumnNumberValues(
+    columnName: String, ignoreErrors: Boolean = false): Either[String, IndexedSeq[BigDecimal]] = {
+
+    getColumnValues(columnName)
       .right.flatMap { values =>
         val nonNullValue = values.filterNot(_ == NullValue)
         val foundBigDecimals = nonNullValue
@@ -25,10 +27,13 @@ case class SeriesItem(name: String, columns: IndexedSeq[Column], values: Indexed
       }
     }
 
-  def getColumn(columnName: String, ignoreErrors: Boolean = false): Either[String, IndexedSeq[Value]] = {
-    val mayBeColumnIndex = columns.zipWithIndex.find(_._1.name == columnName).map(_._2)
+  /**
+   * return column values, possible values are subclasses of ru.maizy.influxdbclient.data.Value.
+   * if column not found, returns Left (if ignoreErrors == false) or ignore it (overwise)
+   */
+  def getColumnValues(columnName: String, ignoreErrors: Boolean = false): Either[String, IndexedSeq[Value]] = {
     val q = '"'
-    mayBeColumnIndex match {
+    findColumnIndex(columnName) match {
       case None => Left(s"Column $q$columnName$q not found")
       case Some(index) =>
         val found = values.collect{ case row: IndexedSeq[Value] if row.size > index => row(index) }
@@ -39,4 +44,8 @@ case class SeriesItem(name: String, columns: IndexedSeq[Column], values: Indexed
         }
     }
   }
+
+  def findColumn(name: String): Option[Column] = columns.find(_.name == name)
+
+  def findColumnIndex(name: String): Option[Int] = columns.zipWithIndex.find(_._1.name == name).map(_._2)
 }

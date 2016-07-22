@@ -5,15 +5,16 @@ package ru.maizy.ambient7.analysis.command
  * See LICENSE.txt for details.
  */
 
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{ ZoneId, ZoneOffset, ZonedDateTime }
-import scala.annotation.tailrec
+import java.time.{ ZoneOffset, ZonedDateTime }
 import scala.concurrent.duration.DurationInt
 import com.typesafe.scalalogging.LazyLogging
-import ru.maizy.influxdbclient.{ InfluxDbClient, InfluxDbConnectionSettings, Tags }
+import scalikejdbc._
 import ru.maizy.ambient7.analysis.AppOptions
-import ru.maizy.ambient7.analysis.aggregate.{ Co2LevelsAggregate, Co2LevelsAnalysis }
+import ru.maizy.ambient7.analysis.data.AgentId
+import ru.maizy.ambient7.analysis.service.{ DbCo2Service, InfluxDbCo2Service }
+import ru.maizy.ambient7.analysis.util.Dates.dateTimeForUser
+import ru.maizy.influxdbclient.{ InfluxDbClient, InfluxDbConnectionSettings }
 
 object AggregateCo2Command extends LazyLogging {
 
@@ -22,50 +23,67 @@ object AggregateCo2Command extends LazyLogging {
       ReturnStatus.paramsError
     } else {
       val influxDbClient: InfluxDbClient = initInfluxDbClient(opts)
+      implicit val dbSession = initDbSession(opts)
 
-      val upperBoundForTestDataset = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
-      val lowerBoundForTestDataset = ZonedDateTime.of(2015, 11, 5, 7, 1, 2, 3, ZoneOffset.UTC)
+      val now = ZonedDateTime.now()
+      // val now = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
+      val agentId = AgentId(opts.influxDbAgentName, opts.influxDbTags)
 
-      val now = upperBoundForTestDataset.withZoneSameInstant(ZoneId.of("Europe/Moscow"))
-
-      // TODO: from db
-      val eitherDbStartDate: Either[String, Option[ZonedDateTime]] = Right(None)
+      val eitherDbStartDate = DbCo2Service.detectStartDateTime(agentId)
 
       val eitherStartDate: Either[String, ZonedDateTime] = eitherDbStartDate
         .right.flatMap {
-          case None => Co2LevelsAnalysis.findStartDate(
-            influxDbClient,
-            now,
-            agentName = opts.influxDbAgentName,
-            tags = opts.influxDbTags
-          )
+          case None =>
+            val influxDbStartDateTime = InfluxDbCo2Service.detectStartDateTime(
+              influxDbClient,
+              now,
+              agentId
+            )
+            influxDbStartDateTime match {
+              case Right(dateTime) =>
+                logger.info(s"Start date according to influxdb data is ${dateTimeForUser(dateTime)}")
+              case _ =>
+            }
+            influxDbStartDateTime
           case Some(date) =>
-            logger.info(s"Start date according to DB data is ${date.format(DateTimeFormatter.ISO_LOCAL_DATE)}")
+            logger.info(s"Start date according to DB data is ${dateTimeForUser(date)}")
             Right(date)
         }
 
       eitherStartDate match {
         case Left(error) =>
-          logger.error(s"Unable to detect start date for analisys $error")
+          logger.error(s"Unable to detect start date for analisys: $error")
           ReturnStatus.computeError
 
         case Right(startDate) =>
-          logger.info(s"Start date detected from influxdb is ${startDate.format(DateTimeFormatter.ISO_LOCAL_DATE)}")
-          val yesterday = now.minusDays(1).truncatedTo(ChronoUnit.DAYS)
-          if (startDate.compareTo(yesterday) < 0) {
-            val analyseResults = analyseByDate(
-              startDate, yesterday, influxDbClient, opts.influxDbAgentName, opts.influxDbTags
+          val hourBefore = now.minusHours(1).truncatedTo(ChronoUnit.HOURS)
+          logger.info(s"Analyse data until ${dateTimeForUser(hourBefore)}")
+          var anyFailed = false
+          if (startDate.compareTo(hourBefore) < 0) {
+            val analyseResults = InfluxDbCo2Service.analyseLevelsByHour(
+              startDate, hourBefore, influxDbClient, agentId
             )
-            for ((day, dayRes) <- analyseResults) {
-              def pad(v: Int) = f"${v.toString}%5s"
-              println(
-                s"${day.format(DateTimeFormatter.ISO_LOCAL_DATE)}\t" +
-                s"l: ${pad(dayRes.lowLevel)}\tm: ${pad(dayRes.mediumLevel)}\th: ${pad(dayRes.highLevel)}\t" +
-                s"?: ${pad(dayRes.unknownLevel)}"
-              )
+            logger.info(s"Computed ${analyseResults.size} new hourly results")
+            if (analyseResults.nonEmpty) {
+              logger.info("Write results to DB")
+
+            }
+
+            for (dayRes <- analyseResults.valuesIterator) {
+              DbCo2Service.addOrUpdateAggregate(dayRes, agentId) match {
+                case Left(e) =>
+                  anyFailed = true
+                  logger.error(s"Unable to write aggregate for ${dayRes.from}, skipping: $e")
+                case _ =>
+              }
             }
           }
-          ReturnStatus.success
+          if (anyFailed) {
+            logger.error("Some results haven't writen to DB")
+            ReturnStatus.computeError
+          } else {
+            ReturnStatus.success
+          }
       }
 
     }
@@ -97,35 +115,10 @@ object AggregateCo2Command extends LazyLogging {
     )
   }
 
-  private def analyseByDate(
-    startDate: ZonedDateTime,
-    until: ZonedDateTime,
-    influxDbClient: InfluxDbClient,
-    agentName: String, tags: Tags): Map[ZonedDateTime, Co2LevelsAggregate] = {
+  private def initDbSession(opts: AppOptions): DBSession = {
+    Class.forName("org.h2.Driver")
+    ConnectionPool.singleton(opts.dbUrl, opts.dbUser, opts.dbPassword)
+    AutoSession
+  }
 
-      @tailrec
-      def iter(
-        from: ZonedDateTime,
-        res: Map[ZonedDateTime, Co2LevelsAggregate]): Map[ZonedDateTime, Co2LevelsAggregate] = {
-
-        val to = from.plusDays(1).truncatedTo(ChronoUnit.DAYS)
-        Co2LevelsAnalysis.compute(influxDbClient, from, to, agentName, tags) match {
-          case Left(error) =>
-            logger.warn(s"Unable to analyse ${from.format(DateTimeFormatter.ISO_LOCAL_DATE)}, skipping")
-            iter(until, res)
-
-          case Right(aggregate) if !aggregate.hasAnyResult =>
-            logger.warn(s"There is not results for ${from.format(DateTimeFormatter.ISO_LOCAL_DATE)}, skipping")
-            iter(until, res)
-
-          case Right(aggregate) if to.compareTo(until) >= 0 =>
-            res
-
-          case Right(aggregate) =>
-            iter(to, res + (from -> aggregate))
-        }
-      }
-
-      iter(startDate, Map.empty)
-    }
 }
