@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%.-1level) [%cyan(%logger)]: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ru.maizy.ambient7" level="DEBUG"/>
+    <logger name="ru.maizy.influxdbclient" level="DEBUG"/>
+    <logger name="scalikejdbc" level="INFO"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

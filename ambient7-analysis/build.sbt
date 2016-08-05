@@ -1,7 +1,7 @@
 enablePlugins(GitVersioning)
 enablePlugins(JavaAppPackaging)
 
-name := "ambient7-mt8057-agent"
+name := "ambient7-analysis"
 organization := "ru.maizy"
 scalaVersion := "2.11.8"
 
@@ -15,14 +15,13 @@ git.gitTagToVersionNumber := { tag: String =>
   }
 }
 
-fork in run := true
-outputStrategy := Some(StdoutOutput)
-
 libraryDependencies ++= Seq(
-  "net.java.dev.jna" % "jna" % "4.1.0",
-  "com.google.guava" % "guava" % "18.0",
   "com.github.scopt" %% "scopt" % "3.5.0",
-  "org.scalaj" %% "scalaj-http" % "2.2.0",
+  "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
+  "com.h2database" % "h2" % "1.4.192",
+  "org.flywaydb" % "flyway-core" % "4.0.3",
+  "org.scalaj" %% "scalaj-http" % "2.3.0",
+  "io.spray" %%  "spray-json" % "1.3.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
@@ -44,3 +43,8 @@ testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask
 testScalastyleInCompile := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
 (test in Test) <<= (test in Test) dependsOn (testScalastyle, testScalastyleInCompile)
 scalastyleFailOnError := true
+
+
+// DB
+flywayUrl := "jdbc:h2:file:./target/analysis;AUTO_SERVER=TRUE"
+flywayUser := "ambient7"

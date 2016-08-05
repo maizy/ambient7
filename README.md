@@ -6,6 +6,7 @@ Components:
 * [grafana](grafana/README.md) for data explorations (optional)
 * [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
   measurements. Can be used sepparatly.
+* [ambient7-analysis](#ambient7-analysis)
 
 
 <a name="mt8057-agent" />
@@ -50,20 +51,56 @@ Theoretically supported but never tested (all platforms supported by
 ### Usage
 
 ```
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers console
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=console
 
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers interactive
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=interactive
 
-java -jar ambient7-mt8057-agent-x.x.x.jar --writers influxdb \
-    --influxdb-database ambient7 \
-    --influxdb-baseurl http://localhost:8086/write \
-    --influxdb-user user --influxdb-password 123
+java -jar ambient7-mt8057-agent-x.x.x.jar --writers=influxdb \
+    --influxdb-database=ambient7 \
+    --influxdb-baseurl=http://localhost:8086/write \
+    --influxdb-user=user --influxdb-password=123
 ```
 
 For more options:
 
 ```
 java -jar ambient7-mt8057-agent-x.x.x.jar --help
+```
+
+
+<a name="ambient7-analysis" />
+## ambient7-analysis
+
+Tools for counting aggregates based on data collected in InfluxDb
+that cannot be counted by InfluxDb itself.
+
+```
+java -jar ambient7-analysis-x.x.x.jar --help
+```
+
+### Init or migrate DB
+
+```
+java -jar ambient7-analysis-x.x.x.jar init-db \
+    --db-user=ambient7 \
+    '--db-url=jdbc:h2:file:/path/to/database/analysis;AUTO_SERVER=TRUE'
+```
+
+### Co2 hourly report
+
+Add to crontab or any other scheduler the command:
+
+```
+java -jar ambient7-analysis-x.x.x.jar aggregate-co2 \
+    --influxdb-database=ambient7 \
+    --influxdb-agent-name=main \
+    '--influxdb-baseurl=http://127.0.0.1:8086/' \
+    --influxdb-user=ambient7_rw \
+    --influxdb-password=123 \
+    --influxdb-readonly-user=ambient7_ro \
+    --influxdb-readonly-password=123 \
+    --db-user=ambient7 \
+    '--db-url=jdbc:h2:file:/path/to/database/analysis;AUTO_SERVER=TRUE'
 ```
 
 
