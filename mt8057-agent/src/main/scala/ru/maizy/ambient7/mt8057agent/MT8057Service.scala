@@ -42,7 +42,7 @@ class MT8057Service(
     if (device.isDefined) {
       queue.add(DeviceUp(currentNanoTime()))
     }
-    val standardDelay = 500
+    val standardDelay = 500L
     var delay = standardDelay  // ms
     while (true) {
       state match {
@@ -59,7 +59,7 @@ class MT8057Service(
           device match {
             case Some(d) =>
               state = Init
-              delay = 50
+              delay = 50L
             case None =>
               delay = standardDelay * 2
           }
@@ -67,7 +67,7 @@ class MT8057Service(
         case Init =>
           if (device.isDefined && initDevice()) {
             state = Read
-            delay = 50
+            delay = 50L
           } else {
             logger.warn("init error")
             closeDevice()
@@ -99,7 +99,7 @@ class MT8057Service(
     } else {
       // hid4java works only if get device like this
       // device from getAttachedHidDevices doesn't work properly
-      Option(hidServices.getHidDevice(VENDOR_ID, PRODUCT_ID, null)) // scalastyle:ignore
+      Option(hidServices.getHidDevice(VENDOR_ID, PRODUCT_ID.toInt, null)) // scalastyle:ignore
     }
   }
 

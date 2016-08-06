@@ -13,8 +13,8 @@ trait ErrorProtocol extends BaseProtocol {
   implicit object ErrorFormat extends RootJsonFormat[ErrorDto] {
 
     def write(value: ErrorDto): JsValue = JsObject(
-      "error" -> JsString(value.message)
-    )
+        "error" -> JsString(value.message)
+      )
 
     def read(json: JsValue): ErrorDto = json.asJsObject.getFields("error") match {
       case Seq(JsString(message)) => ErrorDto(message)

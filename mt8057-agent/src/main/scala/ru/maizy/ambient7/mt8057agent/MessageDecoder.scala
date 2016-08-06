@@ -99,7 +99,7 @@ object MessageDecoder {
     def bytesToLong(b1: Byte, b2: Byte): Long = {
       val r1 = (b1 + 256) % 256
       val r2 = (b2 + 256) % 256
-      (r1 << 8) + r2
+      ((r1 << 8) + r2).toLong
     }
 
     if (data.length < 5) {

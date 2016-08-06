@@ -16,6 +16,7 @@
     <check level="error" class="org.scalastyle.file.IndentationChecker" enabled="true">
         <parameters>
             <parameter name="tabSize"><![CDATA[2]]></parameter>
+            <parameter name="methodParamIndentSize"><![CDATA[4]]></parameter>
         </parameters>
     </check>
 

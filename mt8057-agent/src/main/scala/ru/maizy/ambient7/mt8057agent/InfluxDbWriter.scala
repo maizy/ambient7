@@ -90,11 +90,11 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
 
 object InfluxDbWriter {
   object HttpClient extends BaseHttp (
-    userAgent = "ambient7/" + AppOptions.APP_VERSION,
-    options = Seq(
-      HttpOptions.connTimeout(200),
-      HttpOptions.readTimeout(200),
-      HttpOptions.followRedirects(false)
+      userAgent = "ambient7/" + AppOptions.APP_VERSION,
+      options = Seq(
+        HttpOptions.connTimeout(200),
+        HttpOptions.readTimeout(200),
+        HttpOptions.followRedirects(false)
+      )
     )
-  )
 }

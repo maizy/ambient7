@@ -67,7 +67,7 @@ object OptionParser {
 
     opt[String]("agent-name")
       .valueName { AppOptions.DEFAULT_AGENT_NAME }
-      .action { (value, opts) => opts.copy(influxDbAgentName = value) }
+      .action { (value, opts) => opts.copy(influxDbAgentName = Some(value)) }
 
     opt[String]("influxdb-baseurl")
       .valueName { AppOptions.DEFAULT_INFLUXDB_BASEURL }

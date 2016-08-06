@@ -65,8 +65,8 @@ object DbCo2Service extends LazyLogging {
     dateTime.withZoneSameInstant(DB_ZONE).getHour
 
   def addOrUpdateAggregate(
-    aggregate: Co2AgregatedLevels,
-    agentId: AgentId)(implicit db: DBSession): Either[String, Unit] = {
+      aggregate: Co2AgregatedLevels,
+      agentId: AgentId)(implicit db: DBSession): Either[String, Unit] = {
 
     val day = dateTimeToDbDate(aggregate.from)
     val hour = dateTimeToDbHour(aggregate.from)

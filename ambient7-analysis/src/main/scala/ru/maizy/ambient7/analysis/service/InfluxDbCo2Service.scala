@@ -29,7 +29,7 @@ case class Co2AgregatedLevels(
     agentId: AgentId
 ) {
   override def toString: String = s"Co2AgregatedLevels(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
-    s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"
+      s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"
 
   def hasAnyResult: Boolean =
     lowLevel > 0 || mediumLevel > 0 || highLevel > 0
@@ -43,10 +43,10 @@ object InfluxDbCo2Service extends LazyLogging {
   val DEFAULT_MAX_EMPTY_DURATION = 30
 
   def computeLevels(
-    influxDbClient: InfluxDbClient,
-    from: ZonedDateTime,
-    until: ZonedDateTime,
-    agentId: AgentId): Either[String, Co2AgregatedLevels] = {
+      influxDbClient: InfluxDbClient,
+      from: ZonedDateTime,
+      until: ZonedDateTime,
+      agentId: AgentId): Either[String, Co2AgregatedLevels] = {
 
     require(from.compareTo(until) < 0)
 
@@ -100,10 +100,10 @@ object InfluxDbCo2Service extends LazyLogging {
    * note that an until date truncated to hours
    */
   def detectStartDateTime(
-    influxDbClient: InfluxDbClient,
-    until: ZonedDateTime,
-    agentId: AgentId,
-    maxEmptyDuration: Int = DEFAULT_MAX_EMPTY_DURATION): Either[String, ZonedDateTime] = {
+      influxDbClient: InfluxDbClient,
+      until: ZonedDateTime,
+      agentId: AgentId,
+      maxEmptyDuration: Int = DEFAULT_MAX_EMPTY_DURATION): Either[String, ZonedDateTime] = {
 
     val tagsConditions = agentId.tags.asQueryCondition
     val agentNameEscaped = escapeValue(agentId.agentName)
@@ -120,10 +120,10 @@ object InfluxDbCo2Service extends LazyLogging {
 
     @tailrec
     def find(
-      upperBound: ZonedDateTime,
-      res: ZonedDateTime = until,
-      noDataCount: Int = 0,
-      lastNonEmptyResults: Option[SeriesItem] = None): Either[String, ZonedDateTime] = {
+        upperBound: ZonedDateTime,
+        res: ZonedDateTime = until,
+        noDataCount: Int = 0,
+        lastNonEmptyResults: Option[SeriesItem] = None): Either[String, ZonedDateTime] = {
 
       val lowerBound = upperBound.minusDays(1).truncatedTo(ChronoUnit.DAYS)
       val query = buildQuery(lowerBound, upperBound)
@@ -175,15 +175,15 @@ object InfluxDbCo2Service extends LazyLogging {
   }
 
   def analyseLevelsByHour(
-    startDate: ZonedDateTime,
-    until: ZonedDateTime,
-    influxDbClient: InfluxDbClient,
-    agentId: AgentId): Map[ZonedDateTime, Co2AgregatedLevels] = {
+      startDate: ZonedDateTime,
+      until: ZonedDateTime,
+      influxDbClient: InfluxDbClient,
+      agentId: AgentId): Map[ZonedDateTime, Co2AgregatedLevels] = {
 
       @tailrec
       def iter(
-        from: ZonedDateTime,
-        res: Map[ZonedDateTime, Co2AgregatedLevels]): Map[ZonedDateTime, Co2AgregatedLevels] = {
+          from: ZonedDateTime,
+          res: Map[ZonedDateTime, Co2AgregatedLevels]): Map[ZonedDateTime, Co2AgregatedLevels] = {
 
         val to = from.plusHours(1).truncatedTo(ChronoUnit.HOURS)
         computeLevels(influxDbClient, from, to, agentId) match {

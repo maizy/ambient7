@@ -41,7 +41,7 @@ class DeviceEmulator(private val queue: JavaQueue[Event]) {
             queue.add(TempUpdated(Temp(lastTemp), currentNanoTime()))
           }
         }
-        Thread.sleep(500 + randomGen.nextInt(500))
+        Thread.sleep((500 + randomGen.nextInt(500)).toLong)
       }
     }
   }

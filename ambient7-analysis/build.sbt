@@ -1,40 +1,15 @@
-enablePlugins(GitVersioning)
 enablePlugins(JavaAppPackaging)
 
 name := "ambient7-analysis"
-organization := "ru.maizy"
-scalaVersion := "2.11.8"
 
-git.baseVersion := "0.1.0"
-git.useGitDescribe := true
-git.gitTagToVersionNumber := { tag: String =>
-  val mask = "([0-9\\.]+)".r
-  tag match {
-    case mask(v) => Some(v)
-    case _ => None
-  }
-}
 
 libraryDependencies ++= Seq(
-  "com.github.scopt" %% "scopt" % "3.5.0",
   "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
   "com.h2database" % "h2" % "1.4.192",
   "org.flywaydb" % "flyway-core" % "4.0.3",
-  "org.scalaj" %% "scalaj-http" % "2.3.0",
-  "io.spray" %%  "spray-json" % "1.3.2",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-  "ch.qos.logback" % "logback-classic" % "1.1.3",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "io.spray" %%  "spray-json" % "1.3.2"
 )
 
-scalacOptions ++= Seq(
-  "-encoding", "UTF-8",
-  "-deprecation",
-  "-unchecked",
-  "-explaintypes",
-  "-Xfatal-warnings",
-  "-Xlint"
-)
 
 // scalastyle
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")

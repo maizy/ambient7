@@ -8,7 +8,8 @@ package ru.maizy.influxdbclient.data
 case class SeriesItem(name: String, columns: IndexedSeq[Column], values: IndexedSeq[IndexedSeq[Value]]) {
 
   def getColumnNumberValues(
-    columnName: String, ignoreErrors: Boolean = false): Either[String, IndexedSeq[BigDecimal]] = {
+      columnName: String,
+      ignoreErrors: Boolean = false): Either[String, IndexedSeq[BigDecimal]] = {
 
     getColumnValues(columnName)
       .right.flatMap { values =>
