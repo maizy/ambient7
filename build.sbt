@@ -4,7 +4,7 @@ scalaVersion := "2.11.8"
 
 lazy val commonSettings = Seq(
   organization := "ru.maizy",
-  version := "0.0.2",
+  version := "0.2.0",
   scalaVersion := "2.11.8",
   maintainer := "Nikita Kovaliov <nikita@maizy.ru>",
   packageSummary := "Tools for home climate monitoring",

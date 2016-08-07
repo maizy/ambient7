@@ -28,7 +28,7 @@ Supports various result writers:
 
 ### Download
 
-[ambient7-mt8057-agent-0.1.0.jar](https://github.com/maizy/ambient7/releases/download/0.1.0/ambient7-mt8057-agent-0.1.0.jar)
+[ambient7-mt8057-agent-0.1.0.jar](https://github.com/maizy/ambient7/releases/download/0.2.0/ambient7-mt8057-agent-0.2.0.jar)
 
 
 ### Platforms

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 (2016-08-07)
+
+* co2 levels hourly analysis
+* initial influxdb client
+* mt8057-agent: fix `--agent-name` option
+
 ## 0.1.0 (2016-01-13)
 
 * influxdb user setup scripts
