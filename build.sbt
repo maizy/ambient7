@@ -62,3 +62,8 @@ lazy val ambient7Analysis = project
   .settings(httpClientDependencies: _*)
   .settings(cliDependencies: _*)
   .settings(commonSettings: _*)
+
+lazy val ambient7WebApp = project
+  .in(file("ambient7-webapp"))
+  .settings(commonDependencies: _*)
+  .settings(commonSettings: _*)
