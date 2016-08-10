@@ -41,6 +41,13 @@ lazy val httpClientDependencies = Seq(
   )
 )
 
+lazy val rdbmsDependencies = Seq(
+  libraryDependencies ++= Seq(
+    "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
+    "com.h2database" % "h2" % "1.4.192"
+  )
+)
+
 lazy val cliDependencies = Seq(
   libraryDependencies ++= Seq(
     "com.typesafe" % "config" % "1.3.0",
@@ -59,6 +66,7 @@ lazy val mt8057Agent = project
 lazy val ambient7Analysis = project
   .in(file("ambient7-analysis"))
   .settings(commonDependencies: _*)
+  .settings(rdbmsDependencies: _*)
   .settings(httpClientDependencies: _*)
   .settings(cliDependencies: _*)
   .settings(commonSettings: _*)
@@ -66,4 +74,5 @@ lazy val ambient7Analysis = project
 lazy val ambient7WebApp = project
   .in(file("ambient7-webapp"))
   .settings(commonDependencies: _*)
+  .settings(rdbmsDependencies: _*)
   .settings(commonSettings: _*)

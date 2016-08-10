@@ -5,10 +5,10 @@ name := "ambient7-webapp"
 val scalatraVersion = "2.4.1"
 
 libraryDependencies ++= Seq(
-  "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
-  "com.h2database" % "h2" % "1.4.192",
   "org.scalatra" %% "scalatra" % scalatraVersion,
-  "org.scalatra" %% "scalatra-specs2" % scalatraVersion % "test",
+  "org.scalatra" %% "scalatra-json" % scalatraVersion,
+  "org.json4s" %% "json4s-jackson" % "3.4.0",  // TODO: use spray-json for json
+  "org.scalatra" %% "scalatra-scalatest" % scalatraVersion % "test",
   "org.eclipse.jetty" % "jetty-webapp" % "9.3.11.v20160721" % "container;compile",
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
 )

@@ -8,7 +8,7 @@ import org.scalatra.servlet.ScalatraListener
 object JettyLauncher {
 
   def main(args: Array[String]): Unit = {
-    val port = Option(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
+    val port = Option(System.getenv("PORT")).map(_.toInt).getOrElse(22480)
 
     val server = new Server(port)
     val context = new WebAppContext()
@@ -19,7 +19,7 @@ object JettyLauncher {
 
     server.setHandler(context)
 
-    server.start
-    server.join
+    server.start()
+    server.join()
   }
 }

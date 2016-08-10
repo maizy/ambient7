@@ -1,6 +1,6 @@
 package ru.maizy.ambient7.webapp
 
-import org.scalatra.ScalatraServlet
+import org.scalatra.{ BadRequest, InternalServerError, ScalatraServlet }
 
 trait Ambient7WebAppStack extends ScalatraServlet {
 
@@ -8,4 +8,9 @@ trait Ambient7WebAppStack extends ScalatraServlet {
     serveStaticResource() getOrElse "not found"
   }
 
+  error {
+    case e: java.util.NoSuchElementException => BadRequest(e.getMessage)
+    case e: IllegalArgumentException => BadRequest(e.getMessage)
+    case e: Throwable => InternalServerError(e.getMessage)
+  }
 }
