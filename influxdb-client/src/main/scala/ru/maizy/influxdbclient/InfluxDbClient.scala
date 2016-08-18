@@ -5,8 +5,6 @@ package ru.maizy.influxdbclient
  * See LICENSE.txt for details.
  */
 
-// TODO: separate artifact
-
 import java.net.URLEncoder
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 import scala.util.{ Failure, Success, Try }

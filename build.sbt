@@ -55,24 +55,38 @@ lazy val cliDependencies = Seq(
   )
 )
 
+lazy val core = project
+  .in(file("core"))
+  .settings(commonSettings: _*)
+  .settings(commonDependencies: _*)
+
+lazy val influxDbClient = project
+  .in(file("influxdb-client"))
+  .settings(commonSettings: _*)
+  .settings(commonDependencies: _*)
+  .settings(httpClientDependencies: _*)
 
 lazy val mt8057Agent = project
   .in(file("mt8057-agent"))
-  .settings(commonDependencies: _*)
-  .settings(httpClientDependencies: _*)
-  .settings(cliDependencies: _*)
   .settings(commonSettings: _*)
+  .settings(commonDependencies: _*)
+  .settings(cliDependencies: _*)
+  .dependsOn(core)
+  .dependsOn(influxDbClient)
 
 lazy val ambient7Analysis = project
   .in(file("ambient7-analysis"))
+  .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
-  .settings(httpClientDependencies: _*)
   .settings(cliDependencies: _*)
-  .settings(commonSettings: _*)
+  .dependsOn(core)
+  .dependsOn(influxDbClient)
 
 lazy val ambient7WebApp = project
   .in(file("ambient7-webapp"))
+  .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
-  .settings(commonSettings: _*)
+  .dependsOn(core)
+  .dependsOn(influxDbClient)
