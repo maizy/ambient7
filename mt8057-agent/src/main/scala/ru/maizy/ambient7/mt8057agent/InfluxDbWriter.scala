@@ -42,6 +42,7 @@ class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {
     }
   }
 
+  // TODO: migrate to ru.maizy.ambient7.core.data.AgentTags
   private lazy val tags: String = {
     val tags = mutable.ListBuffer[(String, String)]()
     opts.influxDbAgentName foreach { n =>

@@ -11,7 +11,7 @@ import scala.util.{ Failure, Success, Try }
 import org.scalatra.ScalatraBase
 
 
-trait DatesSupport extends ScalatraBase {
+trait DateParamsSupport extends ScalatraBase {
 
   @throws(classOf[NoSuchElementException])
   @throws(classOf[IllegalArgumentException])

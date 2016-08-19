@@ -9,7 +9,7 @@ import scala.util.{ Failure, Success, Try }
 import org.scalatra.ScalatraBase
 
 
-trait PrimitivesSupport extends ScalatraBase {
+trait PrimitiveParamsSupport extends ScalatraBase {
 
   @throws(classOf[NoSuchElementException])
   @throws(classOf[IllegalArgumentException])

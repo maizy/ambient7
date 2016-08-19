@@ -1,4 +1,4 @@
-package ru.maizy.ambient7.analysis.util
+package ru.maizy.ambient7.core.util
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016

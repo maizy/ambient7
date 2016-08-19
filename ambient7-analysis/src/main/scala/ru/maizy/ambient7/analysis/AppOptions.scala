@@ -5,7 +5,7 @@ package ru.maizy.ambient7.analysis
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.influxdbclient.Tags
+import ru.maizy.ambient7.core.data.AgentTags
 
 case class AppOptions(
     command: Option[String] = None,
@@ -16,7 +16,7 @@ case class AppOptions(
     dbPassword: String = "",
 
     influxDbAgentName: String = AppOptions.DEFAULT_AGENT_NAME,
-    influxDbTags: Tags = Tags.empty,
+    influxDbTags: AgentTags = AgentTags.empty,
     influxDbDatabase: Option[String] = None,
 
     influxDbBaseUrl: String = AppOptions.DEFAULT_INFLUXDB_BASEURL,
@@ -92,9 +92,9 @@ object OptionParser {
           .action { (value, opts) => opts.copy(influxDbReadonlyPassword = Some(value)) },
 
         opt[String]("influxdb-tags")
-          .validate{ value => Tags.tryParseFromString(value).right.map(v => Unit) }
+          .validate{ value => AgentTags.tryParseFromString(value).right.map(v => Unit) }
           .valueName { "<position=outdoor,altitude=200,some=val\\,ue>" }
-          .action { (value, opts) => opts.copy(influxDbTags = Tags.apply(value)) }
+          .action { (value, opts) => opts.copy(influxDbTags = AgentTags.apply(value)) }
           .text { "Any additional InfluxDB record tags for filtering data"}
       )
 

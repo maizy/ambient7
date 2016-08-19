@@ -5,15 +5,15 @@ package ru.maizy.ambient7.analysis.command
  * See LICENSE.txt for details.
  */
 
-import java.time.temporal.ChronoUnit
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import scala.concurrent.duration.DurationInt
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
 import ru.maizy.ambient7.analysis.AppOptions
-import ru.maizy.ambient7.analysis.data.AgentId
 import ru.maizy.ambient7.analysis.service.{ DbCo2Service, InfluxDbCo2Service }
-import ru.maizy.ambient7.analysis.util.Dates.dateTimeForUser
+import ru.maizy.ambient7.core.data.MT8057AgentId
+import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 import ru.maizy.influxdbclient.{ InfluxDbClient, InfluxDbConnectionSettings }
 
 object AggregateCo2Command extends LazyLogging {
@@ -27,7 +27,7 @@ object AggregateCo2Command extends LazyLogging {
 
       val now = ZonedDateTime.now()
       // val now = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
-      val agentId = AgentId(opts.influxDbAgentName, opts.influxDbTags)
+      val agentId = MT8057AgentId(opts.influxDbAgentName, opts.influxDbTags)
 
       val eitherDbStartDate = DbCo2Service.detectStartDateTime(agentId)
 

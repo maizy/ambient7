@@ -13,10 +13,10 @@ import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
 import scala.util.{ Failure, Success }
 import com.typesafe.scalalogging.LazyLogging
-import ru.maizy.ambient7.analysis.data.AgentId
+import ru.maizy.ambient7.core.data.MT8057AgentId
 import ru.maizy.influxdbclient.data.{ NullValue, SeriesItem, StringValue }
 import ru.maizy.influxdbclient.util.Dates
-import ru.maizy.influxdbclient.util.Escape.escapeValue
+import ru.maizy.influxdbclient.util.Escape.{ escapeValue, tagsToQueryCondition }
 import ru.maizy.influxdbclient.InfluxDbClient
 
 case class Co2AgregatedLevels(
@@ -26,7 +26,7 @@ case class Co2AgregatedLevels(
     unknownLevel: Int,
     from: ZonedDateTime,
     to: ZonedDateTime,
-    agentId: AgentId
+    agentId: MT8057AgentId
 ) {
   override def toString: String = s"Co2AgregatedLevels(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
       s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"
@@ -46,7 +46,7 @@ object InfluxDbCo2Service extends LazyLogging {
       influxDbClient: InfluxDbClient,
       from: ZonedDateTime,
       until: ZonedDateTime,
-      agentId: AgentId): Either[String, Co2AgregatedLevels] = {
+      agentId: MT8057AgentId): Either[String, Co2AgregatedLevels] = {
 
     require(from.compareTo(until) < 0)
 
@@ -57,7 +57,7 @@ object InfluxDbCo2Service extends LazyLogging {
       "select max(ppm) as max_ppm " +
       "from co2 " +
       s"where time >= ${escapeValue(dateFrom)} and time < ${escapeValue(dateTo)} " +
-      s"and agent = ${escapeValue(agentId.agentName)} and ${agentId.tags.asQueryCondition} " +
+      s"and agent = ${escapeValue(agentId.agentName)} and ${tagsToQueryCondition(agentId.tags.asPairs)} " +
       "group by time(1m)"
 
     influxDbClient
@@ -102,10 +102,10 @@ object InfluxDbCo2Service extends LazyLogging {
   def detectStartDateTime(
       influxDbClient: InfluxDbClient,
       until: ZonedDateTime,
-      agentId: AgentId,
+      agentId: MT8057AgentId,
       maxEmptyDuration: Int = DEFAULT_MAX_EMPTY_DURATION): Either[String, ZonedDateTime] = {
 
-    val tagsConditions = agentId.tags.asQueryCondition
+    val tagsConditions = tagsToQueryCondition(agentId.tags.asPairs)
     val agentNameEscaped = escapeValue(agentId.agentName)
     val untilTruncated = until.truncatedTo(ChronoUnit.DAYS)
 
@@ -178,7 +178,7 @@ object InfluxDbCo2Service extends LazyLogging {
       startDate: ZonedDateTime,
       until: ZonedDateTime,
       influxDbClient: InfluxDbClient,
-      agentId: AgentId): Map[ZonedDateTime, Co2AgregatedLevels] = {
+      agentId: MT8057AgentId): Map[ZonedDateTime, Co2AgregatedLevels] = {
 
       @tailrec
       def iter(

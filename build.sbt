@@ -31,6 +31,7 @@ lazy val commonDependencies = Seq(
   libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.3",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+    "com.typesafe" % "config" % "1.3.0",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
   )
 )
@@ -50,7 +51,6 @@ lazy val rdbmsDependencies = Seq(
 
 lazy val cliDependencies = Seq(
   libraryDependencies ++= Seq(
-    "com.typesafe" % "config" % "1.3.0",
     "com.github.scopt" %% "scopt" % "3.5.0"
   )
 )
@@ -59,6 +59,7 @@ lazy val core = project
   .in(file("core"))
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
+  .dependsOn(influxDbClient)
 
 lazy val influxDbClient = project
   .in(file("influxdb-client"))
@@ -89,4 +90,3 @@ lazy val ambient7WebApp = project
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
   .dependsOn(core)
-  .dependsOn(influxDbClient)

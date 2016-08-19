@@ -11,6 +11,6 @@ trait Ambient7WebAppStack extends ScalatraServlet {
   error {
     case e: java.util.NoSuchElementException => BadRequest(e.getMessage)
     case e: IllegalArgumentException => BadRequest(e.getMessage)
-    case e: Throwable => InternalServerError(e.getMessage)
+    case e: Throwable => InternalServerError(s"${e.getClass.getCanonicalName}: ${e.getMessage}")
   }
 }

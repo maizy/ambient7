@@ -10,16 +10,16 @@ import java.time.temporal.ChronoUnit
 import java.time.{ ZoneOffset, ZonedDateTime }
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
+import ru.maizy.ambient7.core.data.MT8057AgentId
 import scalikejdbc._
-import ru.maizy.ambient7.analysis.data.AgentId
-import ru.maizy.ambient7.analysis.util.Dates.dateTimeForUser
+import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 
 object DbCo2Service extends LazyLogging {
 
   val DB_ZONE = ZoneOffset.UTC
   val DB_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE
 
-  def detectStartDateTime(agentId: AgentId)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
+  def detectStartDateTime(agentId: MT8057AgentId)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
     // TODO: readonly transaction
 
     val query = sql"""
@@ -66,7 +66,7 @@ object DbCo2Service extends LazyLogging {
 
   def addOrUpdateAggregate(
       aggregate: Co2AgregatedLevels,
-      agentId: AgentId)(implicit db: DBSession): Either[String, Unit] = {
+      agentId: MT8057AgentId)(implicit db: DBSession): Either[String, Unit] = {
 
     val day = dateTimeToDbDate(aggregate.from)
     val hour = dateTimeToDbHour(aggregate.from)
