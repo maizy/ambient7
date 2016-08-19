@@ -1,17 +1,15 @@
-package ru.maizy.ambient7.webapp
+package ru.maizy.ambient7.webapp.servlet
 
 import scalikejdbc._
 import ru.maizy.ambient7.webapp.servlet.helper.{ DateParamsSupport, PrimitiveParamsSupport }
+import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
 
-class Co2HourlyReportServletServlet(config: AppConfig)
+class Co2HourlyReportServlet(appConfig: AppConfig)
   extends Ambient7WebAppStack
   with DateParamsSupport
   with PrimitiveParamsSupport
 {
-
-  val BASE = "/co2_hourly_report"
-
-  get(s"$BASE/by_date") {
+  get("/by_date") {
     var tmp = ""
     // FIXME: tmp
     DB readOnly { implicit session =>

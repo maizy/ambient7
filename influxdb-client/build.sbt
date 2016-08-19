@@ -1,12 +1,6 @@
 name := "influxdb-client"
 description := "InfluxDb Client"
 
-
-libraryDependencies ++= Seq(
-  "io.spray" %%  "spray-json" % "1.3.2"
-)
-
-
 // scalastyle
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")
 lazy val testScalastyleInCompile = taskKey[Unit]("testScalastyleInCompile")

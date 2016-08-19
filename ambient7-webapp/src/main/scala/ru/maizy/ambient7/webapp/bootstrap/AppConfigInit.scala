@@ -11,7 +11,8 @@ import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import com.typesafe.config.{ Config, ConfigFactory }
 import ru.maizy.ambient7.core.data.{ AgentTags, MT8057AgentId }
-import ru.maizy.ambient7.webapp.{ AppConfig, MT8057Device }
+import ru.maizy.ambient7.webapp.AppConfig
+import ru.maizy.ambient7.webapp.data.MT8057Device
 
 
 // TODO: safe config parsing with readable errors

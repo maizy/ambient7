@@ -12,7 +12,7 @@ case class AgentTag(name: String, value: String) {
   def encoded: String = encodeTag(name) + "=" + encodeTag(value)
 }
 
-class AgentTags private(tags: IndexedSeq[AgentTag]) {
+class AgentTags private(val tags: IndexedSeq[AgentTag]) {
   def encoded: String = tags.map(_.encoded).mkString(",")
   override def toString: String = s"AgentTags(${tags.mkString(",")})"
   def asPairs: IndexedSeq[(String, String)] = tags.map(t => (t.name, t.value))

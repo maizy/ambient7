@@ -55,16 +55,24 @@ lazy val cliDependencies = Seq(
   )
 )
 
+lazy val jsonDependencies = Seq(
+  libraryDependencies ++= Seq(
+    "io.spray" %%  "spray-json" % "1.3.2"
+  )
+)
+
 lazy val core = project
   .in(file("core"))
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
+  .settings(jsonDependencies: _*)
   .dependsOn(influxDbClient)
 
 lazy val influxDbClient = project
   .in(file("influxdb-client"))
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
+  .settings(jsonDependencies: _*)
   .settings(httpClientDependencies: _*)
 
 lazy val mt8057Agent = project
@@ -89,4 +97,5 @@ lazy val ambient7WebApp = project
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
+  .settings(jsonDependencies: _*)
   .dependsOn(core)
