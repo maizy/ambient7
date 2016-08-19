@@ -18,7 +18,7 @@ trait PrimitiveParamsSupport extends ScalatraBase {
 
     Try(raw.toInt) match {
       case Success(int) => int
-      case Failure(e) => throw new IllegalThreadStateException("Unable to parse int \"" + raw + "\": " + e.getMessage)
+      case Failure(e) => throw new IllegalArgumentException("Unable to parse int \"" + raw + "\": " + e.getMessage)
     }
   }
 

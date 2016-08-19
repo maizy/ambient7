@@ -13,27 +13,11 @@ import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
 import scala.util.{ Failure, Success }
 import com.typesafe.scalalogging.LazyLogging
-import ru.maizy.ambient7.core.data.MT8057AgentId
+import ru.maizy.ambient7.core.data.{ Co2AggregatedLevels, MT8057AgentId }
 import ru.maizy.influxdbclient.data.{ NullValue, SeriesItem, StringValue }
 import ru.maizy.influxdbclient.util.Dates
 import ru.maizy.influxdbclient.util.Escape.{ escapeValue, tagsToQueryCondition }
 import ru.maizy.influxdbclient.InfluxDbClient
-
-case class Co2AgregatedLevels(
-    lowLevel: Int,
-    mediumLevel: Int,
-    highLevel: Int,
-    unknownLevel: Int,
-    from: ZonedDateTime,
-    to: ZonedDateTime,
-    agentId: MT8057AgentId
-) {
-  override def toString: String = s"Co2AgregatedLevels(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
-      s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"
-
-  def hasAnyResult: Boolean =
-    lowLevel > 0 || mediumLevel > 0 || highLevel > 0
-}
 
 object InfluxDbCo2Service extends LazyLogging {
 
@@ -46,7 +30,7 @@ object InfluxDbCo2Service extends LazyLogging {
       influxDbClient: InfluxDbClient,
       from: ZonedDateTime,
       until: ZonedDateTime,
-      agentId: MT8057AgentId): Either[String, Co2AgregatedLevels] = {
+      agentId: MT8057AgentId): Either[String, Co2AggregatedLevels] = {
 
     require(from.compareTo(until) < 0)
 
@@ -70,7 +54,7 @@ object InfluxDbCo2Service extends LazyLogging {
           case Some(series) =>
             series.getColumnNumberValues("max_ppm")
               .right.map { perMinuteLevels =>
-                Co2AgregatedLevels(
+                Co2AggregatedLevels(
                   lowLevel = perMinuteLevels.count(_.toInt < CO2_OK),
                   mediumLevel =  perMinuteLevels.count(l => l.toInt >= CO2_OK && l.toInt < CO2_NOT_OK),
                   highLevel = perMinuteLevels.count(_.toInt >= CO2_NOT_OK),
@@ -82,7 +66,7 @@ object InfluxDbCo2Service extends LazyLogging {
               }
 
           case _ => Right(
-            Co2AgregatedLevels(
+            Co2AggregatedLevels(
               lowLevel = 0,
               mediumLevel =  0,
               highLevel = 0,
@@ -178,12 +162,12 @@ object InfluxDbCo2Service extends LazyLogging {
       startDate: ZonedDateTime,
       until: ZonedDateTime,
       influxDbClient: InfluxDbClient,
-      agentId: MT8057AgentId): Map[ZonedDateTime, Co2AgregatedLevels] = {
+      agentId: MT8057AgentId): Map[ZonedDateTime, Co2AggregatedLevels] = {
 
       @tailrec
       def iter(
           from: ZonedDateTime,
-          res: Map[ZonedDateTime, Co2AgregatedLevels]): Map[ZonedDateTime, Co2AgregatedLevels] = {
+          res: Map[ZonedDateTime, Co2AggregatedLevels]): Map[ZonedDateTime, Co2AggregatedLevels] = {
 
         val to = from.plusHours(1).truncatedTo(ChronoUnit.HOURS)
         computeLevels(influxDbClient, from, to, agentId) match {

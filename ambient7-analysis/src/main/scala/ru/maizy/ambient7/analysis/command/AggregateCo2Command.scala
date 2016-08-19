@@ -11,9 +11,10 @@ import scala.concurrent.duration.DurationInt
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
 import ru.maizy.ambient7.analysis.AppOptions
-import ru.maizy.ambient7.analysis.service.{ DbCo2Service, InfluxDbCo2Service }
+import ru.maizy.ambient7.analysis.service.InfluxDbCo2Service
 import ru.maizy.ambient7.core.data.MT8057AgentId
 import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
+import ru.maizy.ambient7.rdbms.Co2Service
 import ru.maizy.influxdbclient.{ InfluxDbClient, InfluxDbConnectionSettings }
 
 object AggregateCo2Command extends LazyLogging {
@@ -29,7 +30,7 @@ object AggregateCo2Command extends LazyLogging {
       // val now = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
       val agentId = MT8057AgentId(opts.influxDbAgentName, opts.influxDbTags)
 
-      val eitherDbStartDate = DbCo2Service.detectStartDateTime(agentId)
+      val eitherDbStartDate = Co2Service.detectStartDateTime(agentId)
 
       val eitherStartDate: Either[String, ZonedDateTime] = eitherDbStartDate
         .right.flatMap {
@@ -70,7 +71,7 @@ object AggregateCo2Command extends LazyLogging {
             }
 
             for (dayRes <- analyseResults.valuesIterator) {
-              DbCo2Service.addOrUpdateAggregate(dayRes, agentId) match {
+              Co2Service.addOrUpdateAggregate(dayRes, agentId) match {
                 case Left(e) =>
                   anyFailed = true
                   logger.error(s"Unable to write aggregate for ${dayRes.from}, skipping: $e")

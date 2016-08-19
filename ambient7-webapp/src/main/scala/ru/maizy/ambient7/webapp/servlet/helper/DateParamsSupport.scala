@@ -22,7 +22,7 @@ trait DateParamsSupport extends ScalatraBase {
 
     tryDate match {
       case Success(d) => d
-      case Failure(e) => throw new IllegalThreadStateException("Unable to parse date \"" + raw + "\": " + e.getMessage)
+      case Failure(e) => throw new IllegalArgumentException("Unable to parse date \"" + raw + "\": " + e.getMessage)
     }
   }
 
