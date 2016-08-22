@@ -7,6 +7,10 @@ Components:
 * [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
   measurements. Can be used sepparatly.
 * [ambient7-analysis](#ambient7-analysis)
+* ambient7-analysis - additional data analisis, scheduled by crontab or similar
+* ambient7-webapp - JSON APIs
+* ambient7-webui - Web based UI
+* influxdb-client, core, dbms-service - shared code beetwen other components
 
 
 <a name="mt8057-agent" />
@@ -28,7 +32,7 @@ Supports various result writers:
 
 ### Download
 
-[ambient7-mt8057-agent-0.2.0.jar](https://github.com/maizy/ambient7/releases/download/0.2.0/ambient7-mt8057-agent-0.2.0.jar)
+[ambient7-mt8057-agent.jar](https://github.com/maizy/ambient7/releases/download/0.2.0/ambient7-mt8057-agent-0.2.0.jar)
 
 
 ### Platforms
