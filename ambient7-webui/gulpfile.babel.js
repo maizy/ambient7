@@ -1,7 +1,7 @@
 // based on https://github.com/Granze/react-starterify
 
 import gulp from 'gulp';
-import autoprefixer from 'less-plugin-autoprefix';
+import Autoprefixer from 'less-plugin-autoprefix';
 import browserify from 'browserify';
 import watchify from 'watchify';
 import source from 'vinyl-source-stream';
@@ -16,7 +16,6 @@ import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
 import htmlReplace from 'gulp-html-replace';
 import runSequence from 'run-sequence';
-import ghPages from 'gulp-gh-pages';
 import less from 'gulp-less';
 
 const paths = {
@@ -81,7 +80,7 @@ gulp.task('browserify', () => {
   .pipe(gulp.dest(paths.distJs));
 });
 
-const autoprefix = new autoprefixer({ browsers: ['last 2 versions'] });
+const autoprefix = new Autoprefixer({ browsers: ['last 2 versions'] });
 
 gulp.task('styles', () => {
   gulp.src(paths.srcCss)
@@ -97,7 +96,14 @@ gulp.task('styles', () => {
 
 gulp.task('htmlReplace', () => {
   gulp.src('index.html')
-  .pipe(htmlReplace({ css: '/styles/main.css', js: '/js/app.js' }))
+  .pipe(htmlReplace({
+    css: '/styles/main.css',
+    js: '/js/app.js',
+    opts: {
+      src: '/',
+      tpl: '<script>window.Ambient7Opts = {apiBase: "%s"};</script>'
+    }
+   }))
   .pipe(gulp.dest(paths.dist));
 });
 
@@ -118,7 +124,7 @@ gulp.task('watch', cb => {
 
 gulp.task('build', cb => {
   process.env.NODE_ENV = 'production';
-  runSequence('clean', ['browserify', 'styles', 'htmlReplace'], cb);
+  runSequence('clean', ['lint', 'browserify', 'styles', 'htmlReplace'], cb);
 });
 
 gulp.task('default', ['watch']);
