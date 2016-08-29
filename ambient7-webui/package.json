@@ -21,8 +21,10 @@
   },
   "author": "Nikita Kovalev",
   "dependencies": {
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
+    "immutable": "^3.8.1",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-router": "^2.7.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",
