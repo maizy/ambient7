@@ -10,9 +10,9 @@ class DevicesServlet(appConfig: AppConfig)
 {
 
   get("/") {
-    import ru.maizy.ambient7.webapp.json.MT8057DeviceProtocol._
+    import ru.maizy.ambient7.webapp.json.Co2DeviceProtocol._
     JsObject(
-      "mt8057" -> appConfig.mt8057Devices.values.toJson
+      "co2" -> appConfig.co2Devices.values.toJson
     )
   }
 }

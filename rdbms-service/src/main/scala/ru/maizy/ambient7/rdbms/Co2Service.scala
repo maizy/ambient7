@@ -12,7 +12,7 @@ import scala.annotation.tailrec
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
-import ru.maizy.ambient7.core.data.{ Co2AggregatedLevels, MT8057AgentId }
+import ru.maizy.ambient7.core.data.{ Co2AggregatedLevels, Co2AgentId }
 import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 
 object Co2Service extends LazyLogging {
@@ -20,7 +20,7 @@ object Co2Service extends LazyLogging {
   val DB_ZONE = ZoneOffset.UTC
   val DB_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE
 
-  def detectStartDateTime(agentId: MT8057AgentId)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
+  def detectStartDateTime(agentId: Co2AgentId)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
     // TODO: readonly transaction
 
     val query = sql"""
@@ -52,7 +52,7 @@ object Co2Service extends LazyLogging {
 
   def addOrUpdateAggregate(
       aggregate: Co2AggregatedLevels,
-      agentId: MT8057AgentId)(implicit db: DBSession): Either[String, Unit] = {
+      agentId: Co2AgentId)(implicit db: DBSession): Either[String, Unit] = {
 
     val day = dateTimeToDbDate(aggregate.from)
     val hour = dateTimeToDbHour(aggregate.from)
@@ -77,7 +77,7 @@ object Co2Service extends LazyLogging {
   }
 
   def getHourlyAggregates(
-      agentId: MT8057AgentId,
+      agentId: Co2AgentId,
       from: ZonedDateTime,
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 
@@ -113,7 +113,7 @@ object Co2Service extends LazyLogging {
   }
 
   def computeDailyAggregates(
-      agentId: MT8057AgentId,
+      agentId: Co2AgentId,
       from: ZonedDateTime,
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 

@@ -10,9 +10,9 @@ import scala.collection.immutable.ListMap
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import com.typesafe.config.{ Config, ConfigFactory }
-import ru.maizy.ambient7.core.data.{ AgentTags, MT8057AgentId }
+import ru.maizy.ambient7.core.data.{ AgentTags, Co2AgentId }
 import ru.maizy.ambient7.webapp.AppConfig
-import ru.maizy.ambient7.webapp.data.MT8057Device
+import ru.maizy.ambient7.webapp.data.Co2Device
 
 
 // TODO: safe config parsing with readable errors
@@ -26,7 +26,7 @@ trait AppConfigInit extends LazyLogging {
 
     var appConfig = AppConfig()
     appConfig = readDbConfig(appConfig)
-    appConfig = readMT8057DevicesConfig(appConfig)
+    appConfig = readCo2DevicesConfig(appConfig)
 
     _appConfig = Some(appConfig)
     appConfig
@@ -43,8 +43,8 @@ trait AppConfigInit extends LazyLogging {
     )
   }
 
-  private def readMT8057DevicesConfig(appConfig: AppConfig) = {
-    val devicesConfig = rawConfig.getObjectList("mt8057-devices")
+  private def readCo2DevicesConfig(appConfig: AppConfig) = {
+    val devicesConfig = rawConfig.getObjectList("co2-devices")
     val devicesList = devicesConfig.asScala
       .toIndexedSeq
       .flatMap { deviceConfigObject =>
@@ -59,10 +59,10 @@ trait AppConfigInit extends LazyLogging {
             case Left(error) =>
               throw new RuntimeException(s"Unable to parse agent-tags '$tagsString' for id=$id, skipping tags: $error")
           }
-          Seq(id -> MT8057Device(id, agentId = MT8057AgentId(deviceConfig.getString("agent-name"), tags)))
+          Seq(id -> Co2Device(id, agentId = Co2AgentId(deviceConfig.getString("agent-name"), tags)))
         }
 
-    appConfig.copy(mt8057Devices = ListMap(devicesList: _*))
+    appConfig.copy(co2Devices = ListMap(devicesList: _*))
   }
 
   def appConfig: AppConfig = _appConfig match {

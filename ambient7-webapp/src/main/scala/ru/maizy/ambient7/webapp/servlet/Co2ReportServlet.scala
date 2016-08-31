@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import scalikejdbc._
 import spray.json.{ JsNumber, JsObject, JsString, pimpAny }
 import ru.maizy.ambient7.rdbms.Co2Service
-import ru.maizy.ambient7.webapp.data.MT8057Device
+import ru.maizy.ambient7.webapp.data.Co2Device
 import ru.maizy.ambient7.webapp.servlet.helper.{ AppConfigSupport, DateParamsSupport, DeviceParamSupport }
 import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport }
 import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
@@ -58,7 +58,7 @@ class Co2ReportServlet(val appConfig: AppConfig)
     )
   }
 
-  protected def getReportParams: (ZonedDateTime, ZonedDateTime, MT8057Device) = {
+  protected def getReportParams: (ZonedDateTime, ZonedDateTime, Co2Device) = {
     val from = dateParam("from")
     val forDevice = device()
     val mayBeTo = optDateParam("to") orElse optIntParam("days").map { d => from.plusDays(d.toLong) }

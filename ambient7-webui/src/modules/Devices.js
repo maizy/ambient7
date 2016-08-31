@@ -45,7 +45,7 @@ class Devices extends React.Component {
       this.state.devices === null
       ? loading
       : this.state.devices
-          .get('mt8057')
+          .get('co2')
           .map(d => <DeviceItem key={`device-${d.get('id')}`} deviceId={d.get('id')} />);
 
 

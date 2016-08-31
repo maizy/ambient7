@@ -6,7 +6,7 @@ package ru.maizy.ambient7.webapp.servlet.helper
  */
 
 import org.scalatra.ScalatraBase
-import ru.maizy.ambient7.webapp.data.MT8057Device
+import ru.maizy.ambient7.webapp.data.Co2Device
 
 
 trait DeviceParamSupport extends ScalatraBase {
@@ -14,9 +14,9 @@ trait DeviceParamSupport extends ScalatraBase {
 
   @throws(classOf[NoSuchElementException])
   @throws(classOf[IllegalArgumentException])
-  def device(key: String = "device_id"): MT8057Device = {
+  def device(key: String = "device_id"): Co2Device = {
     val deviceId = params("device_id")
-    appConfig.mt8057Devices(deviceId)
+    appConfig.co2Devices(deviceId)
   }
 
 }

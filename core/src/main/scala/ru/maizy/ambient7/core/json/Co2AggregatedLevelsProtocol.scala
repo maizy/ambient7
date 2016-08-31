@@ -8,7 +8,7 @@ package ru.maizy.ambient7.core.json
 import spray.json.{ JsNumber, JsObject, JsValue, RootJsonFormat, pimpAny }
 import ru.maizy.ambient7.core.data.Co2AggregatedLevels
 
-trait Co2AggregatedLevelsProtocol extends MT8057AgentIdProtocol with DateTimeProtocol {
+trait Co2AggregatedLevelsProtocol extends Co2AgentIdProtocol with DateTimeProtocol {
 
   implicit object Co2AggregatedLevelsFormat extends RootJsonFormat[Co2AggregatedLevels] {
 
