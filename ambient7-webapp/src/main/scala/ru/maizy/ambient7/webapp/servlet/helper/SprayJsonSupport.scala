@@ -17,6 +17,7 @@ trait SprayJsonSupport extends ApiFormats {
       case v: JsValue =>
         contentType = formats("json")
         response.characterEncoding = Some(Codec.UTF8.name)
+        response.addHeader("Access-Control-Allow-Origin", "*")
         v.compactPrint
     }
 

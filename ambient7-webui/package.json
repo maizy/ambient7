@@ -21,10 +21,13 @@
   },
   "author": "Nikita Kovalev",
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "immutable": "^3.8.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
-    "react-router": "^2.7.0"
+    "react-immutable-proptypes": "^2.1.0",
+    "react-router": "^2.7.0",
+    "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",

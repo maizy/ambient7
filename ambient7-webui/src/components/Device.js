@@ -1,11 +1,13 @@
 import React from 'react';
+import Container from '../modules/Container';
 
 class Device extends React.PureComponent {
   render() {
     return (
-      <div>
-        <h3>device {this.props.params.deviceId}</h3>
-      </div>
+      <Container>
+        <h1>{this.props.params.deviceId}</h1>
+        <p>TODO ...</p>
+      </Container>
     );
   }
 }
