@@ -1,0 +1,11 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "new-cap": [
+      "error",
+      {
+        "capIsNewExceptions": ["OrderedMap", "OrderedSet"]
+      }
+    ]
+  }
+}
