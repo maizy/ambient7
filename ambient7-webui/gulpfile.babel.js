@@ -22,16 +22,16 @@ const paths = {
   bundle: 'app.js',
   entry: 'src/Index.js',
   srcCss: 'src/**/*.less',
-  srcLint: ['src/**/*.js', 'test/**/*.js'],
+  srcLint: ['src/**/*.js', 'test/**/*.js', 'gulpfile.babel.js'],
   dist: 'dist',
-  distJs: 'dist/js'
+  distJs: 'dist/js',
 };
 
 const customOpts = {
   entries: [paths.entry],
   debug: true,
   cache: {},
-  packageCache: {}
+  packageCache: {},
 };
 
 
@@ -44,8 +44,8 @@ gulp.task('clean', cb => {
 gulp.task('browserSync', () => {
   browserSync({
     server: {
-      baseDir: './'
-    }
+      baseDir: './',
+    },
   });
 });
 
@@ -87,7 +87,7 @@ gulp.task('styles', () => {
   .pipe(rename({ extname: '.css' }))
   .pipe(sourcemaps.init())
   .pipe(less({
-    plugins: [autoprefix]
+    plugins: [autoprefix],
   }))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(paths.dist))
@@ -96,21 +96,24 @@ gulp.task('styles', () => {
 
 gulp.task('htmlReplace', () => {
   gulp.src('index.html')
-  .pipe(htmlReplace({
-    css: '/styles/main.css',
-    js: '/js/app.js',
-    opts: {
-      src: '/',
-      tpl: '<script>window.Ambient7Opts = {apiBase: "%s"};</script>'
-    }
-   }))
+  .pipe(
+    htmlReplace({
+      css: '/styles/main.css',
+      js: '/js/app.js',
+      opts: {
+        src: '/',
+        tpl: '<script>window.Ambient7Opts = {apiBase: "%s"};</script>',
+      },
+    })
+  )
   .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('lint', () => {
   gulp.src(paths.srcLint)
-  .pipe(eslint())
-  .pipe(eslint.format());
+  .pipe(eslint({ useEslintrc: true }))
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError());
 });
 
 gulp.task('watchTask', () => {
