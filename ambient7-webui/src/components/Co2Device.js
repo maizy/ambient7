@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import DatePicker from 'react-datepicker';
 
 import appOpts from '../AppOpts';
 import { checkIsSuccessfull, buildApiUrl, toImmutableJs } from '../utils/rest';
@@ -14,19 +15,26 @@ class Co2Device extends React.Component {
   constructor() {
     super();
     this.state = {
+      reportUntil: moment(),
       reportByDay: null,
       error: false,
       loading: true,
     };
+
+    // prebind
+    ['_reloadLevels', '_handleLevelsUntilDateChange'].map((f) => (this[f] = this[f].bind(this)));
   }
 
   componentDidMount() {
-    // FIXME: tmp, use params
-    const from = '2016-01-01';
+    this._reloadLevels();
+  }
+
+  _reloadLevels() {
     const days = 7;
+    const from = this.state.reportUntil.clone().subtract(days + 1, 'days');
 
     const url = apiUrl('/co2_report/by_day');
-    url.searchParams.append('from', from);
+    url.searchParams.append('from', from.format('YYYY-MM-DD'));
     url.searchParams.append('days', days.toString());
     url.searchParams.append('device_id', this.props.params.deviceId);
 
@@ -60,6 +68,10 @@ class Co2Device extends React.Component {
     });
   }
 
+  _handleLevelsUntilDateChange(date) {
+    this.setState({ reportUntil: date }, this._reloadLevels);
+  }
+
   render() {
     const dateFormat = 'ddd DD MMM `YY';
 
@@ -81,6 +93,20 @@ class Co2Device extends React.Component {
       <Container>
         <div className="row">
           <div className="col-sm-8 blog-main">
+            <h2>Levels by day</h2>
+            <div>
+              <ul>
+                Until:&nbsp;
+                <span>
+                  <DatePicker
+                    customInput={<input className="text" />}
+                    selected={this.state.reportUntil}
+                    onChange={this._handleLevelsUntilDateChange}
+                    dateFormat="DD.MM.YYYY"
+                  />
+                </span>
+              </ul>
+            </div>
             {co2Levels}
           </div>
           <div className="col-sm-3 col-sm-offset-1 sidebar">

@@ -46,9 +46,7 @@ function LastDaysCo2Levels(props) {
 
   return (
     <div>
-      <h2>Levels by day</h2>
       <div>
-        <ul>From: <span>{ props.from ? props.from.format(props.dateFormat) : null }</span></ul>
         <ul>Days: <span>{ props.daysTotal ? props.daysTotal : null }</span></ul>
       </div>
       <div className="co2-chart">
