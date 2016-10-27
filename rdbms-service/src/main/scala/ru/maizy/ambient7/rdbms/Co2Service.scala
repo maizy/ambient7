@@ -12,7 +12,8 @@ import scala.annotation.tailrec
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
-import ru.maizy.ambient7.core.data.{ Co2AggregatedLevels, Co2AgentId }
+import ru.maizy.ambient7.core.data.{ Co2AgentId, Co2AggregatedLevels }
+import ru.maizy.ambient7.core.util.DateTimeIterator
 import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 
 object Co2Service extends LazyLogging {
@@ -81,6 +82,8 @@ object Co2Service extends LazyLogging {
       from: ZonedDateTime,
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 
+    require(to.compareTo(from) >= 0)
+
     val fromDay = dateTimeToDbDate(from)
     val fromHour = dateTimeToDbHour(from)
     val toDay = dateTimeToDbDate(to)
@@ -96,10 +99,15 @@ object Co2Service extends LazyLogging {
       order by day, hour
       """
 
-    query
+    def timeKey(time: ZonedDateTime): Long = {
+      time.toEpochSecond
+    }
+
+    val dbResults =
+      query
       .map { row =>
         val time = dateTimeFromDb(row.date("day"), row.int("hour"))
-        Co2AggregatedLevels(
+        val levels = Co2AggregatedLevels(
           row.int("low_level_total"),
           row.int("medium_level_total"),
           row.int("high_level_total"),
@@ -108,8 +116,15 @@ object Co2Service extends LazyLogging {
           time.plus(1, ChronoUnit.HOURS),
           agentId
         )
+        timeKey(time) -> levels
       }
-      .list.apply()
+      .list.apply().toMap
+
+    for (i <- DateTimeIterator(from, to, 1, ChronoUnit.HOURS).toSeq)
+      yield dbResults.getOrElse(
+        timeKey(i),
+        Co2AggregatedLevels(0, 0, 0, 60, i, i.plus(1, ChronoUnit.HOURS), agentId)
+      )
   }
 
   def computeDailyAggregates(

@@ -19,7 +19,10 @@ trait Co2AggregatedLevelsProtocol extends Co2AgentIdProtocol with DateTimeProtoc
         "medium_level" -> JsNumber(value.mediumLevel),
         "high_level" -> JsNumber(value.highLevel),
         "unknown_level" -> JsNumber(value.unknownLevel),
-        "total_secounds" -> JsNumber(duration.getSeconds),
+        "total" -> JsObject(
+          "seconds" -> JsNumber(duration.getSeconds),
+          "minutes" -> JsNumber(duration.getSeconds / 60)
+        ),
         "agent" -> value.agentId.toJson,
         "from" -> value.from.toJson,
         "to" -> value.to.toJson

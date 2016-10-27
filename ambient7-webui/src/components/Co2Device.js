@@ -48,7 +48,7 @@ class Co2Device extends React.Component {
     this.setState({
       reportByDay: {
         from: data.get('from').get('local_iso8601'),
-        daysTotal: data.get('days_total'),
+        daysTotal: data.get('duration').get('days'),
         data: chartData,
       },
     });

@@ -2,29 +2,30 @@ name := "ambient7"
 organization := "ru.maizy"
 scalaVersion := "2.11.8"
 
+val scalacOpts = Seq(
+  "-target:jvm-1.8",
+  "-encoding", "UTF-8",
+  "-deprecation",
+  "-unchecked",
+  "-explaintypes",
+  "-Xfatal-warnings",
+  "-Xlint:_",
+  "-Ywarn-dead-code",
+  "-Ywarn-inaccessible",
+  "-Ywarn-infer-any",
+  "-Ywarn-nullary-override",
+  "-Ywarn-nullary-unit",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-unused"
+)
 lazy val commonSettings = Seq(
   organization := "ru.maizy",
   version := "0.2.0",
   scalaVersion := "2.11.8",
   maintainer := "Nikita Kovaliov <nikita@maizy.ru>",
   packageSummary := "Tools for home climate monitoring",
-  scalacOptions ++= Seq(
-    "-target:jvm-1.8",
-    "-encoding", "UTF-8",
-    "-deprecation",
-    "-unchecked",
-    "-explaintypes",
-    "-Xfatal-warnings",
-    "-Xlint:_",
-    "-Ywarn-dead-code",
-    "-Ywarn-inaccessible",
-    "-Ywarn-infer-any",
-    "-Ywarn-nullary-override",
-    "-Ywarn-nullary-unit",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-unused",
-    "-Ywarn-unused-import"
-  )
+  scalacOptions ++= scalacOpts ++ Seq("-Ywarn-unused-import"),
+  scalacOptions in (Compile, console) := scalacOpts
 )
 
 lazy val commonDependencies = Seq(
