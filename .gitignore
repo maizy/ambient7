@@ -29,3 +29,6 @@ project/plugins/project/
 
 .vagrant/
 *.log
+ambient7-webapp/src/main/webapp/styles/
+ambient7-webapp/src/main/webapp/js/
+ambient7-webapp/src/main/webapp/index.html

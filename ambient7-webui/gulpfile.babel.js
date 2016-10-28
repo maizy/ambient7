@@ -9,7 +9,7 @@ import buffer from 'vinyl-buffer';
 import eslint from 'gulp-eslint';
 import babelify from 'babelify';
 import uglify from 'gulp-uglify';
-import rimraf from 'rimraf';
+import del from 'del';
 import notify from 'gulp-notify';
 import browserSync, { reload } from 'browser-sync';
 import sourcemaps from 'gulp-sourcemaps';
@@ -27,6 +27,11 @@ const paths = {
   distJs: 'dist/js',
 };
 
+const releasePaths = {
+  dist: '../ambient7-webapp/src/main/webapp',
+  distJs: '../ambient7-webapp/src/main/webapp/js',
+};
+
 const customOpts = {
   entries: [paths.entry],
   debug: true,
@@ -37,8 +42,13 @@ const customOpts = {
 
 const opts = Object.assign({}, watchify.args, customOpts);
 
-gulp.task('clean', cb => {
-  rimraf('dist', cb);
+gulp.task('clean', () => {
+  // TODO: "!../ambient7-webapp/src/main/webapp/WEB-INF/web.xml" not working here, why?
+  del([
+    paths.distJs,
+    `${paths.dist}/styles`,
+    `${paths.dist}/index.html`,
+  ], { force: true });
 });
 
 gulp.task('browserSync', () => {
@@ -128,6 +138,11 @@ gulp.task('watch', cb => {
 gulp.task('build', cb => {
   process.env.NODE_ENV = 'production';
   runSequence('clean', ['lint', 'browserify', 'styles', 'htmlReplace'], cb);
+});
+
+gulp.task('release', cb => {
+  Object.assign(paths, releasePaths);
+  cb();
 });
 
 gulp.task('default', ['watch']);
