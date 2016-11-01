@@ -1,10 +1,17 @@
 @import '../../node_modules/bootstrap/less/bootstrap.less';
 
-@import "../../node_modules/react-datepicker/dist/react-datepicker.css";
+@import (css, inline) "../../node_modules/react-datepicker/dist/react-datepicker.css";
 
 body {
   padding-top: 50px;
   padding-bottom: 20px;
+}
+
+@media (max-width: @screen-xs-max) {
+  body {
+    padding-top: 150px;
+    padding-bottom: 20px;
+  }
 }
 
 @sidebar-offset: 15px;
@@ -26,7 +33,16 @@ body {
 .co2-levels-report {
   .params {
     .days-picker {
-      max-width: 80px;
+      input {
+        max-width: 80px;
+      }
+    }
+
+    .date-picker {
+      input {
+        max-width: 110px;
+      }
     }
   }
+
 }

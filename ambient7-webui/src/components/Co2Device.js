@@ -111,24 +111,24 @@ class Co2Device extends React.Component {
           <div className="params">
             <form className="form-inline">
 
-              <div className="form-group">
+              <div className="form-group date-picker">
                 <label htmlFor="co2-report-until">Until&nbsp;</label>
-                <DatePicker
-                  customInput={<input type="text" />}
-                  selected={this.state.reportUntil}
-                  onChange={this.handleLevelsUntilDateChange}
-                  className="form-control"
-                  id="co2-report-until"
-                  dateFormat="DD.MM.YYYY"
-                />
+                  <DatePicker
+                    customInput={<input type="text" />}
+                    selected={this.state.reportUntil}
+                    onChange={this.handleLevelsUntilDateChange}
+                    className="form-control"
+                    id="co2-report-until"
+                    dateFormat="DD.MM.YYYY"
+                  />
               </div>
 
-              <div className="form-group">
+              <div className="form-group days-picker">
                 {/* FIXME: why I need there nbsp hack? */}
                 <label htmlFor="co2-report-days">&nbsp;Days&nbsp;</label>
                 <input
                   type="text"
-                  className="form-control days-picker"
+                  className="form-control"
                   id="co2-report-days"
                   value={ this.state.reportDays ? this.state.reportDays : '' }
                   onChange={ this.handleLevelsDaysChange }
