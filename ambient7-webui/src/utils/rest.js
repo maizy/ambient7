@@ -20,6 +20,6 @@ export function buildApiUrl(appOpts) {
       relativePath[0] === '/'
         ? relativePath.substr(1)
         : relativePath;
-    return new URL(appOpts.apiBaseUrl + stripedPath);
+    return new URL(appOpts.apiBaseUrl + stripedPath, document.URL);
   };
 }
