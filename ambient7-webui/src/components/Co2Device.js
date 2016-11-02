@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
+import URLSearchParams from 'url-search-params';
 
 import appOpts from '../AppOpts';
 import { checkIsSuccessfull, buildApiUrl, toImmutableJs } from '../utils/rest';
@@ -58,10 +59,13 @@ class Co2Device extends React.Component {
     const days = this.state.reportDays ? this.state.reportDays : 7;
     const from = this.state.reportUntil.clone().subtract(days - 1, 'days');
 
-    const url = apiUrl('/co2_report/by_day');
-    url.searchParams.append('from', from.format('YYYY-MM-DD'));
-    url.searchParams.append('days', days.toString());
-    url.searchParams.append('device_id', this.props.params.deviceId);
+    // use separate object because URLSearchParams isn't supported in all browsers
+    const params = new URLSearchParams();
+    params.append('from', from.format('YYYY-MM-DD'));
+    params.append('days', days.toString());
+    params.append('device_id', this.props.params.deviceId);
+
+    const url = apiUrl(`/co2_report/by_day?${params}`);
 
     fetch(url)
       .then(checkIsSuccessfull)
