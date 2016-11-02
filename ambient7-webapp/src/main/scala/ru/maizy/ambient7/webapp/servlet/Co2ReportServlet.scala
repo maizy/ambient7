@@ -2,9 +2,9 @@ package ru.maizy.ambient7.webapp.servlet
 
 import java.time.ZonedDateTime
 import scalikejdbc._
-import spray.json.{ JsNumber, JsObject, JsString, pimpAny }
+import spray.json.{ JsNumber, JsObject, JsString, JsValue, pimpAny }
 import ru.maizy.ambient7.rdbms.Co2Service
-import ru.maizy.ambient7.webapp.data.MT8057Device
+import ru.maizy.ambient7.webapp.data.Co2Device
 import ru.maizy.ambient7.webapp.servlet.helper.{ AppConfigSupport, DateParamsSupport, DeviceParamSupport }
 import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport }
 import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
@@ -29,14 +29,7 @@ class Co2ReportServlet(val appConfig: AppConfig)
         to
       )
     }
-
-    JsObject(
-      "items" -> aggregates.toJson,
-      "by" -> JsString("hour"),
-      "from" -> from.toJson,
-      "to" -> to.toJson,
-      "hours_total" -> JsNumber(java.time.Duration.between(from, to).toHours)
-    )
+    reportResult(aggregates.toJson, from, to, by="day")
   }
 
   get("/by_day") {
@@ -48,17 +41,23 @@ class Co2ReportServlet(val appConfig: AppConfig)
         to
       )
     }
+    reportResult(aggregates.toJson, from, to, by="day")
+  }
 
+  protected def reportResult(items: JsValue, from: ZonedDateTime, to: ZonedDateTime, by: String): JsObject = {
     JsObject(
-      "items" -> aggregates.toJson,
-      "by" -> JsString("day"),
+      "items" -> items,
+      "by" -> JsString(by),
       "from" -> from.toJson,
       "to" -> to.toJson,
-      "days_total" -> JsNumber(java.time.Duration.between(from, to).toDays)
+      "duration" -> JsObject(
+        "hours" -> JsNumber(java.time.Duration.between(from, to).toHours),
+        "days" -> JsNumber(java.time.Duration.between(from, to).toDays)
+      )
     )
   }
 
-  protected def getReportParams: (ZonedDateTime, ZonedDateTime, MT8057Device) = {
+  protected def getReportParams: (ZonedDateTime, ZonedDateTime, Co2Device) = {
     val from = dateParam("from")
     val forDevice = device()
     val mayBeTo = optDateParam("to") orElse optIntParam("days").map { d => from.plusDays(d.toLong) }

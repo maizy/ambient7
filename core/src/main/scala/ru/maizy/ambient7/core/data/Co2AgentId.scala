@@ -5,4 +5,4 @@ package ru.maizy.ambient7.core.data
  * See LICENSE.txt for details.
  */
 
-case class MT8057AgentId(agentName: String, tags: AgentTags)
+case class Co2AgentId(agentName: String, tags: AgentTags)

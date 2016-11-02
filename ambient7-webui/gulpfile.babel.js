@@ -1,7 +1,7 @@
 // based on https://github.com/Granze/react-starterify
 
 import gulp from 'gulp';
-import autoprefixer from 'less-plugin-autoprefix';
+import Autoprefixer from 'less-plugin-autoprefix';
 import browserify from 'browserify';
 import watchify from 'watchify';
 import source from 'vinyl-source-stream';
@@ -9,44 +9,53 @@ import buffer from 'vinyl-buffer';
 import eslint from 'gulp-eslint';
 import babelify from 'babelify';
 import uglify from 'gulp-uglify';
-import rimraf from 'rimraf';
+import del from 'del';
 import notify from 'gulp-notify';
 import browserSync, { reload } from 'browser-sync';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
 import htmlReplace from 'gulp-html-replace';
 import runSequence from 'run-sequence';
-import ghPages from 'gulp-gh-pages';
 import less from 'gulp-less';
 
 const paths = {
   bundle: 'app.js',
   entry: 'src/Index.js',
   srcCss: 'src/**/*.less',
-  srcLint: ['src/**/*.js', 'test/**/*.js'],
+  srcLint: ['src/**/*.js', 'test/**/*.js', 'gulpfile.babel.js'],
   dist: 'dist',
-  distJs: 'dist/js'
+  distJs: 'dist/js',
+};
+
+const releasePaths = {
+  dist: '../ambient7-webapp/src/main/webapp',
+  distJs: '../ambient7-webapp/src/main/webapp/js',
 };
 
 const customOpts = {
   entries: [paths.entry],
   debug: true,
   cache: {},
-  packageCache: {}
+  packageCache: {},
 };
 
 
 const opts = Object.assign({}, watchify.args, customOpts);
 
-gulp.task('clean', cb => {
-  rimraf('dist', cb);
+gulp.task('clean', () => {
+  // TODO: "!../ambient7-webapp/src/main/webapp/WEB-INF/web.xml" not working here, why?
+  del([
+    paths.distJs,
+    `${paths.dist}/styles`,
+    `${paths.dist}/index.html`,
+  ], { force: true });
 });
 
 gulp.task('browserSync', () => {
   browserSync({
     server: {
-      baseDir: './'
-    }
+      baseDir: './',
+    },
   });
 });
 
@@ -81,14 +90,14 @@ gulp.task('browserify', () => {
   .pipe(gulp.dest(paths.distJs));
 });
 
-const autoprefix = new autoprefixer({ browsers: ['last 2 versions'] });
+const autoprefix = new Autoprefixer({ browsers: ['last 2 versions'] });
 
 gulp.task('styles', () => {
   gulp.src(paths.srcCss)
   .pipe(rename({ extname: '.css' }))
   .pipe(sourcemaps.init())
   .pipe(less({
-    plugins: [autoprefix]
+    plugins: [autoprefix],
   }))
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest(paths.dist))
@@ -97,14 +106,24 @@ gulp.task('styles', () => {
 
 gulp.task('htmlReplace', () => {
   gulp.src('index.html')
-  .pipe(htmlReplace({ css: '/styles/main.css', js: '/js/app.js' }))
+  .pipe(
+    htmlReplace({
+      css: '/styles/main.css',
+      js: '/js/app.js',
+      opts: {
+        src: '/',
+        tpl: '<script>window.Ambient7Opts = {apiBase: "%s"};</script>',
+      },
+    })
+  )
   .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('lint', () => {
   gulp.src(paths.srcLint)
-  .pipe(eslint())
-  .pipe(eslint.format());
+  .pipe(eslint({ useEslintrc: true }))
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError());
 });
 
 gulp.task('watchTask', () => {
@@ -118,7 +137,12 @@ gulp.task('watch', cb => {
 
 gulp.task('build', cb => {
   process.env.NODE_ENV = 'production';
-  runSequence('clean', ['browserify', 'styles', 'htmlReplace'], cb);
+  runSequence('clean', ['lint', 'browserify', 'styles', 'htmlReplace'], cb);
+});
+
+gulp.task('release', cb => {
+  Object.assign(paths, releasePaths);
+  cb();
 });
 
 gulp.task('default', ['watch']);

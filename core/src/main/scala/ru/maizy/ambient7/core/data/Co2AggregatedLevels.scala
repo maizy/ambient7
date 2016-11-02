@@ -14,7 +14,7 @@ case class Co2AggregatedLevels(
     unknownLevel: Int,
     from: ZonedDateTime,
     to: ZonedDateTime,
-    agentId: MT8057AgentId
+    agentId: Co2AgentId
 ) {
   override def toString: String = s"Co2AggregatedLevels(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
       s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"
