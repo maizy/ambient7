@@ -56,7 +56,7 @@ class Co2Device extends React.Component {
 
   reloadLevels() {
     const days = this.state.reportDays ? this.state.reportDays : 7;
-    const from = this.state.reportUntil.clone().subtract(days + 1, 'days');
+    const from = this.state.reportUntil.clone().subtract(days - 1, 'days');
 
     const url = apiUrl('/co2_report/by_day');
     url.searchParams.append('from', from.format('YYYY-MM-DD'));
