@@ -7,7 +7,7 @@ outputStrategy := Some(StdoutOutput)
 
 libraryDependencies ++= Seq(
   "net.java.dev.jna" % "jna" % "4.1.0",
-  "com.google.guava" % "guava" % "18.0"
+  "com.google.guava" % "guava" % "20.0"
 )
 
 scalacOptions ++= Seq(
@@ -20,9 +20,9 @@ scalacOptions ++= Seq(
 )
 
 // scalastyle
-lazy val testScalastyle = taskKey[Unit]("testScalastyle")
-lazy val testScalastyleInCompile = taskKey[Unit]("testScalastyleInCompile")
-testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
-testScalastyleInCompile := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
-(test in Test) <<= (test in Test) dependsOn (testScalastyle, testScalastyleInCompile)
+(test in Test) := {
+  org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
+  org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
+  (test in Test).value
+}
 scalastyleFailOnError := true

@@ -30,10 +30,10 @@ lazy val commonSettings = Seq(
 
 lazy val commonDependencies = Seq(
   libraryDependencies ++= Seq(
-    "ch.qos.logback" % "logback-classic" % "1.1.3",
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-    "com.typesafe" % "config" % "1.3.0",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+    "ch.qos.logback" % "logback-classic" % "1.1.7",
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+    "com.typesafe" % "config" % "1.3.1",
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   )
 )
 
@@ -45,8 +45,8 @@ lazy val httpClientDependencies = Seq(
 
 lazy val rdbmsDependencies = Seq(
   libraryDependencies ++= Seq(
-    "org.scalikejdbc" %% "scalikejdbc" % "2.4.1",
-    "com.h2database" % "h2" % "1.4.192"
+    "org.scalikejdbc" %% "scalikejdbc" % "2.5.0",
+    "com.h2database" % "h2" % "1.4.193"
   )
 )
 
@@ -97,6 +97,7 @@ lazy val ambient7Analysis = project
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
   .settings(cliDependencies: _*)
+  .settings(jsonDependencies: _*)
   .dependsOn(core)
   .dependsOn(rdbmsService)
   .dependsOn(influxDbClient)
