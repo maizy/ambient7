@@ -1,7 +1,7 @@
 import test from 'ava';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import App from '../../src/components/App';
+import App from '../../src/App';
 
 const shallowRenderer = TestUtils.createRenderer();
 shallowRenderer.render(<App />);
