@@ -1,0 +1,23 @@
+sudo: false
+cache:
+  directories:
+    - $HOME/.m2/repository
+    - $HOME/.sbt
+    - $HOME/.ivy2
+    - $HOME/.nvm
+language: scala
+jdk:
+  - oraclejdk8
+scala:
+  - 2.11.8
+script:
+  - nvm --version
+  - nvm install 4
+  - nvm use 4
+  - npm install -g npm@'>=2.5'
+  - node --version
+  - npm --version
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
+after_success:
+  - sbt ++$TRAVIS_SCALA_VERSION coveralls
