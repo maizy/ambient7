@@ -9,7 +9,8 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-json" % scalatraVersion,
   "org.scalatra" %% "scalatra-scalatest" % scalatraVersion % "test",
   "org.eclipse.jetty" % "jetty-webapp" % "9.3.11.v20160721" % "container;compile",
-  "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
+  "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
+  "org.json4s" %% "json4s-native" % "3.5.0" % "test"
 )
 
 // web app settings
