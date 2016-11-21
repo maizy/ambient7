@@ -24,3 +24,5 @@ containerPort := 22480
   (test in Test).value
 }
 scalastyleFailOnError := true
+// TODO remove shared DB connection pool and turn on
+parallelExecution in Test := false

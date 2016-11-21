@@ -110,3 +110,4 @@ lazy val ambient7WebApp = project
   .settings(jsonDependencies: _*)
   .dependsOn(core)
   .dependsOn(rdbmsService)
+  .dependsOn(ambient7Analysis)
