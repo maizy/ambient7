@@ -17,6 +17,15 @@ class DatesSpec extends BaseSpec {
     Dates.fromInfluxDbToZonedDateTime("2015-11-05T17:59:12Z") shouldBe Success(inLocalTime)
   }
 
+  it should "return time in propert time zone" in {
+    val expectedUtc = ZonedDateTime.of(2015, 11, 5, 17, 59, 12, 0, ZoneOffset.UTC)
+    val cetZone = ZoneId.of("CET")
+    val inCetZone = expectedUtc.withZoneSameInstant(cetZone)
+    val parsedDateTime = Dates.fromInfluxDbToZonedDateTime("2015-11-05T17:59:12Z", cetZone)
+    parsedDateTime shouldBe Success(inCetZone)
+    parsedDateTime.get.getZone shouldBe cetZone
+  }
+
   it should "parse leap-year dates" in {
     val expectedUtc = ZonedDateTime.of(2016, 2, 29, 12, 1, 2, 0, ZoneOffset.UTC)
     val inLocalTime = expectedUtc.withZoneSameInstant(ZoneId.systemDefault())

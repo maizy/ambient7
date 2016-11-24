@@ -17,7 +17,7 @@ object Dates {
   def toInfluxDbFormat(date: ZonedDateTime): String =
     date.withZoneSameInstant(INFLUXDB_TIMEZONE).format(INFLUXDB_DATETIME_FORMAT)
 
-  def fromInfluxDbToZonedDateTime(dateTime: String): Try[ZonedDateTime] =
+  def fromInfluxDbToZonedDateTime(dateTime: String, timeZone: ZoneId = ZoneId.systemDefault()): Try[ZonedDateTime] =
     Try(INFLUXDB_DATETIME_FORMAT.parse(dateTime))
-      .map(Instant.from(_).atZone(INFLUXDB_TIMEZONE).withZoneSameInstant(ZoneId.systemDefault()))
+      .map(Instant.from(_).atZone(INFLUXDB_TIMEZONE).withZoneSameInstant(timeZone))
 }

@@ -6,25 +6,24 @@ package ru.maizy.ambient7.core.json
  */
 
 import java.time.format.DateTimeFormatter
-import java.time.{ ZoneId, ZonedDateTime }
+import java.time.ZonedDateTime
 import spray.json.{ JsNumber, JsObject, JsString, JsValue, RootJsonFormat }
 
 trait DateTimeProtocol extends BaseProtocol
 {
   implicit object ZonedDateTimeFormat extends RootJsonFormat[ZonedDateTime] {
     override def write(obj: ZonedDateTime): JsValue = {
-      val inSystemZone = obj.withZoneSameInstant(ZoneId.systemDefault())
       JsObject(
-        "timestamp" -> JsNumber(inSystemZone.toEpochSecond),
-        "local_iso8601" -> JsString(inSystemZone.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
-        "year" -> JsNumber(inSystemZone.getYear),
-        "month" -> JsNumber(inSystemZone.getMonthValue),
-        "day" -> JsNumber(inSystemZone.getDayOfMonth),
-        "hour" -> JsNumber(inSystemZone.getHour),
-        "minute" -> JsNumber(inSystemZone.getMinute),
-        "second" -> JsNumber(inSystemZone.getSecond),
-        "weekday_iso8601" -> JsNumber(inSystemZone.getDayOfWeek.getValue),
-        "zone" -> JsString(inSystemZone.getZone.getId)
+        "timestamp" -> JsNumber(obj.toEpochSecond),
+        "local_iso8601" -> JsString(obj.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
+        "year" -> JsNumber(obj.getYear),
+        "month" -> JsNumber(obj.getMonthValue),
+        "day" -> JsNumber(obj.getDayOfMonth),
+        "hour" -> JsNumber(obj.getHour),
+        "minute" -> JsNumber(obj.getMinute),
+        "second" -> JsNumber(obj.getSecond),
+        "weekday_iso8601" -> JsNumber(obj.getDayOfWeek.getValue),
+        "zone" -> JsString(obj.getZone.getId)
       )
     }
 

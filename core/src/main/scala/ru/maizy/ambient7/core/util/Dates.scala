@@ -8,6 +8,6 @@ package ru.maizy.ambient7.core.util
 import java.time.{ ZoneId, ZonedDateTime }
 
 object Dates {
-  def dateTimeForUser(dateTime: ZonedDateTime): String =
-    dateTime.withZoneSameInstant(ZoneId.systemDefault()).toString
+  def dateTimeForUser(dateTime: ZonedDateTime, timeZone: ZoneId = ZoneId.systemDefault()): String =
+    dateTime.withZoneSameInstant(timeZone).toString
 }

@@ -11,14 +11,14 @@ import scala.util.{ Failure, Success, Try }
 import org.scalatra.ScalatraBase
 
 
-trait DateParamsSupport extends ScalatraBase {
+trait DateParamsSupport extends ScalatraBase with AppConfigSupport {
 
   @throws(classOf[NoSuchElementException])
   @throws(classOf[IllegalArgumentException])
-  def dateParam(key: String): ZonedDateTime = {
+  def dateParam(key: String, timeZone: ZoneId = appConfig.timeZone): ZonedDateTime = {
     val raw = params(key)
     val tryDate = Try(DateTimeFormatter.ISO_LOCAL_DATE.parse(raw))
-      .map(LocalDate.from(_).atStartOfDay(ZoneId.systemDefault()))
+      .map(LocalDate.from(_).atStartOfDay(timeZone))
 
     tryDate match {
       case Success(d) => d
@@ -26,7 +26,7 @@ trait DateParamsSupport extends ScalatraBase {
     }
   }
 
-  def optDateParam(key: String): Option[ZonedDateTime] =
-    Try(dateParam(key)).toOption
+  def optDateParam(key: String, timeZone: ZoneId = appConfig.timeZone): Option[ZonedDateTime] =
+    Try(dateParam(key, timeZone)).toOption
 
 }

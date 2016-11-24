@@ -143,10 +143,10 @@ object InfluxDbCo2Service extends LazyLogging {
             .map(row => row(0))
           firstHour match {
             case Some(rawDateTime: StringValue) =>
-              Dates.fromInfluxDbToZonedDateTime(rawDateTime.value) match {
+              Dates.fromInfluxDbToZonedDateTime(rawDateTime.value, day.getZone) match {
                 case Success(dateTime) =>
                   // sync timezones & replace hour
-                  dateTime.withZoneSameInstant(day.getZone).truncatedTo(ChronoUnit.HOURS)
+                  dateTime.truncatedTo(ChronoUnit.HOURS)
 
                 case Failure(_) => day
               }

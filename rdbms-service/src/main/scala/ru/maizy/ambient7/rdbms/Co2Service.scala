@@ -83,6 +83,7 @@ object Co2Service extends LazyLogging {
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 
     require(to.compareTo(from) >= 0)
+    val timeZone = from.getZone
 
     val fromDay = dateTimeToDbDate(from)
     val fromHour = dateTimeToDbHour(from)
@@ -106,7 +107,7 @@ object Co2Service extends LazyLogging {
     val dbResults =
       query
       .map { row =>
-        val time = dateTimeFromDb(row.date("day"), row.int("hour"))
+        val time = dateTimeFromDb(row.date("day"), row.int("hour")).withZoneSameInstant(timeZone)
         val levels = Co2AggregatedLevels(
           row.int("low_level_total"),
           row.int("medium_level_total"),

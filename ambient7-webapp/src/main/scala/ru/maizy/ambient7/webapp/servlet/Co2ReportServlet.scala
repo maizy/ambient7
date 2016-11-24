@@ -6,7 +6,7 @@ import spray.json.{ JsNumber, JsObject, JsString, JsValue, pimpAny }
 import ru.maizy.ambient7.rdbms.Co2Service
 import ru.maizy.ambient7.webapp.data.Co2Device
 import ru.maizy.ambient7.webapp.servlet.helper.{ AppConfigSupport, DateParamsSupport, DeviceParamSupport }
-import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport }
+import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport, TimeZoneSupport }
 import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
 
 class Co2ReportServlet(val appConfig: AppConfig)
@@ -16,6 +16,7 @@ class Co2ReportServlet(val appConfig: AppConfig)
   with PrimitiveParamsSupport
   with DeviceParamSupport
   with SprayJsonSupport
+  with TimeZoneSupport
 {
 
   import ru.maizy.ambient7.core.json.Co2AggregatedLevelsProtocol._
@@ -68,6 +69,6 @@ class Co2ReportServlet(val appConfig: AppConfig)
         throw new IllegalArgumentException("wrong period")
       case Some(t) => t
     }
-    (from, to, forDevice)
+    (from.toAppTimeZone, to.toAppTimeZone, forDevice)
   }
 }

@@ -19,7 +19,7 @@ import ru.maizy.ambient7.webapp.data.Co2Device
 trait AppConfigInit extends LazyLogging {
 
   private var _rawConfig: Option[Config] = None
-  private var _appConfig: Option[AppConfig] = None
+  protected var _appConfig: Option[AppConfig] = None
 
   def loadAppConfig(): AppConfig = {
     _rawConfig = Some(ConfigFactory.load)
