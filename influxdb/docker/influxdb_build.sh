@@ -3,7 +3,7 @@
 # InfluxDb docker build container script
 #
 # Usage:
-#   cd ambient7/influxdb-setup/docker
+#   cd ambient7/influxdb/docker
 #   ./influxdb_build.sh
 #
-docker build --tag ambient7/influxdb:0.1 ./
+docker build --tag ambient7/influxdb:0.2 ./

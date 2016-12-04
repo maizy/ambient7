@@ -19,3 +19,6 @@ cd ambient7/influxdb/docker
 docker logs ambient7-influxdb
 docker logs -f ambient7-influxdb
 ```
+
+### [Upgrade from influxdb 0.9 to 1.1 (ambient7 0.2 -> 0.3)](upgrade_0-9_1-1/README.md)
+
