@@ -21,7 +21,7 @@ echo -n "Are you sure to remove all value from measurement '${MEASUREMENT}' [N/y
 read Y
 
 if [[ $Y == "Y" || $Y == "y" ]];then
-    curl -v -f --get "http://${HOST}/query?db=ambient7" \
+    curl -v -f -XPOST "http://${HOST}/query?db=ambient7" \
         "$AUTH_PARAM" \
         --data-urlencode "q=DROP SERIES FROM ${MEASUREMENT}" \
         && echo -e "\nDone"
