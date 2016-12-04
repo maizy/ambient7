@@ -21,10 +21,10 @@ function create_user() {
     perms=$2
     echo "Password for user $user "
     read pass
-    curl -v -f --get "http://${HOST}/query" \
+    curl -v -f -XPOST "http://${HOST}/query" \
         --data-urlencode 'q=CREATE USER "'$user'" WITH PASSWORD '"'"$pass"'" \
         "$AUTH_PARAM"
-    curl -v -f --get "http://${HOST}/query" \
+    curl -v -f -XPOST "http://${HOST}/query" \
         --data-urlencode 'q=GRANT '$perms' ON '$DB' TO "'$user'"' \
         "$AUTH_PARAM"
     echo -e "\n\n"

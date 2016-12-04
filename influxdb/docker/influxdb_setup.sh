@@ -2,11 +2,8 @@
 #
 # InfluxDb docker container setup script
 #
-# On OS X a data dir can't be a shared vbox disk because
-# of vboxfs limitations.
-#
 # Usage:
-#   cd ambient7/influxdb-setup/docker
+#   cd ambient7/influxdb/docker
 #   ./influxdb_setup.sh DATADIR ADMIN_PASSWORD
 #
 DATADIR="$1"
@@ -25,4 +22,4 @@ docker run -d -p "${API_PORT}:8086" -p "${ADMIN_PORT}:8083" \
     -e "INFLUXDB_INIT_PWD=${ADMIN_PASSWORD}" \
     -e "PRE_CREATE_DB=ambient7" \
     --name=ambient7-influxdb \
-    ambient7/influxdb:0.1
+    ambient7/influxdb:0.2

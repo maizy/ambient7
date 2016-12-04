@@ -2,13 +2,12 @@ FROM phusion/baseimage:latest
 MAINTAINER Nikita Kovalev <nikita@maizy.ru>
 
 # Install InfluxDB
-ENV INFLUXDB_VERSION 0.9.5.1
-RUN curl -s -o /tmp/influxdb_latest_amd64.deb https://s3.amazonaws.com/influxdb/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
+ENV INFLUXDB_VERSION 1.1.0
+RUN curl -s -o /tmp/influxdb_latest_amd64.deb https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
   dpkg -i /tmp/influxdb_latest_amd64.deb && \
   rm /tmp/influxdb_latest_amd64.deb && \
   rm -rf /var/lib/apt/lists/*
 
-ADD types.db /usr/share/collectd/types.db
 ADD config.toml /config/config.toml
 
 RUN mkdir -p /etc/service/influxdb
