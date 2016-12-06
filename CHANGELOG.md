@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2016-12-06)
+
+* webui: co2 levels report
+* webapp: API for device list & device by id
+* webapp: API for hourly & daily co2 reports
+* upgrade to influxdb v1.1
+* all jars now required jre1.8+
+
 ## 0.2.0 (2016-08-07)
 
 * co2 levels hourly analysis

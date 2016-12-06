@@ -16,6 +16,12 @@ libraryDependencies ++= Seq(
 // web app settings
 containerPort := 22480
 
+assemblyMergeStrategy in assembly := {
+  case "logback.xml" => MergeStrategy.first
+  case x =>
+    (assemblyMergeStrategy in assembly).value.apply(x)
+}
+
 
 // scalastyle
 (test in Test) := {

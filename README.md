@@ -8,14 +8,22 @@ Components:
 * ambient7-analysis - additional data analisis, scheduled by crontab or similar
 * ambient7-webapp - JSON APIs
 * ambient7-webui - Web based UI
-* influxdb-client, core, dbms-service - code shared beetwen other components
+* influxdb-client, core, rdbms-service - code shared beetwen other components
 * [influxdb](influxdb/README.md) as a timeseries db
 * [grafana](grafana/README.md) for data explorations (optional)
 
 [![Build Status](https://travis-ci.org/maizy/ambient7.svg?branch=master)](https://travis-ci.org/maizy/ambient7)
 [![Coverage Status](https://coveralls.io/repos/github/maizy/ambient7/badge.svg?branch=master)](https://coveralls.io/github/maizy/ambient7?branch=master)
 
-<a name="mt8057-agent" />
+<a name="downloads"></a>
+## Downloads
+
+* [ambient7-mt8057-agent.jar](https://github.com/maizy/ambient7/releases/download/0.3.0/ambient7-mt8057-agent-0.3.0.jar)
+* [ambient7-analysis.jar](https://github.com/maizy/ambient7/releases/download/0.3.0/ambient7-analysis-0.3.0.jar)
+* [ambient7-webapp.jar](https://github.com/maizy/ambient7/releases/download/0.3.0/ambient7-webapp-0.3.0.jar)
+
+
+<a name="mt8057-agent"></a>
 ## mt8057-agent
 
 Agent for sending results from
@@ -23,18 +31,13 @@ Agent for sending results from
 (with ZyAura ZG01C module onboard).
 
 Can be used sepparatly without other ambient7 parts as all-in-one fat jar
-(jre 1.6+).
+(jre 1.8+).
 
 Supports various result writers:
 
 * console
 * interactive
 * InfluxDB API
-
-
-### Download
-
-[ambient7-mt8057-agent.jar](https://github.com/maizy/ambient7/releases/download/0.2.0/ambient7-mt8057-agent-0.2.0.jar)
 
 
 ### Platforms
@@ -74,7 +77,7 @@ java -jar ambient7-mt8057-agent-x.x.x.jar --help
 ```
 
 
-<a name="ambient7-analysis" />
+<a name="ambient7-analysis"></a>
 ## ambient7-analysis
 
 Tools for counting aggregates based on data collected in InfluxDb
