@@ -6,20 +6,21 @@ package ru.maizy.ambient7.analysis
  */
 
 import ru.maizy.ambient7.core.data.AgentTags
+import ru.maizy.ambient7.core.config.Defaults
 
 case class AppOptions(
     command: Option[String] = None,
     startOfDay: Option[Int] = None,
 
-    dbUrl: String = AppOptions.DEFAULT_DB_URL,
-    dbUser: String = "ambient7",
-    dbPassword: String = "",
+    dbUrl: String = Defaults.DB_URL,
+    dbUser: String = Defaults.DB_USER,
+    dbPassword: String = Defaults.DB_PASSWORD,
 
-    influxDbAgentName: String = AppOptions.DEFAULT_AGENT_NAME,
+    influxDbAgentName: String = Defaults.INFLUXDB_AGENT_NAME,
     influxDbTags: AgentTags = AgentTags.empty,
     influxDbDatabase: Option[String] = None,
 
-    influxDbBaseUrl: String = AppOptions.DEFAULT_INFLUXDB_BASEURL,
+    influxDbBaseUrl: String = Defaults.INFLUXDB_BASEURL,
     influxDbUser: Option[String] = None,
     influxDbPassword: Option[String] = None,
 
@@ -28,24 +29,17 @@ case class AppOptions(
     influxDbReadonlyPassword: Option[String] = None
 )
 
-object AppOptions {
-  val DEFAULT_DB_URL = "jdbc:h2:file:./target/analysis;AUTO_SERVER=TRUE"
-  val DEFAULT_INFLUXDB_BASEURL = "http://localhost:8086/"
-  val APP_VERSION = "0.1.0"
-  val DEFAULT_AGENT_NAME = "main"
-}
-
 object OptionParser {
 
   private val parser = new scopt.OptionParser[AppOptions]("java -jar ambient7-analysis.jar") {
 
-    head("ambient7: analyzing tool", AppOptions.APP_VERSION)
+    head("ambient7: analyzing tool")
     help("help")
     version("version")
 
     opt[String]("db-url")
       .abbr("d")
-      .valueName(s"<${AppOptions.DEFAULT_DB_URL}>")
+      .valueName(s"<${Defaults.DB_URL}>")
       .action { (value, opts) => opts.copy(dbUrl = value) }
       .text(s"URL for connecting to h2 database")
       .required()
@@ -63,12 +57,12 @@ object OptionParser {
       .text("\tcompute hourly co2 levels report")
       .children(
         opt[String]("influxdb-agent-name")
-          .valueName { s"<${AppOptions.DEFAULT_AGENT_NAME}>" }
+          .valueName { s"<${Defaults.INFLUXDB_AGENT_NAME}>" }
           .action { (value, opts) => opts.copy(influxDbAgentName = value) }
           .required(),
 
         opt[String]("influxdb-baseurl")
-          .valueName { s"<${AppOptions.DEFAULT_INFLUXDB_BASEURL}>" }
+          .valueName { s"<${Defaults.INFLUXDB_BASEURL}>" }
           .action { (value, opts) => opts.copy(influxDbBaseUrl = value) },
 
         opt[String]("influxdb-database")

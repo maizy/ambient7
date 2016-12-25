@@ -19,6 +19,7 @@ object Writers extends Enumeration with EnumerationMap {
   val InfluxDb = Value("influxdb")
 }
 
+// FIXME migrate to universal config
 case class AppOptions(
     agentName: String = AppOptions.DEFAULT_AGENT_NAME,
     writers: Set[Writers.Writer] = Set.empty,
@@ -36,7 +37,7 @@ case class AppOptions(
 object AppOptions {
   val DEFAULT_INFLUXDB_BASEURL = "http://localhost:8086/write"
   val DEFAULT_AGENT_NAME = "main"
-  val APP_VERSION = "0.1.0"  // TODO: auto generate on build
+  val APP_VERSION = "0.3.0"  // TODO: auto generate on build
 }
 
 object OptionParser {

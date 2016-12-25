@@ -67,6 +67,7 @@ lazy val core = project
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(jsonDependencies: _*)
+  .settings(cliDependencies: _*)
   .dependsOn(influxDbClient)
 
 lazy val rdbmsService = project
@@ -96,7 +97,6 @@ lazy val ambient7Analysis = project
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
-  .settings(cliDependencies: _*)
   .settings(jsonDependencies: _*)
   .dependsOn(core)
   .dependsOn(rdbmsService)
