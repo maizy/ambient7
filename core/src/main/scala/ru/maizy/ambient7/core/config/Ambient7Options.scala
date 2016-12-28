@@ -5,8 +5,10 @@ package ru.maizy.ambient7.core.config
  * See LICENSE.txt for details.
  */
 
+import java.nio.file.Path
+
 case class Ambient7Options(
-    mainConfigPath: Option[String] = None,
-    mainInfluxDd: Option[InfluxDbOptions] = None,
+    universalConfigPath: Option[Path] = None,
+    influxDb: Option[InfluxDbOptions] = None,
     mainDb: Option[DbOptions] = None
 )

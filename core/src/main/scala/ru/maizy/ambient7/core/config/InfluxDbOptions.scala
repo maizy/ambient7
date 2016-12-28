@@ -6,10 +6,13 @@ package ru.maizy.ambient7.core.config
  */
 
 case class InfluxDbOptions(
-    baseUrl: String = Defaults.INFLUXDB_BASEURL,
     database: Option[String] = None,
+
+    baseUrl: String = Defaults.INFLUXDB_BASEURL,
     user: Option[String] = None,
     password: Option[String] = None,
-    agentName: String = Defaults.INFLUXDB_AGENT_NAME,
-    tags: String = ""
+
+    readonlyBaseUrl: Option[String] = None,
+    readonlyUser: Option[String] = None,
+    readonlyPassword: Option[String] = None
 )

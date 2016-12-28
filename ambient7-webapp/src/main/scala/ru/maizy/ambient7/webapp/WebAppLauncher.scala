@@ -6,10 +6,10 @@ package ru.maizy.ambient7.webapp
  */
 object WebAppLauncher extends App {
 
-  val config = WebAppConfigParser
-  config.fillParser()
-  val eitherAppConfig = config.parse(args.toSeq)
+  val config = WebAppConfigReader
+  config.fillReader()
+  val eitherAppConfig = config.readAppConfig(args.toIndexedSeq)
   println(eitherAppConfig)
 
-  // TODO: launch jetty app
+  // TODO: launch jetty app (merge with JettyLauncher)
 }

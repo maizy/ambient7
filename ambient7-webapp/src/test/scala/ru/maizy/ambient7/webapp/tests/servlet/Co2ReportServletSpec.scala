@@ -183,5 +183,6 @@ class Co2ReportServletSpec extends BaseServletAndDbTest with JsonAsserts {
     (item \\ "unknown_level") shouldBe JInt(expected.unknown)
     (item \\ "from" \\ "local_iso8601") shouldBe JString(expectedFrom.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
     (item \\ "from" \\ "zone") shouldBe JString(expectedFrom.getZone.getId)
+    ()
   }
 }

@@ -72,7 +72,7 @@ object Co2Service extends LazyLogging {
       )"""
 
     Try(query.execute().apply()) match {
-      case Success(_) => Right(Unit)
+      case Success(_) => Right(())
       case Failure(e) => Left(s"Unable to upsert aggregation data: $e")
     }
   }

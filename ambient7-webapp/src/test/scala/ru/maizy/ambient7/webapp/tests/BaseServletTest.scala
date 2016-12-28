@@ -20,6 +20,7 @@ trait TestsBootstrap extends ScalikeJdbcInit with AppConfigInit with LazyLogging
   def loadTestConfig(): Unit = {
     logger.info("load test config")
     loadAppConfig()
+    ()
   }
 
   def overwriteAppConfig(config: AppConfig): Unit = {
@@ -35,6 +36,7 @@ trait TestsBootstrap extends ScalikeJdbcInit with AppConfigInit with LazyLogging
     val flyway = new Flyway()
     flyway.setDataSource(ConnectionPool.get().dataSource)
     flyway.migrate()
+    ()
   }
 
   def destroyWebApp(): Unit = {

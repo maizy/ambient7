@@ -163,6 +163,7 @@ class MT8057Service(
       // just fire event, device loop will find device on next step
       queue.add(DeviceUp(currentNanoTime()))
     }
+    ()
   }
 
   override def hidFailure(event: HidServicesEvent): Unit = {

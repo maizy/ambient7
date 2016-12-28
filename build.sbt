@@ -16,7 +16,8 @@ val scalacOpts = Seq(
   "-Ywarn-nullary-override",
   "-Ywarn-nullary-unit",
   "-Ywarn-numeric-widen",
-  "-Ywarn-unused"
+  "-Ywarn-unused",
+  "-Ywarn-value-discard"
 )
 lazy val commonSettings = Seq(
   organization := "ru.maizy",

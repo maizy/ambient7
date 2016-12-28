@@ -86,7 +86,7 @@ object OptionParser {
           .action { (value, opts) => opts.copy(influxDbReadonlyPassword = Some(value)) },
 
         opt[String]("influxdb-tags")
-          .validate{ value => AgentTags.tryParseFromString(value).right.map(v => Unit) }
+          .validate{ value => AgentTags.tryParseFromString(value).right.map(v => ()) }
           .valueName { "<position=outdoor,altitude=200,some=val\\,ue>" }
           .action { (value, opts) => opts.copy(influxDbTags = AgentTags.apply(value)) }
           .text { "Any additional InfluxDB record tags for filtering data"}
