@@ -1,5 +1,10 @@
 package ru.maizy.ambient7.webapp
 
+/**
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
+ * See LICENSE.txt for details.
+ */
+
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.webapp.WebAppContext

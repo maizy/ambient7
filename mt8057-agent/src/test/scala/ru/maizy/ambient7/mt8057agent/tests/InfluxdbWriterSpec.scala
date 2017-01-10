@@ -1,7 +1,7 @@
 package ru.maizy.ambient7.mt8057agent.tests
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 

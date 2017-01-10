@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
+ * See LICENSE.txt for details.
+ */
+
 import org.scalatra._
 import javax.servlet.ServletContext
 import ru.maizy.ambient7.webapp.bootstrap.{ AppConfigInit, ScalikeJdbcInit }

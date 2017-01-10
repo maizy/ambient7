@@ -6,7 +6,7 @@ import scalaj.http.{ HttpOptions, HttpResponse, BaseHttp, HttpRequest }
 import com.typesafe.scalalogging.LazyLogging
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 class InfluxDbWriter(opts: AppOptions) extends Writer with LazyLogging {

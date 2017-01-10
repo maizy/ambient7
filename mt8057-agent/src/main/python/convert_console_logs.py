@@ -4,6 +4,8 @@
 # Convert console writer logs to InfluxDB line protocols
 # Usage: python convert_console_logs.py LOGPATH [AGENTNAME]
 #
+# Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
+# See LICENSE.txt for details.
 import sys
 import os
 import re

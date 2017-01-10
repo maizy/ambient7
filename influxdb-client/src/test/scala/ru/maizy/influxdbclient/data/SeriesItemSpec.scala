@@ -3,7 +3,7 @@ package ru.maizy.influxdbclient.data
 import ru.maizy.influxdbclient.BaseSpec
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 class SeriesItemSpec extends BaseSpec {

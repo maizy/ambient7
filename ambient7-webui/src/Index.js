@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
+ * See LICENSE.txt for details.
+ */
+
 import React from 'react';
 import { render } from 'react-dom';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';

@@ -6,7 +6,7 @@ import ru.maizy.ambient7.core.tests.BaseSpec
 import ru.maizy.ambient7.core.util.DateTimeIterator
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 class DateTimeIteratorSpec extends BaseSpec {

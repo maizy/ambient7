@@ -3,7 +3,7 @@ package ru.maizy.ambient7.mt8057agent
 import java.io.File
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 trait EnumerationMap extends Enumeration {

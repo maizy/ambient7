@@ -1,5 +1,10 @@
 package ru.maizy.ambient7.webapp.servlet
 
+/**
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
+ * See LICENSE.txt for details.
+ */
+
 import java.time.ZonedDateTime
 import scalikejdbc._
 import spray.json.{ JsNumber, JsObject, JsString, JsValue, pimpAny }
