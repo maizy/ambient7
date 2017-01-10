@@ -10,5 +10,8 @@ import java.nio.file.Path
 case class Ambient7Options(
     universalConfigPath: Option[Path] = None,
     influxDb: Option[InfluxDbOptions] = None,
-    mainDb: Option[DbOptions] = None
+    mainDb: Option[DbOptions] = None,
+
+    // TODO: fix this little hack
+    showHelp: Boolean = false
 )

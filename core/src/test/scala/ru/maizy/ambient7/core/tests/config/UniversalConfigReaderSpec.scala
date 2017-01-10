@@ -5,7 +5,7 @@ package ru.maizy.ambient7.core.tests.config
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, DbOptions, UniversalConfigReader }
+import ru.maizy.ambient7.core.config.{ Ambient7Options, DbOptions, ParsingError, UniversalConfigReader }
 import ru.maizy.ambient7.core.tests.BaseSpec
 
 class UniversalConfigReaderSpec extends BaseSpec {
@@ -14,6 +14,19 @@ class UniversalConfigReaderSpec extends BaseSpec {
     override def appName: String = "test app"
 
     override def fillReader(): Unit = {
+      cliParser.opt[String]("option")
+        .abbr("o")
+        .action { (value, opts) => opts.copy(mainDb = Some(DbOptions(url = Some(value)))) }
+
+      ()
+    }
+  }
+
+  class ParserWithConfig(required: Boolean) extends UniversalConfigReader {
+    override def appName: String = "test app"
+
+    override def fillReader(): Unit = {
+      fillConfigOptions(required)
       cliParser.opt[String]("option")
         .abbr("o")
         .action { (value, opts) => opts.copy(mainDb = Some(DbOptions(url = Some(value)))) }
@@ -49,7 +62,7 @@ class UniversalConfigReaderSpec extends BaseSpec {
     class OptsRequiredReader extends ReaderWithSimpleOpts {
       override def fillReader(): Unit = {
         super.fillReader()
-        appendCheck {opts => Either.cond(opts.mainDb.isDefined, (), IndexedSeq("db opts required")) }
+        appendCheck {opts => Either.cond(opts.mainDb.isDefined, (), ParsingError.withMessage("db opts required")) }
       }
     }
 
@@ -57,33 +70,79 @@ class UniversalConfigReaderSpec extends BaseSpec {
     requiredReader.fillReader()
 
     allOptionalReader.readAppConfig(IndexedSeq.empty) shouldBe Right(Ambient7Options())
-    requiredReader.readAppConfig(IndexedSeq.empty) shouldBe Left(IndexedSeq("db opts required"))
+
+    requiredReader.readAppConfig(IndexedSeq.empty) shouldHaveUsageAndErrorMessage "db opts required"
   }
 
   it should "required config if needed" in {
-    class ParserWithConfig(required: Boolean) extends UniversalConfigReader {
-      override def appName: String = "test app"
+    val configReader = new ParserWithConfig(required = true)
+    configReader.fillReader()
 
-      override def fillReader(): Unit = {
-        fillConfigOptions(required)
-        ()
-      }
+    configReader.isConfigEnabled shouldBe true
+
+    configReader.readAppConfig(IndexedSeq.empty) shouldHaveUsageAndErrorMessage "config path is required"
+    configReader.readAppConfig(IndexedSeq("-o", "some")) shouldHaveUsageAndErrorMessage "config path is required"
+
+  }
+
+  it should "not required config if it's options" in {
+    val configReader = new ParserWithConfig(required = false)
+    configReader.fillReader()
+
+    configReader.isConfigEnabled shouldBe true
+
+    configReader.readAppConfig(IndexedSeq.empty) shouldBe Right(Ambient7Options())
+    configReader.readAppConfig(IndexedSeq("-o", "value")) shouldBe
+      Right(Ambient7Options(mainDb = Some(DbOptions(url = Some("value")))))
+  }
+
+  it should "show usage" in {
+    val reader = new ReaderWithSimpleOpts()
+    reader.fillReader()
+
+    reader.readAppConfig(IndexedSeq("-h")) shouldHaveOnlyUsageWithoutErrors()
+    reader.readAppConfig(IndexedSeq("--help")) shouldHaveOnlyUsageWithoutErrors()
+    reader.readAppConfig(IndexedSeq("--help", "-o=value")) shouldHaveOnlyUsageWithoutErrors()
+  }
+
+  it should "show usage if config required" in {
+    val reader = new ParserWithConfig(required = true)
+    reader.fillReader()
+
+    reader.readAppConfig(IndexedSeq("-h")) shouldHaveOnlyUsageWithoutErrors()
+    reader.readAppConfig(IndexedSeq("-h", "--config=bad.config")) shouldHaveOnlyUsageWithoutErrors()
+  }
+
+  implicit class ShouldHaveUsage(result: UniversalConfigReader.ParseResult) {
+    def shouldHaveUsage(): Unit = {
+      result should be ('left)
+      result.left.get.usage shouldBe defined
+      result.left.get.usage.get.length should be > 0
+      result.left.get.usage.get.toLowerCase should not contain "usage"
+      ()
     }
+  }
 
-    val requiredConfigReader = new ParserWithConfig(required = true)
-    requiredConfigReader.fillReader()
+  implicit class ShouldHaveUsageAndErrorMessage(result: UniversalConfigReader.ParseResult)
+    extends ShouldHaveUsage(result)
+  {
+    def shouldHaveUsageAndErrorMessage(message: String): Unit = {
+      result should be ('left)
+      shouldHaveUsage()
+      result.left.get.messages shouldBe IndexedSeq(message)
+      ()
+    }
+  }
 
-    val optionalConfigReader = new ParserWithConfig(required = false)
-    optionalConfigReader.fillReader()
-
-    requiredConfigReader.isConfigEnabled shouldBe true
-    optionalConfigReader.isConfigEnabled shouldBe true
-
-    requiredConfigReader.readAppConfig(IndexedSeq.empty) shouldBe Left(IndexedSeq("config path is required"))
-    requiredConfigReader.readAppConfig(IndexedSeq("-u", "some")) shouldBe Left(IndexedSeq("config path is required"))
-
-    optionalConfigReader.readAppConfig(IndexedSeq.empty) shouldBe Right(Ambient7Options())
-
+  implicit class ShouldHaveOnlyUsageWithoutErrors(result: UniversalConfigReader.ParseResult)
+    extends ShouldHaveUsage(result)
+  {
+    def shouldHaveOnlyUsageWithoutErrors(): Unit = {
+      result should be ('left)
+      shouldHaveUsage()
+      result.left.get.messages shouldBe IndexedSeq.empty
+      ()
+    }
   }
 
 }

@@ -7,6 +7,7 @@ val scalacOpts = Seq(
   "-encoding", "UTF-8",
   "-deprecation",
   "-unchecked",
+  "-feature",
   "-explaintypes",
   "-Xfatal-warnings",
   "-Xlint:_",

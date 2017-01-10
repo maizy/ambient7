@@ -4,17 +4,18 @@ package ru.maizy.ambient7.core.config
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
  * See LICENSE.txt for details.
  */
+
 trait InfluxDbConfigReader extends UniversalConfigReader {
 
   private def influxDbOpts(opts: Ambient7Options)(fill: InfluxDbOptions => InfluxDbOptions): Ambient7Options = {
     opts.copy(influxDb = Some(fill(opts.influxDb.getOrElse(InfluxDbOptions()))))
   }
 
-  private def appendInfluxDbOptsCheck(check: InfluxDbOptions => Either[IndexedSeq[String], Unit]): Unit =
+  private def appendInfluxDbOptsCheck(check: InfluxDbOptions => Either[ParsingError, Unit]): Unit =
     appendCheck { appOpts =>
       appOpts.influxDb match {
         case Some(influxDbOptions) => check(influxDbOptions)
-        case _ => Left(IndexedSeq("InfluxDB opts not defined"))
+        case _ => Left(ParsingError.withMessage("InfluxDB opts not defined"))
       }
     }
 
@@ -38,7 +39,7 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .required()
 
     appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.database.isDefined, (), IndexedSeq("influxdb-database is required"))
+      opts => Either.cond(opts.database.isDefined, (), ParsingError.withMessage("influxdb-database is required"))
     })
 
 
@@ -46,7 +47,7 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => influxDbOpts(opts)(_.copy(user = Some(value))) }
 
     appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.user.isDefined, (), IndexedSeq("influxdb-user is required"))
+      opts => Either.cond(opts.user.isDefined, (), ParsingError.withMessage("influxdb-user is required"))
     })
 
 
@@ -54,7 +55,7 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => influxDbOpts(opts)(_.copy(password = Some(value))) }
 
     appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.password.isDefined, (), IndexedSeq("influxdb-password is required"))
+      opts => Either.cond(opts.password.isDefined, (), ParsingError.withMessage("influxdb-password is required"))
     })
 
 
@@ -68,7 +69,11 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .text("By default --influxdb-user")
 
     appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.readonlyUser.isDefined, (), IndexedSeq("influxdb-readonly-user is required"))
+      opts => Either.cond(
+        opts.readonlyUser.isDefined,
+        (),
+        ParsingError.withMessage("influxdb-readonly-user is required")
+      )
     })
 
 
@@ -77,7 +82,11 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .text("By default --influxdb-password")
 
     appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.readonlyPassword.isDefined, (), IndexedSeq("influxdb-readonly-password is required"))
+      opts => Either.cond(
+        opts.readonlyPassword.isDefined,
+        (),
+        ParsingError.withMessage("influxdb-readonly-password is required")
+      )
     })
 
     // TODO: uni config rules

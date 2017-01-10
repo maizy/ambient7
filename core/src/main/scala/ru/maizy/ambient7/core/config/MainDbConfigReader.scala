@@ -6,6 +6,8 @@ package ru.maizy.ambient7.core.config
  */
 trait MainDbConfigReader extends UniversalConfigReader {
 
+  import UniversalConfigReader._
+
   private def mainDbOpts(opts: Ambient7Options)(fill: DbOptions => DbOptions): Ambient7Options = {
     opts.copy(mainDb = Some(fill(opts.mainDb.getOrElse(DbOptions()))))
   }
@@ -14,7 +16,7 @@ trait MainDbConfigReader extends UniversalConfigReader {
     appendCheck { appOpts =>
       appOpts.mainDb match {
         case Some(dbOpts) => check(dbOpts)
-        case _ => Left(IndexedSeq("DB opts not defined"))
+        case _ => Left(ParsingError.withMessage("DB opts not defined"))
       }
     }
 
@@ -28,7 +30,7 @@ trait MainDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => mainDbOpts(opts)(_.copy(url = Some(value))) }
       .text(s"URL for connecting to h2 database")
 
-    appendDbOptsCheck{ dbOpts => Either.cond(dbOpts.url.isDefined, (), IndexedSeq("db-url is required")) }
+    appendDbOptsCheck{ dbOpts => Either.cond(dbOpts.url.isDefined, (), ParsingError.withMessage("db-url is required")) }
 
 
     cliParser.opt[String]("db-user")
