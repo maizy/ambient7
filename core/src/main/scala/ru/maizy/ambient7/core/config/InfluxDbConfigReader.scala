@@ -19,14 +19,6 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       }
     }
 
-//  private def appendInfluxDbOptsPostprocessor(postprocessor: InfluxDbOptions => ParseResult): Unit =
-//    appendPostprocessor { appOpts =>
-//      appOpts.influxDb match {
-//        case Some(influxDbOptions) => postprocessor(influxDbOptions)
-//        case _ => Right(appOpts)
-//      }
-//    }
-
   def fillInfluxDbOptions(): Unit = {
 
     cliParser.opt[String]("influxdb-baseurl")

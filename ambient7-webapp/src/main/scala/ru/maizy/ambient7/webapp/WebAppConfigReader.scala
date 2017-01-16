@@ -14,7 +14,7 @@ object WebAppConfigReader
   override def appName: String = "java -jar ambient7-webapp.jar"
 
   override def fillReader(): Unit = {
-    fillConfigOptions(requireUniversalConfig = true)
+    fillConfigOptions(requireConfig = true)
     fillDbOptions()
   }
 }

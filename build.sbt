@@ -35,6 +35,7 @@ lazy val commonDependencies = Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.7",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
     "com.typesafe" % "config" % "1.3.1",
+    "com.github.kxbmap" %% "configs" % "0.4.4",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   )
 )

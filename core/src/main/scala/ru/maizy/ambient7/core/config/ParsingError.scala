@@ -26,7 +26,7 @@ object ParsingError {
   def withMessage(message: String): ParsingError =
     ParsingError(IndexedSeq(message))
 
-  def withMessages(messages: String*): ParsingError =
+  def withMessages(messages: Seq[String]): ParsingError =
     ParsingError(messages.toIndexedSeq)
 
 }

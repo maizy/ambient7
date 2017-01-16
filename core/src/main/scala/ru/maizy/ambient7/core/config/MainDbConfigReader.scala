@@ -4,6 +4,7 @@ package ru.maizy.ambient7.core.config
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
+
 trait MainDbConfigReader extends UniversalConfigReader {
 
   import UniversalConfigReader._
@@ -30,6 +31,10 @@ trait MainDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => mainDbOpts(opts)(_.copy(url = Some(value))) }
       .text(s"URL for connecting to h2 database")
 
+    appendSimpleOptionalConfigRule[String]("db.url") { (value, opts) =>
+      mainDbOpts(opts)(_.copy(url = Some(value)))
+    }
+
     appendDbOptsCheck{ dbOpts => Either.cond(dbOpts.url.isDefined, (), ParsingError.withMessage("db-url is required")) }
 
 
@@ -37,10 +42,18 @@ trait MainDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => mainDbOpts(opts)(_.copy(user = value)) }
       .text("database user")
 
+    appendSimpleOptionalConfigRule[String]("db.user") {
+      (value, opts) => mainDbOpts(opts)(_.copy(user = value))
+    }
+
 
     cliParser.opt[String]("db-password")
       .action { (value, opts) => mainDbOpts(opts)(_.copy(password = value)) }
       .text("database password")
+
+    appendSimpleOptionalConfigRule[String]("db.password") { (value, opts) =>
+      mainDbOpts(opts)(_.copy(password = value))
+    }
 
     ()
   }

@@ -6,15 +6,20 @@ package ru.maizy.ambient7.core.config
  */
 
 import java.io.File
-import java.nio.file.Files
+import java.nio.file.{ Files, Path }
 import scala.annotation.tailrec
+import scala.util.{ Failure, Try, Success }
+import com.typesafe.config.{ Config, ConfigFactory }
+import configs.Configs
 import scopt.OptionParser
+import ru.maizy.ambient7.core.config.helper.ConfigRuleOps.IfSuccessOp
 
 object UniversalConfigReader {
   type CheckResult = Either[ParsingError, Unit]
   type Check = Ambient7Options => CheckResult
   type ParseResult = Either[ParsingError, Ambient7Options]
   type Postprocessor = Ambient7Options => ParseResult
+  type ConfigRule = (Config, Ambient7Options) => ParseResult
 }
 
 trait UniversalConfigReader {
@@ -24,7 +29,8 @@ trait UniversalConfigReader {
   private var postprocessors_ = List[Postprocessor]()
 
   private var isConfigEnabled_ = false
-  // private var isConfigRequired_ = false
+  private var isConfigRequired_ = false
+  private var configRules_ = List[ConfigRule]()
 
   private val isCliOptionsEnabled_ = true
 
@@ -75,9 +81,9 @@ trait UniversalConfigReader {
       .action((_, opts) => opts.copy(showHelp = true))
   }
 
-  protected def fillConfigOptions(requireUniversalConfig: Boolean = false): Unit = {
+  protected def fillConfigOptions(requireConfig: Boolean = false): Unit = {
     isConfigEnabled_ = true
-    // isConfigRequired_ = requireUniversalConfig
+    isConfigRequired_ = requireConfig
 
     def addConfigOption(parser: OptionParser[Ambient7Options], required: Boolean = false): Unit = {
       val opt = parser.opt[File]("config")
@@ -96,10 +102,12 @@ trait UniversalConfigReader {
     }
 
     addConfigOption(configPathCliParser)
-    addConfigOption(cliParser, required = requireUniversalConfig)
+    addConfigOption(cliParser, required = requireConfig)
   }
 
   def isConfigEnabled: Boolean = isConfigEnabled_
+
+  def isConfigRequired: Boolean = isConfigRequired_
 
   def isCliOptionsEnabled: Boolean = isCliOptionsEnabled_
 
@@ -116,11 +124,42 @@ trait UniversalConfigReader {
   protected def appendPostprocessor(postprocessor: Postprocessor): Unit =
     postprocessors_ = postprocessor :: postprocessors_
 
+  protected def appendConfigRule(rule: ConfigRule): Unit =
+    configRules_ = rule :: configRules_
+
+  protected def appendSimpleConfigRule[T](configPath: String)(
+      saveValue: (T, Ambient7Options) => Ambient7Options)(implicit reader: Configs[T]): Unit =
+  {
+    appendConfigRule { (config, opts) =>
+      Configs.apply[T].get(config, configPath).ifSuccess(value => saveValue(value, opts))
+    }
+  }
+
+  protected def appendSimpleOptionalConfigRule[T](configPath: String)(
+      save: (T, Ambient7Options) => Ambient7Options)(implicit reader: Configs[Option[T]]): Unit =
+  {
+    appendSimpleConfigRule[Option[T]](configPath) { (mayBeValue, opts) =>
+      mayBeValue match {
+        case Some(value) => save(value, opts)
+        case None => opts
+      }
+    }
+  }
+
+  def configRules: List[ConfigRule] = configRules_.reverse
+
   private def processHelpOption(result: ParseResult): ParseResult = {
     result match {
       // show usage if --help option exists
       case Right(opts) if opts.showHelp => Left(ParsingError())
       case _ => result
+    }
+  }
+
+  private def safeLoadConfig(universalConfigPath: Path): Either[IndexedSeq[String], Config] = {
+    Try(ConfigFactory.parseFile(universalConfigPath.toFile)) match {
+      case Failure(exception) => Left(IndexedSeq(s"reading config error ${exception.getMessage}"))
+      case Success(config) => Right(config)
     }
   }
 
@@ -131,19 +170,23 @@ trait UniversalConfigReader {
     parseResult = processHelpOption(parseResult)
     parseResult.right.flatMap { optsWithConfigPath =>
       optsWithConfigPath.universalConfigPath match {
-        case Some(universalConfigPath) =>
-          if (Files.isReadable(universalConfigPath)) {
-            configLogger.info(s"parse config from $universalConfigPath")
-
-            // FIXME: implements
-
-            Right(optsWithConfigPath)
+        case Some(configPath) =>
+          if (Files.isReadable(configPath)) {
+            configLogger.info(s"parse config from $configPath")
+            safeLoadConfig(configPath)
+              .left.map(ParsingError.withMessages(_))
+              .right.flatMap { config =>
+                val configRulesApplingResult = configRules.foldLeft[ParseResult](Right(optsWithConfigPath)) {
+                  case (error@Left(_), _) => error
+                  case (res@Right(_), rule) => res.right.flatMap(opts => rule(config, opts))
+                }
+                configRulesApplingResult
+              }
           } else {
-            val message = s"unable to read config from $universalConfigPath"
+            val message = s"unable to read config from $configPath"
             configLogger.error(message)
             Left(ParsingError.withMessage(message))
           }
-
         case _ =>
           configLogger.info("universal config path not defined")
           Right(opts)
@@ -156,6 +199,15 @@ trait UniversalConfigReader {
   {
     configLogger.debug("cli options enabled")
     Right(cliParser.parse(args, opts).getOrElse(opts))
+  }
+
+  private def applyPostprocessors(result: ParseResult): ParseResult = {
+    result.right.flatMap { opts =>
+      postprocessors.foldLeft[ParseResult](Right(opts)) {
+        case (error@Left(_), _) => error
+        case (res@Right(_), processor) => res.right.flatMap(processor)
+      }
+    }
   }
 
   private def checkConfig(opts: Ambient7Options): ParseResult =
@@ -187,9 +239,10 @@ trait UniversalConfigReader {
       eitherAppConfig = eitherAppConfig.right.flatMap(opts => parseCliOptions(args, opts))
     }
     eitherAppConfig = processHelpOption(eitherAppConfig)
+    eitherAppConfig = applyPostprocessors(eitherAppConfig)
     eitherAppConfig = eitherAppConfig.right.flatMap(opts => checkConfig(opts))
     eitherAppConfig match {
-      case config@Right(_) => config
+      case success@Right(_) => success
       case Left(parsingError) if isCliOptionsEnabled => Left(cliParser.appendUsageToParserError(parsingError))
       case error@Left(_) => error
     }
