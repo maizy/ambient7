@@ -25,10 +25,18 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .valueName { s"<${Defaults.INFLUXDB_BASEURL}>" }
       .action { (value, opts) => influxDbOpts(opts)(_.copy(baseUrl = value)) }
 
+    appendSimpleOptionalConfigRule[String]("influxdb.baseurl") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(baseUrl = value))
+    }
+
 
     cliParser.opt[String]("influxdb-database")
       .action { (value, opts) => influxDbOpts(opts)(_.copy(database = Some(value))) }
       .required()
+
+    appendSimpleOptionalConfigRule[String]("influxdb.database") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(baseUrl = value))
+    }
 
     appendInfluxDbOptsCheck({
       opts => Either.cond(opts.database.isDefined, (), ParsingError.withMessage("influxdb-database is required"))
@@ -38,6 +46,10 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
     cliParser.opt[String]("influxdb-user")
       .action { (value, opts) => influxDbOpts(opts)(_.copy(user = Some(value))) }
 
+    appendSimpleOptionalConfigRule[String]("influxdb.user") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(user = Some(value)))
+    }
+
     appendInfluxDbOptsCheck({
       opts => Either.cond(opts.user.isDefined, (), ParsingError.withMessage("influxdb-user is required"))
     })
@@ -45,6 +57,10 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
 
     cliParser.opt[String]("influxdb-password")
       .action { (value, opts) => influxDbOpts(opts)(_.copy(password = Some(value))) }
+
+    appendSimpleOptionalConfigRule[String]("influxdb.password") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(password = Some(value)))
+    }
 
     appendInfluxDbOptsCheck({
       opts => Either.cond(opts.password.isDefined, (), ParsingError.withMessage("influxdb-password is required"))
@@ -55,10 +71,26 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => influxDbOpts(opts)(_.copy(readonlyBaseUrl = Some(value))) }
       .text("By default --influxdb-baseurl")
 
+    appendSimpleOptionalConfigRule[String]("influxdb.readonly.baseurl") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(readonlyBaseUrl = Some(value)))
+    }
+
+    appendInfluxDbOptsCheck({
+      opts => Either.cond(
+        opts.readonlyBaseUrl.isDefined,
+        (),
+        ParsingError.withMessage("influxdb-readonly-baseurl is required")
+      )
+    })
+
 
     cliParser.opt[String]("influxdb-readonly-user")
       .action { (value, opts) => influxDbOpts(opts)(_.copy(readonlyUser = Some(value))) }
       .text("By default --influxdb-user")
+
+    appendSimpleOptionalConfigRule[String]("influxdb.readonly.user") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(readonlyUser = Some(value)))
+    }
 
     appendInfluxDbOptsCheck({
       opts => Either.cond(
@@ -73,6 +105,10 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       .action { (value, opts) => influxDbOpts(opts)(_.copy(readonlyPassword = Some(value))) }
       .text("By default --influxdb-password")
 
+    appendSimpleOptionalConfigRule[String]("influxdb.readonly.password") { (value, opts) =>
+      influxDbOpts(opts)(_.copy(readonlyPassword = Some(value)))
+    }
+
     appendInfluxDbOptsCheck({
       opts => Either.cond(
         opts.readonlyPassword.isDefined,
@@ -81,9 +117,17 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       )
     })
 
-    // TODO: uni config rules
-
-    // TODO: config postprocessors
+    appendPostprocessor { opts =>
+      Right(
+        influxDbOpts(opts){ influxdbOpts =>
+          influxdbOpts.copy(
+            readonlyBaseUrl = influxdbOpts.readonlyBaseUrl orElse Some(influxdbOpts.baseUrl),
+            readonlyUser = influxdbOpts.readonlyUser orElse influxdbOpts.user,
+            readonlyPassword = influxdbOpts.readonlyPassword orElse influxdbOpts.password
+          )
+        }
+      )
+    }
 
   }
 }
