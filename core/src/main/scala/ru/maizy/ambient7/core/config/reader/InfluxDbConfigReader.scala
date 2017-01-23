@@ -1,9 +1,12 @@
-package ru.maizy.ambient7.core.config
+package ru.maizy.ambient7.core.config.reader
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.core.config.{ Ambient7Options, Defaults, InfluxDbOptions, ParsingError }
+
 
 trait InfluxDbConfigReader extends UniversalConfigReader {
 

@@ -1,11 +1,12 @@
-package ru.maizy.ambient7.core.tests.config
+package ru.maizy.ambient7.core.tests.config.reader
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ DbOptions, UniversalConfigReader }
+import ru.maizy.ambient7.core.config.DbOptions
+import ru.maizy.ambient7.core.config.reader.UniversalConfigReader
 
 trait SampleReaders {
 

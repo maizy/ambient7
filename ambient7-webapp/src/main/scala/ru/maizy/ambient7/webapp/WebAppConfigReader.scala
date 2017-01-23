@@ -5,7 +5,7 @@ package ru.maizy.ambient7.webapp
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ MainDbConfigReader, UniversalConfigReader }
+import ru.maizy.ambient7.core.config.reader.{ MainDbConfigReader, UniversalConfigReader }
 
 object WebAppConfigReader
   extends UniversalConfigReader

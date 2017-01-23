@@ -5,11 +5,11 @@ package ru.maizy.ambient7.core.config.helper
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, ParsingError, UniversalConfigReader }
+import ru.maizy.ambient7.core.config.{ Ambient7Options, ParsingError }
 
 object ConfigRuleOps {
 
-  import UniversalConfigReader._
+  import ru.maizy.ambient7.core.config.reader.UniversalConfigReader._
 
   implicit class IfSuccessOp[T](configRes: configs.Result[T]) {
 
