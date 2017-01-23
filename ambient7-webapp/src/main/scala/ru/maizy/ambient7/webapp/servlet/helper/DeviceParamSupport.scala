@@ -6,7 +6,7 @@ package ru.maizy.ambient7.webapp.servlet.helper
  */
 
 import org.scalatra.ScalatraBase
-import ru.maizy.ambient7.webapp.data.Co2Device
+import ru.maizy.ambient7.core.data.Co2Device
 
 
 trait DeviceParamSupport extends ScalatraBase {

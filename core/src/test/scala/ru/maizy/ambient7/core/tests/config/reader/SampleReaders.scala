@@ -22,6 +22,19 @@ trait SampleReaders {
     }
   }
 
+  class ReaderWithSimpleRequiredOpts extends UniversalConfigReader {
+    override def appName: String = "test app"
+
+    override def fillReader(): Unit = {
+      cliParser.opt[String]("option")
+        .abbr("o")
+        .action { (value, opts) => opts.copy(mainDb = Some(DbOptions(url = Some(value)))) }
+        .required()
+
+      ()
+    }
+  }
+
   class ReaderWithSimpleOptsAndPostprocessors extends ReaderWithSimpleOpts {
     override def fillReader(): Unit = {
       super.fillReader()

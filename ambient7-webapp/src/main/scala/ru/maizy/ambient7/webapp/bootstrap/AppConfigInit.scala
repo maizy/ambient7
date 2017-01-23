@@ -10,9 +10,8 @@ import scala.collection.immutable.ListMap
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import com.typesafe.config.{ Config, ConfigFactory }
-import ru.maizy.ambient7.core.data.{ AgentTags, Co2AgentId }
+import ru.maizy.ambient7.core.data.{ AgentTags, Co2Agent, Co2Device }
 import ru.maizy.ambient7.webapp.AppConfig
-import ru.maizy.ambient7.webapp.data.Co2Device
 
 
 // TODO: safe config parsing with readable errors
@@ -59,7 +58,7 @@ trait AppConfigInit extends LazyLogging {
             case Left(error) =>
               throw new RuntimeException(s"Unable to parse agent-tags '$tagsString' for id=$id, skipping tags: $error")
           }
-          Seq(id -> Co2Device(id, agentId = Co2AgentId(deviceConfig.getString("agent-name"), tags)))
+          Seq(id -> Co2Device(id, agent = Co2Agent(deviceConfig.getString("agent-name"), tags)))
         }
 
     appConfig.copy(co2Devices = ListMap(devicesList: _*))

@@ -5,10 +5,10 @@ package ru.maizy.ambient7.webapp.json
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.json.{ BaseProtocol, Co2AgentIdProtocol }
-import ru.maizy.ambient7.webapp.data.Co2Device
+import ru.maizy.ambient7.core.data.Co2Device
+import ru.maizy.ambient7.core.json.{ BaseProtocol, Co2AgentProtocol }
 
-trait Co2DeviceProtocol extends BaseProtocol with Co2AgentIdProtocol {
+trait Co2DeviceProtocol extends BaseProtocol with Co2AgentProtocol {
   implicit val deviceFormat = jsonFormat(Co2Device, "id", "agent")
 }
 

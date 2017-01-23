@@ -5,7 +5,7 @@ package ru.maizy.ambient7.core.config.reader
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, DbOptions, Defaults, ParsingError }
+import ru.maizy.ambient7.core.config.{ Ambient7Options, DbOptions, Defaults }
 
 
 trait MainDbConfigReader extends UniversalConfigReader {
@@ -20,7 +20,7 @@ trait MainDbConfigReader extends UniversalConfigReader {
     appendCheck { appOpts =>
       appOpts.mainDb match {
         case Some(dbOpts) => check(dbOpts)
-        case _ => Left(ParsingError.withMessage("DB opts not defined"))
+        case _ => failure("DB opts not defined")
       }
     }
 
@@ -38,7 +38,13 @@ trait MainDbConfigReader extends UniversalConfigReader {
       mainDbOpts(opts)(_.copy(url = Some(value)))
     }
 
-    appendDbOptsCheck{ dbOpts => Either.cond(dbOpts.url.isDefined, (), ParsingError.withMessage("db-url is required")) }
+    appendDbOptsCheck{ dbOpts =>
+      if (dbOpts.url.isDefined) {
+        success
+      } else {
+        failure("db-url is required")
+      }
+    }
 
 
     cliParser.opt[String]("db-user")

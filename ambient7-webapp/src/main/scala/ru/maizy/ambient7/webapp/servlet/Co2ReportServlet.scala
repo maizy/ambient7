@@ -8,8 +8,8 @@ package ru.maizy.ambient7.webapp.servlet
 import java.time.ZonedDateTime
 import scalikejdbc._
 import spray.json.{ JsNumber, JsObject, JsString, JsValue, pimpAny }
+import ru.maizy.ambient7.core.data.Co2Device
 import ru.maizy.ambient7.rdbms.Co2Service
-import ru.maizy.ambient7.webapp.data.Co2Device
 import ru.maizy.ambient7.webapp.servlet.helper.{ AppConfigSupport, DateParamsSupport, DeviceParamSupport }
 import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport, TimeZoneSupport }
 import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
@@ -30,7 +30,7 @@ class Co2ReportServlet(val appConfig: AppConfig)
     val (from, to, device) = getReportParams
     val aggregates = DB readOnly { implicit session =>
       Co2Service.getHourlyAggregates(
-        device.agentId,
+        device.agent,
         from,
         to
       )
@@ -42,7 +42,7 @@ class Co2ReportServlet(val appConfig: AppConfig)
     val (from, to, device) = getReportParams
     val aggregates = DB readOnly { implicit session =>
       Co2Service.computeDailyAggregates(
-        device.agentId,
+        device.agent,
         from,
         to
       )

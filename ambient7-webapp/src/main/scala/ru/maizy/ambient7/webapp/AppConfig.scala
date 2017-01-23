@@ -7,7 +7,7 @@ package ru.maizy.ambient7.webapp
 
 import java.time.ZoneId
 import ru.maizy.ambient7.core.config.Defaults
-import ru.maizy.ambient7.webapp.data.Co2Device
+import ru.maizy.ambient7.core.data.Co2Device
 
 case class AppConfig(
     // FIXME: migrate to uni config

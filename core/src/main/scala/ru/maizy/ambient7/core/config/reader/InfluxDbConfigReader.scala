@@ -10,6 +10,8 @@ import ru.maizy.ambient7.core.config.{ Ambient7Options, Defaults, InfluxDbOption
 
 trait InfluxDbConfigReader extends UniversalConfigReader {
 
+  import UniversalConfigReader._
+
   private def influxDbOpts(opts: Ambient7Options)(fill: InfluxDbOptions => InfluxDbOptions): Ambient7Options = {
     opts.copy(influxDb = Some(fill(opts.influxDb.getOrElse(InfluxDbOptions()))))
   }
@@ -18,7 +20,7 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
     appendCheck { appOpts =>
       appOpts.influxDb match {
         case Some(influxDbOptions) => check(influxDbOptions)
-        case _ => Left(ParsingError.withMessage("InfluxDB opts not defined"))
+        case _ => failure("InfluxDB opts not defined")
       }
     }
 
@@ -35,15 +37,18 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
 
     cliParser.opt[String]("influxdb-database")
       .action { (value, opts) => influxDbOpts(opts)(_.copy(database = Some(value))) }
-      .required()
 
     appendSimpleOptionalConfigRule[String]("influxdb.database") { (value, opts) =>
-      influxDbOpts(opts)(_.copy(baseUrl = value))
+      influxDbOpts(opts)(_.copy(database = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.database.isDefined, (), ParsingError.withMessage("influxdb-database is required"))
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.database.isDefined) {
+        success
+      } else {
+        failure("influxdb-database is required")
+      }
+    }
 
 
     cliParser.opt[String]("influxdb-user")
@@ -53,9 +58,13 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       influxDbOpts(opts)(_.copy(user = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.user.isDefined, (), ParsingError.withMessage("influxdb-user is required"))
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.user.isDefined) {
+        success
+      } else {
+        failure("influxdb-user is required")
+      }
+    }
 
 
     cliParser.opt[String]("influxdb-password")
@@ -65,9 +74,13 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       influxDbOpts(opts)(_.copy(password = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(opts.password.isDefined, (), ParsingError.withMessage("influxdb-password is required"))
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.password.isDefined) {
+        success
+      } else {
+        failure("influxdb-password is required")
+      }
+    }
 
 
     cliParser.opt[String]("influxdb-readonly-baseurl")
@@ -78,13 +91,13 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       influxDbOpts(opts)(_.copy(readonlyBaseUrl = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(
-        opts.readonlyBaseUrl.isDefined,
-        (),
-        ParsingError.withMessage("influxdb-readonly-baseurl is required")
-      )
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.readonlyBaseUrl.isDefined) {
+        success
+      } else {
+        failure("influxdb-readonly-baseurl is required")
+      }
+    }
 
 
     cliParser.opt[String]("influxdb-readonly-user")
@@ -95,13 +108,13 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       influxDbOpts(opts)(_.copy(readonlyUser = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(
-        opts.readonlyUser.isDefined,
-        (),
-        ParsingError.withMessage("influxdb-readonly-user is required")
-      )
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.readonlyUser.isDefined) {
+        success
+      } else {
+        failure("influxdb-readonly-user is required")
+      }
+    }
 
 
     cliParser.opt[String]("influxdb-readonly-password")
@@ -112,13 +125,13 @@ trait InfluxDbConfigReader extends UniversalConfigReader {
       influxDbOpts(opts)(_.copy(readonlyPassword = Some(value)))
     }
 
-    appendInfluxDbOptsCheck({
-      opts => Either.cond(
-        opts.readonlyPassword.isDefined,
-        (),
-        ParsingError.withMessage("influxdb-readonly-password is required")
-      )
-    })
+    appendInfluxDbOptsCheck { opts =>
+      if (opts.readonlyPassword.isDefined) {
+        success
+      } else {
+        failure("influxdb-readonly-password is required")
+      }
+    }
 
     appendPostprocessor { opts =>
       Right(

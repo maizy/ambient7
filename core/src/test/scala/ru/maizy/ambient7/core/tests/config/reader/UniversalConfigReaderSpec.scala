@@ -12,7 +12,7 @@ import ru.maizy.ambient7.core.tests.BaseSpec
 
 class UniversalConfigReaderSpec extends BaseSpec with SampleReaders {
 
-  val sampleConfigPath = getResourcePathString("sample-config.conf")
+  private val sampleConfigPath = getResourcePathString("sample-config.conf")
 
   "UniversalConfigReader" should "allow to add cli opts" in {
     val reader = new ReaderWithSimpleOpts()
@@ -183,6 +183,13 @@ class UniversalConfigReaderSpec extends BaseSpec with SampleReaders {
         "sample.array has type LIST rather than STRING"
     }
 
+  }
+
+  it should "interpret cli parser errors as errors" in {
+    val reader = new ReaderWithSimpleRequiredOpts
+    reader.fillReader()
+
+    reader.readAppConfig(IndexedSeq.empty) shouldHaveUsageAndErrorMessage "Missing option --option"
   }
 
   implicit class ShouldHaveUsage(result: UniversalConfigReader.ParseResult) {

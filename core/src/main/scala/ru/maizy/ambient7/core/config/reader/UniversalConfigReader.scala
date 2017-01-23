@@ -21,6 +21,10 @@ object UniversalConfigReader {
   type ParseResult = Either[ParsingError, Ambient7Options]
   type Postprocessor = Ambient7Options => ParseResult
   type ConfigRule = (Config, Ambient7Options) => ParseResult
+
+  val success: CheckResult = Right(())
+  def failure(message: String): CheckResult = Left(ParsingError.withMessage(message))
+  def failure(messages: IndexedSeq[String]): CheckResult = Left(ParsingError.withMessages(messages))
 }
 
 trait UniversalConfigReader {
@@ -60,6 +64,9 @@ trait UniversalConfigReader {
       }
     }
 
+    def errorsAndWarnings: IndexedSeq[String] =
+      savedErrors ++ savedWarning
+
   }
 
   protected val cliParser = new SilentOptionParser[Ambient7Options](appName) {
@@ -87,13 +94,12 @@ trait UniversalConfigReader {
     isConfigRequired_ = requireConfig
 
     def addConfigOption(parser: OptionParser[Ambient7Options], required: Boolean = false): Unit = {
-      val opt = parser.opt[File]("config")
+      parser.opt[File]("config")
         .abbr("c")
         .action { (value, opts) => opts.copy(universalConfigPath = Some(value.toPath.toAbsolutePath)) }
         .text(s"path to universal ambient7 config")
 
       if (required) {
-        opt.required()
         appendCheck { opts =>
           Either.cond(opts.universalConfigPath.isDefined, (), ParsingError.withMessage("config path is required"))
         }
@@ -164,10 +170,18 @@ trait UniversalConfigReader {
     }
   }
 
+  private def processCliParser(
+      parser: SilentOptionParser[Ambient7Options], args: IndexedSeq[String], opts: Ambient7Options): ParseResult =
+  {
+    parser.parse(args, opts) match {
+      case None => Left(ParsingError.withMessages(parser.errorsAndWarnings))
+      case Some(resOpts) => Right(resOpts)
+    }
+  }
+
   private def parseConfig(opts: Ambient7Options, args: IndexedSeq[String]): ParseResult = {
     configLogger.debug("config enabled")
-    val optsWithConfigPath = configPathCliParser.parse(args, opts).getOrElse(opts)
-    var parseResult: ParseResult = Right(optsWithConfigPath)
+    var parseResult: ParseResult = processCliParser(configPathCliParser, args, opts)
     parseResult = processHelpOption(parseResult)
     parseResult.right.flatMap { optsWithConfigPath =>
       optsWithConfigPath.universalConfigPath match {
@@ -195,12 +209,8 @@ trait UniversalConfigReader {
     }
   }
 
-  private def parseCliOptions(
-      args: IndexedSeq[String], opts: Ambient7Options): ParseResult =
-  {
-    configLogger.debug("cli options enabled")
-    Right(cliParser.parse(args, opts).getOrElse(opts))
-  }
+  private def parseCliOptions(args: IndexedSeq[String], opts: Ambient7Options): ParseResult =
+    processCliParser(cliParser, args, opts)
 
   private def applyPostprocessors(result: ParseResult): ParseResult = {
     result.right.flatMap { opts =>
