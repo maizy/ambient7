@@ -9,10 +9,10 @@ import java.time.ZonedDateTime
 import org.scalatra.ScalatraBase
 
 
-trait TimeZoneSupport extends ScalatraBase with AppConfigSupport {
+trait TimeZoneSupport extends ScalatraBase with AppOptionsSupport {
   implicit class ToAppTimeZoneOps(datetime: ZonedDateTime) {
     def toAppTimeZone: ZonedDateTime = {
-      datetime.withZoneSameInstant(appConfig.timeZone)
+      datetime.withZoneSameInstant(appOptions.timeZone)
     }
   }
 }

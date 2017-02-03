@@ -8,7 +8,7 @@ package ru.maizy.ambient7.webapp.tests.servlet
 import java.time.format.DateTimeFormatter
 import java.time.{ LocalDateTime, ZoneOffset }
 import org.json4s.{ JArray, JInt, JString, JValue }
-import ru.maizy.ambient7.webapp.AppConfig
+import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.webapp.servlet.Co2ReportServlet
 import ru.maizy.ambient7.webapp.tests.{ BaseServletAndDbTest, JsonAsserts }
 
@@ -17,13 +17,13 @@ class Co2ReportServletSpec extends BaseServletAndDbTest with JsonAsserts {
 
   case class ExpectedItem(from: String, low: Int, medium: Int, high: Int, unknown: Int)
 
-  override def initServlets(config: AppConfig): Unit = {
-    addServlet(new Co2ReportServlet(config), "/co2_report")
+  override def initServlets(options: Ambient7Options): Unit = {
+    addServlet(new Co2ReportServlet(options), "/co2_report")
   }
 
-  override def setupConfig(config: AppConfig): Unit = {
-    val newConfig = config.copy(timeZone = ZoneOffset.UTC)
-    bootstrap.overwriteAppConfig(newConfig)
+  override def setupAppOptions(options: Ambient7Options): Unit = {
+    val newConfig = options.copy(timeZone = ZoneOffset.UTC)
+    bootstrap.overwriteAppOptions(newConfig)
   }
 
   "/co2_report/by_day" should "return error for unknown devied id" in {
@@ -175,7 +175,7 @@ class Co2ReportServletSpec extends BaseServletAndDbTest with JsonAsserts {
   def assertReportItem(item: JValue, expected: ExpectedItem): Unit = {
     val expectedFrom = LocalDateTime.from(
       DateTimeFormatter.ISO_LOCAL_DATE_TIME.parse(expected.from)
-    ).atZone(bootstrap.appConfig.timeZone)
+    ).atZone(bootstrap.appOptions.timeZone)
 
     (item \\ "low_level") shouldBe JInt(expected.low)
     (item \\ "medium_level") shouldBe JInt(expected.medium)

@@ -5,30 +5,44 @@ package ru.maizy.ambient7.webapp.tests
  * See LICENSE.txt for details.
  */
 
+import java.nio.file.Paths
 import com.typesafe.scalalogging.LazyLogging
 import org.flywaydb.core.Flyway
 import org.scalatest.{ BeforeAndAfterAll, FlatSpecLike, Matchers }
 import org.scalatra.test.scalatest.ScalatraSuite
 import scalikejdbc.ConnectionPool
-import ru.maizy.ambient7.webapp.AppConfig
-import ru.maizy.ambient7.webapp.bootstrap.{ AppConfigInit, ScalikeJdbcInit }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.webapp.WebAppConfigReader
+import ru.maizy.ambient7.webapp.bootstrap.ScalikeJdbcInit
 
-trait TestsBootstrap extends ScalikeJdbcInit with AppConfigInit with LazyLogging {
+trait TestsBootstrap extends ScalikeJdbcInit with LazyLogging {
 
   private var _connectionPool: Option[ConnectionPool] = None
+  private var _appOptions: Option[Ambient7Options] = None
 
-  def loadTestConfig(): Unit = {
-    logger.info("load test config")
-    loadAppConfig()
+  def appOptions: Ambient7Options = _appOptions.get
+
+  def loadTestOptions(args: IndexedSeq[String] = IndexedSeq.empty): Unit = {
+    logger.info("load test app options")
+    WebAppConfigReader.readAppConfig(args) match {
+      case Right(options) =>
+        _appOptions = Some(options)
+      case Left(error) =>
+        logger.error(s"Unable to load app options: ${error.messages.mkString("; ")}")
+        throw new RuntimeException("unable to load app options")
+    }
     ()
   }
 
-  def overwriteAppConfig(config: AppConfig): Unit = {
-    _appConfig = Some(config)
+  def overwriteAppOptions(options: Ambient7Options): Unit = {
+    _appOptions = Some(options)
+    ()
   }
 
   def setupTestDb(): Unit = {
-    _connectionPool = Some(setupDbConnectionPool(appConfig))
+    _appOptions.foreach { options =>
+      _connectionPool = Some(setupDbConnectionPool(options))
+    }
   }
 
   def migrateDb(): Unit = {
@@ -58,11 +72,11 @@ abstract class BaseServletTest
   protected override def beforeAll(): Unit = {
     logger.info("before all")
     super.beforeAll()
-    bootstrap.loadTestConfig()
-    setupConfig(bootstrap.appConfig)
+    bootstrap.loadTestOptions(IndexedSeq("--config", getResourcePathString("ambient7.conf")))
+    setupAppOptions(bootstrap.appOptions)
     bootstrap.setupTestDb()
     setupBootstrapBeforeTests()
-    initServlets(bootstrap.appConfig)
+    initServlets(bootstrap.appOptions)
   }
 
   protected override def afterAll(): Unit = {
@@ -73,8 +87,13 @@ abstract class BaseServletTest
 
   private[tests] def setupBootstrapBeforeTests(): Unit = {}
 
-  def setupConfig(config: AppConfig): Unit = {}
+  def setupAppOptions(options: Ambient7Options): Unit = {}
 
-  def initServlets(config: AppConfig): Unit
+  def initServlets(options: Ambient7Options): Unit
+
+  def getResourcePathString(relPath: String): String = {
+    val normPath = if (!relPath.startsWith("/")) "/" + relPath else relPath
+    Paths.get(this.getClass.getResource(normPath).toURI).toString
+  }
 
 }

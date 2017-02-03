@@ -6,6 +6,7 @@ package ru.maizy.ambient7.core.config
  */
 
 import java.nio.file.Path
+import java.time.ZoneId
 import ru.maizy.ambient7.core.data.{ AgentTags, Co2Agent, Co2Device, Device, DeviceType, Devices }
 
 case class FromCliDevice(
@@ -22,9 +23,16 @@ case class Ambient7Options(
     universalConfigPath: Option[Path] = None,
     influxDb: Option[InfluxDbOptions] = None,
     mainDb: Option[DbOptions] = None,
+    timeZone: ZoneId = ZoneId.systemDefault(),
+
     devices: Option[Devices] = None,
     selectedDeviceId: Option[String] = None,
     fromCliDevice: Option[FromCliDevice] = None,
+
+    // TODO: how to extract those specific option to target submodule?
+    webAppSpecificOptions: Option[WebAppSpecificOptions] = None,
+
+
 
     // TODO: fix this little hack
     showHelp: Boolean = false

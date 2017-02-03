@@ -7,12 +7,18 @@ package ru.maizy.ambient7.webapp.bootstrap
 
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc.{ ConnectionPool, ConnectionPoolSettings }
-import ru.maizy.ambient7.webapp.AppConfig
+import ru.maizy.ambient7.core.config.Ambient7Options
 
 trait ScalikeJdbcInit extends LazyLogging {
 
-  def setupDbConnectionPool(config: AppConfig): ConnectionPool = {
+  def setupDbConnectionPool(opts: Ambient7Options): ConnectionPool = {
     logger.info("setup scalike jdbc connection pool")
+
+    if (opts.mainDb.isEmpty || opts.mainDb.exists(_.url.isEmpty)) {
+      throw new RuntimeException("main db options missing")
+    }
+
+    val dbOptions = opts.mainDb.get
 
     Class.forName("org.h2.Driver")
 
@@ -21,7 +27,7 @@ trait ScalikeJdbcInit extends LazyLogging {
     )
 
     // TODO: use exlicit named connection
-    ConnectionPool.singleton(config.dbUrl, config.dbUser, config.dbPassword, settings)
+    ConnectionPool.singleton(dbOptions.url.get, dbOptions.user, dbOptions.password, settings)
     ConnectionPool.get()
   }
 

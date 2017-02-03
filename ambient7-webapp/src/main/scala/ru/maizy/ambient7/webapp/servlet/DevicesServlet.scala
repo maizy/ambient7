@@ -6,19 +6,24 @@ package ru.maizy.ambient7.webapp.servlet
  */
 
 import spray.json.{ JsObject, pimpAny }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.data.Co2Device
 import ru.maizy.ambient7.webapp.servlet.error.IllegalPathParam
 import ru.maizy.ambient7.webapp.servlet.helper.SprayJsonSupport
-import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
+import ru.maizy.ambient7.webapp.Ambient7WebAppStack
 
-class DevicesServlet(appConfig: AppConfig)
+class DevicesServlet(val appConfig: Ambient7Options)
   extends Ambient7WebAppStack
   with SprayJsonSupport
 {
 
+  def co2Devices: List[Co2Device] = appConfig.devices.map(_.co2Devices).getOrElse(List.empty)
+
   get("/") {
     import ru.maizy.ambient7.webapp.json.Co2DeviceProtocol._
+
     JsObject(
-      "co2" -> appConfig.co2Devices.values.toJson
+      "co2" -> co2Devices.toJson
     )
   }
 
@@ -26,7 +31,7 @@ class DevicesServlet(appConfig: AppConfig)
     import ru.maizy.ambient7.webapp.json.Co2DeviceProtocol
     implicit val deviceFormat = Co2DeviceProtocol.deviceFormat
     val deviceId = params("deviceId")
-    appConfig.co2Devices.get(deviceId) match {
+    co2Devices.find(_.id == deviceId) match {
       case Some(device) => device.toJson
       case None => throw new IllegalPathParam("unknown device")
     }

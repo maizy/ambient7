@@ -29,4 +29,21 @@ object ParsingError {
   def withMessages(messages: Seq[String]): ParsingError =
     ParsingError(messages.toIndexedSeq)
 
+  def formatErrorsAndUsage(parsingError: ParsingError): String = {
+    val sep = "\n  * "
+    val errors = if (parsingError.messages.nonEmpty) {
+      s"Errors:$sep${parsingError.messages.mkString(sep)}\n"
+    } else {
+      ""
+    }
+    val usage = parsingError.usage.map(u => s"Usage: $u").getOrElse("")
+    List(errors, usage).filterNot(_ == "").mkString("\n")
+  }
+
+  def formatErrorsForLog(parsingError: ParsingError): String = {
+    val errors = parsingError.messages.mkString("; ")
+    val div = if (errors.length > 0) ": " else ""
+    s"Unable to launch app$div$errors"
+  }
+
 }

@@ -5,13 +5,13 @@
 
 ```
 cd ambient7/
-sbt '~ambient7WebApp/jetty:start'
+sbt 'ambient7WebApp/run --config=config/ambient7.conf'
 ```
 
 or with additional settings:
 ```
-sbt -Dconfig.file=/path/application.conf -Dlogback.configurationFile=src/etc/logback.dev.xml \
-    '~ambient7WebApp/jetty:start'
+sbt -Dlogback.configurationFile=ambient7-webapp/src/etc/logback.dev.xml \
+    'ambient7WebApp/run --config=config/ambient7.conf'
 ```
 
 Open [http://localhost:22480/](http://localhost:22480/) in your browser.

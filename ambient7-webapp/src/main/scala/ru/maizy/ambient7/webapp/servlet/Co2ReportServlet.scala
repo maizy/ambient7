@@ -8,15 +8,16 @@ package ru.maizy.ambient7.webapp.servlet
 import java.time.ZonedDateTime
 import scalikejdbc._
 import spray.json.{ JsNumber, JsObject, JsString, JsValue, pimpAny }
+import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.core.data.Co2Device
 import ru.maizy.ambient7.rdbms.Co2Service
-import ru.maizy.ambient7.webapp.servlet.helper.{ AppConfigSupport, DateParamsSupport, DeviceParamSupport }
+import ru.maizy.ambient7.webapp.servlet.helper.{ AppOptionsSupport, DateParamsSupport, DeviceParamSupport }
 import ru.maizy.ambient7.webapp.servlet.helper.{ PrimitiveParamsSupport, SprayJsonSupport, TimeZoneSupport }
-import ru.maizy.ambient7.webapp.{ Ambient7WebAppStack, AppConfig }
+import ru.maizy.ambient7.webapp.Ambient7WebAppStack
 
-class Co2ReportServlet(val appConfig: AppConfig)
+class Co2ReportServlet(val appOptions: Ambient7Options)
   extends Ambient7WebAppStack
-  with AppConfigSupport
+  with AppOptionsSupport
   with DateParamsSupport
   with PrimitiveParamsSupport
   with DeviceParamSupport
