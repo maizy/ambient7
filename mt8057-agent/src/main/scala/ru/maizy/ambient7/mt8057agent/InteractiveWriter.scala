@@ -4,7 +4,10 @@ package ru.maizy.ambient7.mt8057agent
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
-class InteractiveWriter(opts: AppOptions) extends StatefullWriter {
+
+import ru.maizy.ambient7.core.config.Ambient7Options
+
+class InteractiveWriter(opts: Ambient7Options) extends StatefullWriter {
   val CO2_OK = 800
   val C02_NOT_OK = 1200
 

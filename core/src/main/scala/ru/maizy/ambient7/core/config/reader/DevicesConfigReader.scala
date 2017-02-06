@@ -64,12 +64,6 @@ trait DevicesConfigReader extends UniversalConfigReader {
       .action(saveTags)
       .text { "Any additional InfluxDB record tags"}
 
-    // Deprecated
-    cliParser.opt[String]("influxdb-tags")
-      .validate(validateTags)
-      .action(saveTags)
-      .text { "Deprecated, use --agent-tags"}
-
     appendCheck { opts =>
       if (opts.fromCliDevice.isDefined && opts.fromCliDevice.exists(_.deviceType.isEmpty)) {
         failure("device type is required")

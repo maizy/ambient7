@@ -3,12 +3,13 @@ package ru.maizy.ambient7.mt8057agent
 import java.text.SimpleDateFormat
 import java.util.Date
 import com.typesafe.scalalogging.LazyLogging
+import ru.maizy.ambient7.core.config.Ambient7Options
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
-class ConsoleWriter(opts: AppOptions) extends Writer with LazyLogging {
+class ConsoleWriter(opts: Ambient7Options) extends Writer with LazyLogging {
 
   private def convertTimestamp(nanos: Long): String = {
     val millis = nanos / 1000000

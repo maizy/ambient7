@@ -16,6 +16,17 @@ class AgentTags private(val tags: IndexedSeq[AgentTag]) {
   def encoded: String = tags.map(_.encoded).mkString(",")
   override def toString: String = s"AgentTags(${tags.mkString(",")})"
   def asPairs: IndexedSeq[(String, String)] = tags.map(t => (t.name, t.value))
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[AgentTags]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: AgentTags => (that canEqual this) && tags == that.tags
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    tags.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
 }
 
 object AgentTags {
@@ -48,7 +59,7 @@ object AgentTags {
         part <- parts
         if part.count(_ == '=') == 1;
         nameValue = part.split("=")
-      ) yield AgentTag(nameValue(0), decodeTag(nameValue(1)))
+      ) yield AgentTag(decodeTag(nameValue(0)), decodeTag(nameValue(1)))
 
       if (parts.size != parsedTags.size) {
         // TODO: more precise errors

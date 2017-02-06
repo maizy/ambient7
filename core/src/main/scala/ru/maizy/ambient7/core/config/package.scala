@@ -5,8 +5,8 @@ package ru.maizy.ambient7.core
  * See LICENSE.txt for details.
  */
 
-import com.typesafe.scalalogging.{ LazyLogging, Logger }
+import com.typesafe.scalalogging.Logger
 
-package object config extends LazyLogging {
-  val configLogger: Logger = logger
+package object config {
+  val configLogger = Logger("ru.maizy.ambient7.core")
 }
