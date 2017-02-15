@@ -32,6 +32,7 @@ case class Ambient7Options(
     // TODO: how to extract those specific option to target submodule?
     webAppSpecificOptions: Option[WebAppSpecificOptions] = None,
     mt8057AgentSpecificOptions: Option[Mt8057AgentSpecificOptions] = None,
+    analysisSpecificOptions: Option[AnalysisSpecificOptions] = None,
 
     // TODO: fix this little hack
     showHelp: Boolean = false

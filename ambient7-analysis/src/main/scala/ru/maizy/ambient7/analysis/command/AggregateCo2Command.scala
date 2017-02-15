@@ -10,116 +10,124 @@ import java.time.temporal.ChronoUnit
 import scala.concurrent.duration.DurationInt
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
-import ru.maizy.ambient7.analysis.AppOptions
 import ru.maizy.ambient7.analysis.service.InfluxDbCo2Service
-import ru.maizy.ambient7.core.data.Co2Agent
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.data.{ Co2Agent, Co2Device }
 import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 import ru.maizy.ambient7.rdbms.Co2Service
-import ru.maizy.influxdbclient.{ InfluxDbClient, InfluxDbConnectionSettings }
+import ru.maizy.influxdbclient.InfluxDbClient
 
 object AggregateCo2Command extends LazyLogging {
 
-  def run(opts: AppOptions): ReturnStatus = {
-    if (opts.influxDbDatabase.isEmpty || opts.influxDbReadonlyBaseUrl.isEmpty) {
-      ReturnStatus.paramsError
-    } else {
-      val influxDbClient: InfluxDbClient = initInfluxDbClient(opts)
-      implicit val dbSession = initDbSession(opts)
-
-      val now = ZonedDateTime.now()
-      // val now = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
-      val agentId = Co2Agent(opts.influxDbAgentName, opts.influxDbTags)
-
-      val eitherDbStartDate = Co2Service.detectStartDateTime(agentId)
-
-      val eitherStartDate: Either[String, ZonedDateTime] = eitherDbStartDate
-        .right.flatMap {
-          case None =>
-            val influxDbStartDateTime = InfluxDbCo2Service.detectStartDateTime(
-              influxDbClient,
-              now,
-              agentId
-            )
-            influxDbStartDateTime match {
-              case Right(dateTime) =>
-                logger.info(s"Start date according to influxdb data is ${dateTimeForUser(dateTime)}")
-              case _ =>
-            }
-            influxDbStartDateTime
-          case Some(date) =>
-            logger.info(s"Start date according to DB data is ${dateTimeForUser(date)}")
-            Right(date)
-        }
-
-      eitherStartDate match {
-        case Left(error) =>
-          logger.error(s"Unable to detect start date for analisys: $error")
+  def run(opts: Ambient7Options): ReturnStatus = {
+    (initInfluxDbClient(opts), initDbSession(opts)) match {
+      case (Some(influxDbClient), Some(dBSession)) =>
+        val results: List[Boolean] = opts.devices
+          .map(_.co2Devices).getOrElse(List.empty)
+          .map(processDevice(_, influxDbClient, dBSession))
+        if (results.exists { r => !r }) {
+          logger.error("Some results haven't writen to DB")
           ReturnStatus.computeError
-
-        case Right(startDate) =>
-          val hourBefore = now.minusHours(1).truncatedTo(ChronoUnit.HOURS)
-          logger.info(s"Analyse data until ${dateTimeForUser(hourBefore)}")
-          var anyFailed = false
-          if (startDate.compareTo(hourBefore) < 0) {
-            val analyseResults = InfluxDbCo2Service.analyseLevelsByHour(
-              startDate, hourBefore, influxDbClient, agentId
-            )
-            logger.info(s"Computed ${analyseResults.size} new hourly results")
-            if (analyseResults.nonEmpty) {
-              logger.info("Write results to DB")
-
-            }
-
-            for (dayRes <- analyseResults.valuesIterator) {
-              Co2Service.addOrUpdateAggregate(dayRes, agentId) match {
-                case Left(e) =>
-                  anyFailed = true
-                  logger.error(s"Unable to write aggregate for ${dayRes.from}, skipping: $e")
-                case _ =>
-              }
-            }
-          }
-          if (anyFailed) {
-            logger.error("Some results haven't writen to DB")
-            ReturnStatus.computeError
-          } else {
-            ReturnStatus.success
-          }
-      }
-
+        } else {
+          ReturnStatus.success
+        }
+      case _ => ReturnStatus.paramsError
     }
-
   }
 
-  private def initInfluxDbClient(opts: AppOptions): InfluxDbClient = {
-    val influxDbDatabase = opts.influxDbDatabase.get
-    val writableSettings = InfluxDbConnectionSettings(
-      opts.influxDbBaseUrl,
-      influxDbDatabase,
-      opts.influxDbUser,
-      opts.influxDbPassword
-    )
+  private def processDevice(device: Co2Device, influxDbClient: InfluxDbClient, dbSession: DBSession): Boolean = {
+    implicit val implicitDbSession = dbSession
+    val now = ZonedDateTime.now()
+    // val now = ZonedDateTime.of(2015, 12, 3, 7, 12, 13, 14, ZoneOffset.UTC)
+    val agent = device.agent
+    logger.info(s"Process co2 device $device")
 
-    val readonlySettings = InfluxDbConnectionSettings(
-      opts.influxDbReadonlyBaseUrl.get,
-      influxDbDatabase,
-      opts.influxDbReadonlyUser,
-      opts.influxDbReadonlyPassword
-    )
+    val eitherStartDate: Either[String, ZonedDateTime] = detectStartDate(agent, influxDbClient, now)
 
-    new InfluxDbClient(
-      influxDbSettings = writableSettings,
-      _influxDbReadonlySettings = Some(readonlySettings),
-      userAgent = Some("ambient7-analysis"),
-      connectTimeout = 500.millis,
-      readTimeout = 10.seconds
-    )
+    eitherStartDate match {
+      case Left(error) =>
+        logger.error(s"Unable to detect start date for analisys: $error")
+        false
+
+      case Right(startDate) =>
+        val hourBefore = now.minusHours(1).truncatedTo(ChronoUnit.HOURS)
+        logger.info(s"Analyse data until ${ dateTimeForUser(hourBefore) }")
+        var anyFailed = false
+        if (startDate.compareTo(hourBefore) < 0) {
+          val analyseResults = InfluxDbCo2Service.analyseLevelsByHour(
+            startDate, hourBefore, influxDbClient, agent
+          )
+          logger.info(s"Computed ${ analyseResults.size } new hourly results")
+          if (analyseResults.nonEmpty) {
+            logger.info("Write results to DB")
+          }
+
+          for (dayRes <- analyseResults.valuesIterator) {
+            Co2Service.addOrUpdateAggregate(dayRes, agent).left.foreach { e =>
+              anyFailed = true
+              logger.error(s"Unable to write aggregate for ${ dayRes.from }, skipping: $e")
+            }
+          }
+        }
+        if (anyFailed) {
+          logger.error("Some results haven't writen to DB")
+          false
+        } else {
+          true
+        }
+    }
   }
 
-  private def initDbSession(opts: AppOptions): DBSession = {
-    Class.forName("org.h2.Driver")
-    ConnectionPool.singleton(opts.dbUrl, opts.dbUser, opts.dbPassword)
-    AutoSession
+  private def detectStartDate(
+      agent: Co2Agent, influxDbClient: InfluxDbClient, now: ZonedDateTime)(implicit dBSession: DBSession) = {
+
+    val eitherDbStartDate = Co2Service.detectStartDateTime(agent)
+    val eitherStartDate: Either[String, ZonedDateTime] = eitherDbStartDate
+      .right.flatMap {
+      case None =>
+        val influxDbStartDateTime = InfluxDbCo2Service.detectStartDateTime(
+          influxDbClient,
+          now,
+          agent
+        )
+        influxDbStartDateTime.right.foreach { dateTime =>
+          logger.info(s"Start date according to influxdb data is ${ dateTimeForUser(dateTime) }")
+        }
+        influxDbStartDateTime
+      case Some(date) =>
+        logger.info(s"Start date according to DB data is ${ dateTimeForUser(date) }")
+        Right(date)
+    }
+    eitherStartDate
+  }
+
+  private def initInfluxDbClient(opts: Ambient7Options): Option[InfluxDbClient] = {
+    (
+      opts.influxDb.flatMap(_.clientConnectionSettings),
+      opts.influxDb.flatMap(_.readonlyClientConnectionSetting)
+    ) match {
+      case (Some(setting), Some(readonlySettings)) =>
+        Some(
+          new InfluxDbClient(
+            influxDbSettings = setting,
+            _influxDbReadonlySettings = Some(readonlySettings),
+            userAgent = Some("ambient7-analysis"),
+            connectTimeout = 500.millis,
+            readTimeout = 10.seconds
+          )
+        )
+      case _ => None
+    }
+  }
+
+  private def initDbSession(opts: Ambient7Options): Option[DBSession] = {
+    opts.mainDb.flatMap { dbSetting =>
+      dbSetting.url.map { url =>
+        Class.forName("org.h2.Driver")
+        ConnectionPool.singleton(url, dbSetting.user, dbSetting.password)
+        AutoSession
+      }
+    }
   }
 
 }

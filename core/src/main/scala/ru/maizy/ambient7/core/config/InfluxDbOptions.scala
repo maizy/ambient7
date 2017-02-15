@@ -1,5 +1,7 @@
 package ru.maizy.ambient7.core.config
 
+import ru.maizy.influxdbclient.InfluxDbConnectionSettings
+
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
@@ -15,4 +17,25 @@ case class InfluxDbOptions(
     readonlyBaseUrl: Option[String] = None,
     readonlyUser: Option[String] = None,
     readonlyPassword: Option[String] = None
-)
+) {
+
+  lazy val clientConnectionSettings: Option[InfluxDbConnectionSettings] =
+    database.map(
+      InfluxDbConnectionSettings(
+        baseUrl,
+        _,
+        user,
+        password
+      )
+    )
+
+  lazy val readonlyClientConnectionSetting: Option[InfluxDbConnectionSettings] =
+    database.map(
+      InfluxDbConnectionSettings(
+        readonlyBaseUrl.getOrElse(baseUrl),
+        _,
+        readonlyUser,
+        readonlyPassword
+      )
+    )
+}
