@@ -1,17 +1,17 @@
 package ru.maizy.ambient7.webapp.tests.servlet
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.webapp.AppConfig
+import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.webapp.servlet.DevicesServlet
 import ru.maizy.ambient7.webapp.tests.{ BaseServletTest, JsonAsserts }
 
 class DevicesServletSpec extends BaseServletTest with JsonAsserts {
-  override def initServlets(config: AppConfig): Unit = {
-    addServlet(new DevicesServlet(config), "/devices")
+  override def initServlets(options: Ambient7Options): Unit = {
+    addServlet(new DevicesServlet(options), "/devices")
   }
 
   "/devices" should "return devices list" in {

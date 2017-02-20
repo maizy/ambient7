@@ -7,6 +7,7 @@ val scalacOpts = Seq(
   "-encoding", "UTF-8",
   "-deprecation",
   "-unchecked",
+  "-feature",
   "-explaintypes",
   "-Xfatal-warnings",
   "-Xlint:_",
@@ -16,7 +17,8 @@ val scalacOpts = Seq(
   "-Ywarn-nullary-override",
   "-Ywarn-nullary-unit",
   "-Ywarn-numeric-widen",
-  "-Ywarn-unused"
+  "-Ywarn-unused",
+  "-Ywarn-value-discard"
 )
 lazy val commonSettings = Seq(
   organization := "ru.maizy",
@@ -33,6 +35,7 @@ lazy val commonDependencies = Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.7",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
     "com.typesafe" % "config" % "1.3.1",
+    "com.github.kxbmap" %% "configs" % "0.4.4",
     "org.scalatest" %% "scalatest" % "3.0.0" % "test"
   )
 )
@@ -67,6 +70,7 @@ lazy val core = project
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(jsonDependencies: _*)
+  .settings(cliDependencies: _*)
   .dependsOn(influxDbClient)
 
 lazy val rdbmsService = project
@@ -96,7 +100,6 @@ lazy val ambient7Analysis = project
   .settings(commonSettings: _*)
   .settings(commonDependencies: _*)
   .settings(rdbmsDependencies: _*)
-  .settings(cliDependencies: _*)
   .settings(jsonDependencies: _*)
   .dependsOn(core)
   .dependsOn(rdbmsService)

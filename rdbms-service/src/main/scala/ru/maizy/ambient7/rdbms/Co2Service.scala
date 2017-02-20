@@ -1,7 +1,7 @@
 package ru.maizy.ambient7.rdbms
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 
@@ -12,7 +12,7 @@ import scala.annotation.tailrec
 import scala.util.{ Failure, Success, Try }
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
-import ru.maizy.ambient7.core.data.{ Co2AgentId, Co2AggregatedLevels }
+import ru.maizy.ambient7.core.data.{ Co2Agent, Co2AggregatedLevels }
 import ru.maizy.ambient7.core.util.DateTimeIterator
 import ru.maizy.ambient7.core.util.Dates.dateTimeForUser
 
@@ -21,7 +21,7 @@ object Co2Service extends LazyLogging {
   val DB_ZONE = ZoneOffset.UTC
   val DB_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE
 
-  def detectStartDateTime(agentId: Co2AgentId)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
+  def detectStartDateTime(agentId: Co2Agent)(implicit db: DBSession): Either[String, Option[ZonedDateTime]] = {
     // TODO: readonly transaction
 
     val query = sql"""
@@ -53,7 +53,7 @@ object Co2Service extends LazyLogging {
 
   def addOrUpdateAggregate(
       aggregate: Co2AggregatedLevels,
-      agentId: Co2AgentId)(implicit db: DBSession): Either[String, Unit] = {
+      agentId: Co2Agent)(implicit db: DBSession): Either[String, Unit] = {
 
     val day = dateTimeToDbDate(aggregate.from)
     val hour = dateTimeToDbHour(aggregate.from)
@@ -72,13 +72,13 @@ object Co2Service extends LazyLogging {
       )"""
 
     Try(query.execute().apply()) match {
-      case Success(_) => Right(Unit)
+      case Success(_) => Right(())
       case Failure(e) => Left(s"Unable to upsert aggregation data: $e")
     }
   }
 
   def getHourlyAggregates(
-      agentId: Co2AgentId,
+      agentId: Co2Agent,
       from: ZonedDateTime,
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 
@@ -129,7 +129,7 @@ object Co2Service extends LazyLogging {
   }
 
   def computeDailyAggregates(
-      agentId: Co2AgentId,
+      agentId: Co2Agent,
       from: ZonedDateTime,
       to: ZonedDateTime)(implicit db: DBSession): Seq[Co2AggregatedLevels] = {
 

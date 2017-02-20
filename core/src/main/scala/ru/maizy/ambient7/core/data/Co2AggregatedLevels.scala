@@ -1,7 +1,7 @@
 package ru.maizy.ambient7.core.data
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 
@@ -14,7 +14,7 @@ case class Co2AggregatedLevels(
     unknownLevel: Int,
     from: ZonedDateTime,
     to: ZonedDateTime,
-    agentId: Co2AgentId
+    agentId: Co2Agent
 ) {
   override def toString: String = s"Co2AggregatedLevels(low=$lowLevel, med=$mediumLevel, high=$highLevel, " +
       s"unknown=$unknownLevel, $from->$to, agent=${agentId.agentName}, tags=${agentId.tags})"

@@ -66,7 +66,7 @@ java -jar ambient7-mt8057-agent-x.x.x.jar --writers=interactive
 
 java -jar ambient7-mt8057-agent-x.x.x.jar --writers=influxdb \
     --influxdb-database=ambient7 \
-    --influxdb-baseurl=http://localhost:8086/write \
+    --influxdb-baseurl=http://localhost:8086/ \
     --influxdb-user=user --influxdb-password=123
 ```
 
@@ -90,9 +90,7 @@ java -jar ambient7-analysis-x.x.x.jar --help
 ### Init or migrate DB
 
 ```
-java -jar ambient7-analysis-x.x.x.jar init-db \
-    --db-user=ambient7 \
-    '--db-url=jdbc:h2:file:/path/to/database/analysis;AUTO_SERVER=TRUE'
+java -jar ambient7-analysis-x.x.x.jar --config=ambient7.conf init-db
 ```
 
 ### Co2 hourly report
@@ -100,16 +98,7 @@ java -jar ambient7-analysis-x.x.x.jar init-db \
 Add to crontab or any other scheduler the command:
 
 ```
-java -jar ambient7-analysis-x.x.x.jar aggregate-co2 \
-    --influxdb-database=ambient7 \
-    --influxdb-agent-name=main \
-    '--influxdb-baseurl=http://127.0.0.1:8086/' \
-    --influxdb-user=ambient7_rw \
-    --influxdb-password=123 \
-    --influxdb-readonly-user=ambient7_ro \
-    --influxdb-readonly-password=123 \
-    --db-user=ambient7 \
-    '--db-url=jdbc:h2:file:/path/to/database/analysis;AUTO_SERVER=TRUE'
+java -jar ambient7-analysis-x.x.x.jar --config=ambient7.conf aggregate-co2
 ```
 
 

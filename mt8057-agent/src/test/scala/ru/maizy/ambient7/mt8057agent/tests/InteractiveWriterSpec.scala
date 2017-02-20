@@ -1,15 +1,16 @@
 package ru.maizy.ambient7.mt8057agent.tests
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.mt8057agent.{ AppOptions, Co2, Temp, InteractiveWriter, DeviceUp, TempUpdated, Co2Updated }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.mt8057agent.{ Co2, Co2Updated, DeviceUp, InteractiveWriter, Temp, TempUpdated }
 
 class InteractiveWriterSpec extends AbstractBaseSpec with WritersTestUtils {
 
-  val w = new InteractiveWriter(AppOptions())
+  val w = new InteractiveWriter(Ambient7Options())
 
   val co2 = Co2(1123)
   val temp = Temp(33.33)
@@ -36,7 +37,7 @@ class InteractiveWriterSpec extends AbstractBaseSpec with WritersTestUtils {
   }
 
   it should "output temp without co2" in {
-    val w2 = new InteractiveWriter(AppOptions())
+    val w2 = new InteractiveWriter(Ambient7Options())
     checkWriterEvent(w2, DeviceUp(time))
     val (out, err) = checkWriterEvent(w2, TempUpdated(temp, time))
     err shouldBe ""

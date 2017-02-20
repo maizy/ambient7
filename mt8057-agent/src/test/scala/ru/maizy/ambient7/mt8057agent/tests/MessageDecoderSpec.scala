@@ -5,7 +5,7 @@ import org.scalatest.TryValues
 import ru.maizy.ambient7.mt8057agent.{ MessageDecoder, Co2, Temp }
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 class MessageDecoderSpec

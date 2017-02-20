@@ -1,11 +1,12 @@
-package ru.maizy.ambient7.core.tests
+package ru.maizy.ambient7.core.tests.util
 
 import java.time.temporal.ChronoUnit
 import java.time.{ ZoneOffset, ZonedDateTime }
+import ru.maizy.ambient7.core.tests.BaseSpec
 import ru.maizy.ambient7.core.util.DateTimeIterator
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 class DateTimeIteratorSpec extends BaseSpec {

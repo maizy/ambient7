@@ -1,7 +1,7 @@
 package ru.maizy.ambient7.mt8057agent
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2015
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2015-2017
  * See LICENSE.txt for details.
  */
 
@@ -163,6 +163,7 @@ class MT8057Service(
       // just fire event, device loop will find device on next step
       queue.add(DeviceUp(currentNanoTime()))
     }
+    ()
   }
 
   override def hidFailure(event: HidServicesEvent): Unit = {

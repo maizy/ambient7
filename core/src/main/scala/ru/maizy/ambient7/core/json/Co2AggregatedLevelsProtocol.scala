@@ -1,14 +1,14 @@
 package ru.maizy.ambient7.core.json
 
 /**
- * Copyright (c) Nikita Kovaliov, maizy.ru, 2016
+ * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
 
 import spray.json.{ JsNumber, JsObject, JsValue, RootJsonFormat, pimpAny }
 import ru.maizy.ambient7.core.data.Co2AggregatedLevels
 
-trait Co2AggregatedLevelsProtocol extends Co2AgentIdProtocol with DateTimeProtocol {
+trait Co2AggregatedLevelsProtocol extends Co2AgentProtocol with DateTimeProtocol {
 
   implicit object Co2AggregatedLevelsFormat extends RootJsonFormat[Co2AggregatedLevels] {
 
