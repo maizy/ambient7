@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (in progress)
+
+* universal config for all apps & agents
+
+
 ## 0.3.0 (2016-12-06)
 
 * webui: co2 levels report
