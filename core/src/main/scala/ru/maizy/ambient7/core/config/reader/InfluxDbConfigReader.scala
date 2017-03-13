@@ -5,7 +5,8 @@ package ru.maizy.ambient7.core.config.reader
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, Defaults, InfluxDbOptions }
+import ru.maizy.ambient7.core.config.options.InfluxDbOptions
+import ru.maizy.ambient7.core.config.{ Ambient7Options, Defaults }
 
 
 trait InfluxDbConfigReader extends UniversalConfigReader {

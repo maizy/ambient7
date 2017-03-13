@@ -6,8 +6,9 @@ package ru.maizy.ambient7.core.tests.config.reader
  */
 
 import java.nio.file.Paths
+import ru.maizy.ambient7.core.config.options.DbOptions
 import ru.maizy.ambient7.core.config.reader.UniversalConfigReader
-import ru.maizy.ambient7.core.config.{ Ambient7Options, DbOptions, ParsingError }
+import ru.maizy.ambient7.core.config.{ Ambient7Options, ParsingError }
 import ru.maizy.ambient7.core.tests.BaseSpec
 
 class UniversalConfigReaderSpec extends BaseSpec with SampleReaders {

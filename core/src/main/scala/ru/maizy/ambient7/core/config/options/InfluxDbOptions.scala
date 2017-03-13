@@ -1,11 +1,12 @@
-package ru.maizy.ambient7.core.config
-
-import ru.maizy.influxdbclient.InfluxDbConnectionSettings
+package ru.maizy.ambient7.core.config.options
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2016-2017
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.core.config.Defaults
+import ru.maizy.influxdbclient.InfluxDbConnectionSettings
 
 case class InfluxDbOptions(
     database: Option[String] = None,

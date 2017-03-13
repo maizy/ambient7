@@ -8,7 +8,8 @@ package ru.maizy.ambient7.mt8057agent
 import scala.util.{ Failure, Success, Try }
 import scalaj.http.{ BaseHttp, HttpOptions, HttpRequest, HttpResponse }
 import com.typesafe.scalalogging.LazyLogging
-import ru.maizy.ambient7.core.config.{ Ambient7Options, InfluxDbOptions }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.config.options.InfluxDbOptions
 import ru.maizy.ambient7.core.data.{ AgentTag, AgentTags }
 
 class InfluxDbWriter(opts: Ambient7Options) extends Writer with LazyLogging {

@@ -5,7 +5,8 @@ package ru.maizy.ambient7.mt8057agent.tests
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, InfluxDbOptions }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.config.options.InfluxDbOptions
 import ru.maizy.ambient7.core.data.{ AgentTags, Co2Agent, Co2Device, Devices }
 import ru.maizy.ambient7.mt8057agent._
 
