@@ -5,6 +5,10 @@ package ru.maizy.ambient7.core.data
  * See LICENSE.txt for details.
  */
 
-case class Co2Device(id: String, agent: Co2Agent) extends Device {
+import ru.maizy.ambient7.core.notifications.WatcherSpec
+
+case class Co2Device(id: String, agent: Co2Agent, watchersSpecs: List[WatcherSpec] = List.empty)
+  extends Device
+{
   val deviceType = DeviceType.CO2
 }

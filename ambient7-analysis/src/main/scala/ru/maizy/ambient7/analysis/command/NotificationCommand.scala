@@ -11,6 +11,7 @@ object NotificationCommand {
 
   def run(opts: Ambient7Options): ReturnStatus = {
     println(opts.notifications.get)
+    println(opts.devices.get)
     ReturnStatus.success
   }
 }

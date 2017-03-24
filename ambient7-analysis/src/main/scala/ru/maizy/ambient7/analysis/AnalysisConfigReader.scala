@@ -25,7 +25,7 @@ object AnalysisConfigReader
   }
 
   override def fillReader(): Unit = {
-    fillDevicesOptions()
+    fillDevicesOptions(parseWatchersConfig = true)
     fillConfigOptions(requireConfig = true)
     fillInfluxDbOptions()
     fillDbOptions()

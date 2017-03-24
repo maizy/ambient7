@@ -19,15 +19,6 @@ trait NotificationsConfigReader extends UniversalConfigReader {
   import UniversalConfigReader._
   import configs.syntax._
 
-  implicit class ErrorOrFlatmap[T, V](result: configs.Result[T]) {
-    def errorOrFlatmap(map: T => Either[Seq[String], V]): Either[Seq[String], V] = {
-      result.toEither match {
-        case Right(r) => map(r)
-        case Left(errors) => Left(errors.messages)
-      }
-    }
-  }
-
   private def notificationsOpts(
       opts: Ambient7Options)(save: NotificationsOptions => NotificationsOptions): Ambient7Options =
     opts.copy(notifications = Some(save(opts.notifications.getOrElse(NotificationsOptions()))))
@@ -55,7 +46,12 @@ trait NotificationsConfigReader extends UniversalConfigReader {
     ()
   }
 
-  // TODO: generalize copy-paste from ru.maizy.ambient7.core.config.reader.DevicesConfigReader#fillDevicesOptions
+  /**
+   * TODO: generalize copy-paste in
+   *   * here
+   *   * [[ru.maizy.ambient7.core.config.reader.DevicesConfigReader.fillDevicesOptions]]
+   *   * [[ru.maizy.ambient7.core.config.reader.DevicesConfigReader.extractWatchers]]
+   */
   private def addActionsConfigRule(): Unit = {
 
     appendConfigRule { (config, opts) =>
@@ -66,8 +62,8 @@ trait NotificationsConfigReader extends UniversalConfigReader {
 
           @tailrec
           def iter(
-              acc: Either[Seq[String], Seq[ActionSpec]],
-              actionsConfig: List[Config]): Either[Seq[String], Seq[ActionSpec]] =
+              acc: Either[Seq[String], List[ActionSpec]],
+              actionsConfig: List[Config]): Either[Seq[String], List[ActionSpec]] =
           {
             actionsConfig match {
               case Nil => acc
@@ -75,7 +71,7 @@ trait NotificationsConfigReader extends UniversalConfigReader {
                 val current = extractAction(actionConfig) match {
                   // don't append action if there was error on previous steps
                   case Right(action) if acc.isRight =>
-                    Right(acc.right.toOption.getOrElse(Seq.empty) :+ action)
+                    Right(acc.right.toOption.getOrElse(List.empty) :+ action)
                   // always replace previous success with errors
                   case Left(errors) =>
                     Left(acc.left.toOption.getOrElse(Seq.empty) ++: errors)
@@ -92,7 +88,7 @@ trait NotificationsConfigReader extends UniversalConfigReader {
               if (dublicates.nonEmpty) {
                 Left(ParsingError.withMessages(dublicates.map{id => s"more than one action with id '$id'"}.toSeq))
               } else {
-                Right(notificationsOpts(opts)(_.copy(actionsSpecs = actions.toList)))
+                Right(notificationsOpts(opts)(_.copy(actionsSpecs = actions)))
               }
             case Left(errors) => Left(ParsingError.withMessages(errors))
           }

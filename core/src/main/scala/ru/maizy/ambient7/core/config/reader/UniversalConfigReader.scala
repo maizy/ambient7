@@ -259,6 +259,14 @@ trait UniversalConfigReader {
     }
   }
 
+  implicit class ErrorOrFlatmap[T, V](result: configs.Result[T]) {
+    def errorOrFlatmap(map: T => Either[Seq[String], V]): Either[Seq[String], V] = {
+      result.toEither match {
+        case Right(r) => map(r)
+        case Left(errors) => Left(errors.messages)
+      }
+    }
+  }
 }
 
 
