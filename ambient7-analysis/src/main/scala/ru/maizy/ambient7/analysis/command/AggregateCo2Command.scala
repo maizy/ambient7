@@ -7,9 +7,9 @@ package ru.maizy.ambient7.analysis.command
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import scala.concurrent.duration.DurationInt
 import com.typesafe.scalalogging.LazyLogging
 import scalikejdbc._
+import ru.maizy.ambient7.analysis.influxdb
 import ru.maizy.ambient7.analysis.service.InfluxDbCo2Service
 import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.core.data.{ Co2Agent, Co2Device }
@@ -20,7 +20,7 @@ import ru.maizy.influxdbclient.InfluxDbClient
 object AggregateCo2Command extends LazyLogging {
 
   def run(opts: Ambient7Options): ReturnStatus = {
-    (initInfluxDbClient(opts), initDbSession(opts)) match {
+    (influxdb.buildClient(opts), initDbSession(opts)) match {
       case (Some(influxDbClient), Some(dBSession)) =>
         val results: List[Boolean] = opts.devices
           .map(_.co2Devices).getOrElse(List.empty)
@@ -99,25 +99,6 @@ object AggregateCo2Command extends LazyLogging {
         Right(date)
     }
     eitherStartDate
-  }
-
-  private def initInfluxDbClient(opts: Ambient7Options): Option[InfluxDbClient] = {
-    (
-      opts.influxDb.flatMap(_.clientConnectionSettings),
-      opts.influxDb.flatMap(_.readonlyClientConnectionSetting)
-    ) match {
-      case (Some(setting), Some(readonlySettings)) =>
-        Some(
-          new InfluxDbClient(
-            influxDbSettings = setting,
-            _influxDbReadonlySettings = Some(readonlySettings),
-            userAgent = Some("ambient7-analysis"),
-            connectTimeout = 500.millis,
-            readTimeout = 10.seconds
-          )
-        )
-      case _ => None
-    }
   }
 
   private def initDbSession(opts: Ambient7Options): Option[DBSession] = {
