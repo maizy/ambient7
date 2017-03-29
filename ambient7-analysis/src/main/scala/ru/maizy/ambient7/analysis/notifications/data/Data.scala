@@ -5,6 +5,7 @@ package ru.maizy.ambient7.analysis.notifications.data
  * See LICENSE.txt for details.
  */
 
+import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import ru.maizy.influxdbclient.InfluxDbClient
 
@@ -14,9 +15,9 @@ class Data private (influxDbClient: InfluxDbClient, val limit: Int) {
   val temp = new DataPoints[Option[Float]](limit)
   val availability = new DataPoints[Boolean](limit)
 
-  def update(): Either[Seq[String], Unit] = {
+  def update(): Future[Unit] = {
     // FIXME
-    Left(Seq("todo"))
+    Future.failed(new Error("todo"))
   }
 }
 
