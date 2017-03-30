@@ -109,4 +109,4 @@ java -jar ambient7-analysis-x.x.x.jar --config=ambient7.conf aggregate-co2
 
 ## License
 
-[The MIT License](LICENSE.txt)
+[Apache 2.0](LICENSE.txt)
