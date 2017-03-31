@@ -45,7 +45,7 @@ object InfluxDbCo2Service extends LazyLogging {
       "group by time(1m)"
 
     influxDbClient
-      .query(query)
+      .syncQuery(query)
       .left.map(e => s"error when requesting data from influxdb: $e")
       .right.flatMap { results =>
         val totalMinutes = time.Duration.between(from, until).toMinutes.toInt
@@ -111,7 +111,7 @@ object InfluxDbCo2Service extends LazyLogging {
 
       val lowerBound = upperBound.minusDays(1).truncatedTo(ChronoUnit.DAYS)
       val query = buildQuery(lowerBound, upperBound)
-      influxDbClient.query(query) match {
+      influxDbClient.syncQuery(query) match {
         case Left(error) =>
           Left(s"Unable to perform query for $lowerBound - $upperBound: ${error.message}")
 

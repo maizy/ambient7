@@ -11,6 +11,7 @@
     <logger name="ru.maizy.ambient7" level="DEBUG"/>
     <logger name="ru.maizy.influxdbclient" level="DEBUG"/>
     <logger name="scalikejdbc" level="INFO"/>
+    <logger name="com.ning.http.client" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>

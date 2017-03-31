@@ -9,7 +9,7 @@ val scalacOpts = Seq(
   "-unchecked",
   "-feature",
   "-explaintypes",
-  "-Xfatal-warnings",
+  // "-Xfatal-warnings",
   "-Xlint:_",
   "-Ywarn-dead-code",
   "-Ywarn-inaccessible",
@@ -42,7 +42,8 @@ lazy val commonDependencies = Seq(
 
 lazy val httpClientDependencies = Seq(
   libraryDependencies ++= Seq(
-    "org.scalaj" %% "scalaj-http" % "2.3.0"
+    "org.scalaj" %% "scalaj-http" % "2.3.0", // TODO: iss #39: remove sync methods and this dependancy
+    "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
   )
 )
 

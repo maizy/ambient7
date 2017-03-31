@@ -6,20 +6,23 @@ package ru.maizy.influxdbclient.util
  */
 object Escape {
 
-  def encodeKey(key: String): String = key.replace("\"", "\\\"")  // " -> \"
+  def encodeIdentifier(key: String): String = key.replace("\"", "\\\"")  // " -> \"
 
-  def escapeKey(key: String): String = "\"" + encodeKey(key) + "\""
+  def escapeIdentifier(key: String): String = "\"" + encodeIdentifier(key) + "\""
+
+  def decodeIdentifier(value: String): String = value.replace("\\\"", "\"")
+
+
+  def encodeValue(value: String): String = value.replace("'", "\\'")
+
+  def decodeValue(value: String): String = value.replace("\\'", "'")
+
+  def escapeValue(value: String): String = "'" + encodeValue(value) + "'"
 
 
   def encodeTag(key: String): String = key.replace(",", "\\,")
 
   def decodeTag(key: String): String = key.replace("\\,", ",")
-
-
-  // TODO: build right replacement based on spec
-  def encodeValue(value: String): String = value.replace("'", "\\'")
-
-  def escapeValue(value: String): String = "'" + encodeValue(value) + "'"
 
   def tagsToQueryCondition(tags: IndexedSeq[(String, String)]): String = {
     if (tags.isEmpty) {
@@ -28,7 +31,7 @@ object Escape {
       tags
         .map { pair =>
           val (name, value) = pair
-          encodeKey(name) + " = " + encodeValue(value)
+          encodeIdentifier(name) + " = " + encodeValue(value)
         }
         .mkString(" and ")
     }

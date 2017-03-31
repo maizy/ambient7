@@ -6,14 +6,18 @@ package ru.maizy.influxdbclient
  */
 
 import java.net.URLEncoder
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
+import scala.collection.JavaConverters.{ collectionAsScalaIterableConverter, mapAsScalaMapConverter }
 import scala.util.{ Failure, Success, Try }
 import scalaj.http.{ BaseHttp, HttpOptions, HttpResponse }
 import com.typesafe.scalalogging.LazyLogging
+import dispatch.{ Http, Req, as, implyRequestHandlerTuple, url }
 import ru.maizy.influxdbclient.data.{ ErrorDto, QueryResult }
 import ru.maizy.influxdbclient.responses.QueryResultsProtocol._
 import spray.json.{ DeserializationException, JsonParser, ParserInput }
 
+// TODO: remove sync methods (iss #39)
 class InfluxDbClient(
     val influxDbSettings: InfluxDbConnectionSettings,
     val userAgent: Option[String] = None,
@@ -37,9 +41,43 @@ class InfluxDbClient(
       )
     )
 
-  def rawDataQuery(query: String): Either[ErrorDto, HttpResponse[Array[Byte]]] = {
+
+  def rawDataQuery(query: String, readOnly: Boolean = true)(implicit ec: ExecutionContext): Future[RawHttpResponse] = {
+    val settings = if (readOnly) influxDbReadonlySettings else influxDbSettings
+    logger.debug(s"${settings.user}@${settings.db}: $query")
+    val request = buildBaseRequest("query", settings)
+      .addQueryParameter("db", settings.db)
+      .addQueryParameter("q", query)
+
+    Http(request > as.Response { response =>
+      val headers = response.getHeaders.asScala.mapValues(_.asScala.toIndexedSeq).toMap
+      RawHttpResponse(response.getStatusCode, response.getResponseBodyAsBytes, headers)
+    })
+  }
+
+  def query(query: String, readOnly: Boolean = true)(implicit ec: ExecutionContext): Future[QueryResult] = {
+    rawDataQuery(query, readOnly) map { raw =>
+      parseQueryResult(raw) match {
+        case Right(r) => r
+        case Left(error) => throw new Error(error.message, error.cause)
+      }
+
+    }
+  }
+
+  // TODO: remove ErrorDto use Error instead
+  private def parseQueryResult(response: RawHttpResponse): Either[ErrorDto, QueryResult] = {
+    if (response.code != 200) {
+      Left(parserErrorResponse(response))
+    } else {
+      parserQueryResponse(response)
+    }
+  }
+
+  @deprecated("use async methods", "0.4")
+  def syncRawDataQuery(query: String): Either[ErrorDto, HttpResponse[Array[Byte]]] = {
     logger.debug(s"db: ${influxDbReadonlySettings.db}, query: $query")
-    val request = buildBaseRequest("query", influxDbReadonlySettings)
+    val request = buildBaseSyncRequest("query", influxDbReadonlySettings)
       .param("db", influxDbReadonlySettings.db)
       .param("q", query)
 
@@ -49,17 +87,15 @@ class InfluxDbClient(
     }
   }
 
-  def query(query: String): Either[ErrorDto, QueryResult] = {
-    rawDataQuery(query).right.flatMap { response =>
-      if (response.code != 200) {
-        Left(parserErrorResponse(response))
-      } else {
-        parserQueryResponse(response)
-      }
+  @deprecated("use async methods", "0.4")
+  def syncQuery(query: String): Either[ErrorDto, QueryResult] = {
+    syncRawDataQuery(query).right.flatMap { response =>
+      parseQueryResult(RawHttpResponse(response.code, response.body, response.headers))
     }
   }
 
-  private def parserErrorResponse(response: HttpResponse[Array[Byte]]): ErrorDto =
+  // TODO: remove ErrorDto use Error instead
+  private def parserErrorResponse(response: RawHttpResponse): ErrorDto =
     Try(JsonParser(ParserInput(response.body)).convertTo[ErrorDto]) match {
       case Success(error) => error
       case Failure(e: DeserializationException) =>
@@ -68,7 +104,8 @@ class InfluxDbClient(
         ErrorDto(s"unknown response deserialization error (response code ${response.code})", Some(e))
     }
 
-  private def parserQueryResponse(response: HttpResponse[Array[Byte]]): Either[ErrorDto, QueryResult] =
+  // TODO: remove ErrorDto use Error instead
+  private def parserQueryResponse(response: RawHttpResponse): Either[ErrorDto, QueryResult] =
     Try(JsonParser(ParserInput(response.body)).convertTo[QueryResult]) match {
       case Success(result) =>
         Right(result)
@@ -78,7 +115,7 @@ class InfluxDbClient(
         Left(ErrorDto("unknown response deserialization error", Some(e)))
     }
 
-  private def buildBaseRequest(method: String, settings: InfluxDbConnectionSettings) = {
+  private def buildBaseSyncRequest(method: String, settings: InfluxDbConnectionSettings) = {
     val request = httpClient.apply(buildUri(method, settings))
     (settings.user, settings.password) match {
       case (Some(user), Some(password)) => request.auth(user, password)
@@ -86,6 +123,15 @@ class InfluxDbClient(
     }
   }
 
+  private def buildBaseRequest(method: String, settings: InfluxDbConnectionSettings): Req  = {
+    val request = url(buildUri(method, settings))
+    (settings.user, settings.password) match {
+      case (Some(user), Some(password)) => request.as(user, password)
+      case _ => request
+    }
+  }
+
+  // TODO: use dispatch.url constructor instead of a string
   private def buildUri(method: String, settings: InfluxDbConnectionSettings): String =
     settings.baseUrl.stripSuffix("/") + "/" + urlencode(method)
 

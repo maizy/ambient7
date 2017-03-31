@@ -5,7 +5,7 @@ package ru.maizy.ambient7.analysis.notifications.data
  * See LICENSE.txt for details.
  */
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 import ru.maizy.influxdbclient.InfluxDbClient
 
@@ -16,8 +16,11 @@ class Data private (influxDbClient: InfluxDbClient, val limit: Int) {
   val availability = new DataPoints[Boolean](limit)
 
   def update(): Future[Unit] = {
-    // FIXME
-    Future.failed(new Error("todo"))
+    implicit val ec = ExecutionContext.Implicits.global
+    influxDbClient.query("select ppm from co2 limit 10").map { res =>
+      println(res)
+      ()
+    }
   }
 }
 
