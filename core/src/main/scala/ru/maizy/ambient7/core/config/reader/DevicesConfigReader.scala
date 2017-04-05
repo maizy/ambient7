@@ -278,7 +278,7 @@ trait DevicesConfigReader extends UniversalConfigReader {
               watcherSpec <- device.watchersSpecs;
               actionId <- watcherSpec.actionsIds
               if !availableActionsIds.contains(actionId)
-            ) yield s"watcher '${watcherSpec.watcherType}' of device '${device.id}' contains unknown action $actionId"
+            ) yield s"watcher '${watcherSpec.watcherType}' of device '${device.id}' contains unknown action '$actionId'"
           }
         }
         .getOrElse(List.empty)

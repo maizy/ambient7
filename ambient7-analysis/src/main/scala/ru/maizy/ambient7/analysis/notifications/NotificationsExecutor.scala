@@ -5,26 +5,30 @@ package ru.maizy.ambient7.analysis.notifications
  * See LICENSE.txt for details.
  */
 
-import java.time.ZonedDateTime
+import java.time.{ ZoneId, ZoneOffset, ZonedDateTime }
 import scala.concurrent.{ ExecutionContext, Future, Promise }
 import scala.concurrent.duration.DurationInt
-import scala.util.Success
+import scala.util.{ Failure, Success }
 import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.analysis.influxdb
-import ru.maizy.ambient7.analysis.notifications.data.Data
+import ru.maizy.ambient7.analysis.notifications.data.{ Co2Data, Data }
+import ru.maizy.ambient7.core.data.Device
 
 class NotificationsExecutor(opts: Ambient7Options) {
+  private case class WatchedDevice(device: Device, data: Data)
+
   private val logger = notificationsLogger
-  var data: Option[Data] = None
-  val finishPromise: Option[Future[Unit]] = None
+  private var watchedDevices: List[WatchedDevice] = List.empty
+  private var finishPromise: Option[Promise[Unit]] = None
 
   private implicit val notificationContext = ExecutionContext.global
 
   def start(): Future[Unit] = {
-    val finishPromise = Promise[Unit]()
+    val promise = Promise[Unit]()
+    finishPromise = Some(promise)
 
     def onFailureProxyToPromise[T](future: Future[T]): Future[T] = {
-      future onFailure { case error: Throwable => finishPromise.failure(error) }
+      future onFailure { case error: Throwable => promise.failure(error) }
       future
     }
 
@@ -32,7 +36,7 @@ class NotificationsExecutor(opts: Ambient7Options) {
       onFailureProxyToPromise(sheduleDataUpdate())
     }
 
-    finishPromise.future
+    promise.future
   }
 
   private def init(): Future[Unit] = {
@@ -43,8 +47,12 @@ class NotificationsExecutor(opts: Ambient7Options) {
         // TODO: init watchers
         // FIXME: tmp
         val maxRequestedDuration = 20.minutes
-
-        data = Some(Data(influxDbClient, refreshRate, maxRequestedDuration))
+        val device = opts.co2Devices.head
+        watchedDevices =
+          WatchedDevice(
+            device,
+            new Co2Data(device.agent, influxDbClient, refreshRate, maxRequestedDuration)
+          ) :: watchedDevices
         Future.successful(())
       case _ => Future.failed(new Error("Some options required for notifications not provided"))
     }
@@ -52,14 +60,14 @@ class NotificationsExecutor(opts: Ambient7Options) {
 
   // FIXME: add scheduler based on ScheduledExecutorService, current solution blocks one of EC thread
   private def sheduleDataUpdate(step: Long = 0): Future[Unit] = {
-    (opts.notifications.map(_.refreshRate), data) match {
+    opts.notifications.map(_.refreshRate) match {
 
-      case (Some(refreshRate), Some(dataContainer)) =>
+      case Some(refreshRate) =>
         val start = ZonedDateTime.now()
         val nextUpdate = start.plusSeconds(refreshRate.toSeconds)
 
         logger.debug(s"Updating notification data, step #$step")
-        val dataUpdateFuture = dataUpdate(dataContainer)
+        val dataUpdateFuture = updateData()
 
         def checkAndScheduleNext(): Unit = {
           val end = ZonedDateTime.now()
@@ -78,19 +86,33 @@ class NotificationsExecutor(opts: Ambient7Options) {
         dataUpdateFuture onComplete {
           case Success(_) =>
             // FIXME: tmp, remove $data
-            logger.debug(s"Notification data has updated successful, step #$step: $data")
+            logger.debug(s"Notification data has updated successful, step #$step")
             checkAndScheduleNext()
 
-          case util.Failure(e) =>
+          case Failure(e) =>
             logger.error(s"Notification data hasn't updated, step #$step", e)
             checkAndScheduleNext()
         }
 
         Future.successful(())
 
-        case _ => Future.failed(new Error("Requirements for date update not defined"))
+        case _ => Future.failed(new Error("Requirements for date update isn't defined"))
     }
   }
 
-  private def dataUpdate(dataContainer: Data): Future[Unit] = dataContainer.update()
+  private def updateData(): Future[Unit] = {
+    // FIXME: tmp
+    val now = ZonedDateTime.of(2017, 3, 31, 16, 30, 13, 0, ZoneOffset.UTC)
+      .withZoneSameInstant(ZoneId.systemDefault())
+
+    Future
+      .sequence(watchedDevices.map(_.data.update(now)))
+      .map { _ =>
+        // FIXME tmp
+        for (device <- watchedDevices) {
+          println(s"data for device ${device.device} updated\n ${device.data}")
+        }
+        ()
+      }
+  }
 }

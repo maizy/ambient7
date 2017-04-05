@@ -42,9 +42,10 @@ class InfluxDbClient(
     )
 
 
+
   def rawDataQuery(query: String, readOnly: Boolean = true)(implicit ec: ExecutionContext): Future[RawHttpResponse] = {
     val settings = if (readOnly) influxDbReadonlySettings else influxDbSettings
-    logger.debug(s"${settings.user}@${settings.db}: $query")
+    logQuery(settings, query)
     val request = buildBaseRequest("query", settings)
       .addQueryParameter("db", settings.db)
       .addQueryParameter("q", query)
@@ -76,7 +77,7 @@ class InfluxDbClient(
 
   @deprecated("use async methods", "0.4")
   def syncRawDataQuery(query: String): Either[ErrorDto, HttpResponse[Array[Byte]]] = {
-    logger.debug(s"db: ${influxDbReadonlySettings.db}, query: $query")
+    logQuery(influxDbReadonlySettings, query)
     val request = buildBaseSyncRequest("query", influxDbReadonlySettings)
       .param("db", influxDbReadonlySettings.db)
       .param("q", query)
@@ -136,4 +137,8 @@ class InfluxDbClient(
     settings.baseUrl.stripSuffix("/") + "/" + urlencode(method)
 
   private def urlencode(value: String) = URLEncoder.encode(value, "UTF-8")
+
+  private def logQuery(settings: InfluxDbConnectionSettings, query: String): Unit = {
+    logger.debug(s"${settings.user.map( _ + "@").getOrElse("")}${settings.baseUrl}/${settings.db}: $query")
+  }
 }

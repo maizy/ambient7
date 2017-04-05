@@ -20,11 +20,7 @@ class DataPoints[T](val limit: Int)
       underlying(replaceElementIndex) = (time, value)
     } else {
       val nextAfter = underlying.reverse.indexWhere(pair => pair._1.compareTo(time) < 0)
-      val appendPosition = if (nextAfter == -1) {
-         0
-      } else {
-        underlying.length - nextAfter
-      }
+      val appendPosition = if (nextAfter == -1) 0 else underlying.length - nextAfter
       underlying.insert(appendPosition, (time, value))
     }
     if (underlying.length > limit) {
@@ -34,5 +30,11 @@ class DataPoints[T](val limit: Int)
   }
 
   def toTraversable: Traversable[(ZonedDateTime, T)] = underlying
+
+  override def toString: String = {
+    val points = toTraversable.map { case (time, v) => s"$time => $v"}.mkString("\n\t")
+    s"DataPoints(\n\t$points\n)"
+  }
+
 
 }

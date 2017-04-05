@@ -11,13 +11,21 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.DurationInt
 import scala.util.{ Failure, Success }
 import com.typesafe.scalalogging.LazyLogging
-import ru.maizy.ambient7.core.data.{ Co2AggregatedLevels, Co2Agent }
+import ru.maizy.ambient7.core.data.{ Co2Agent, Co2AggregatedLevels }
 import ru.maizy.influxdbclient.data.{ NullValue, SeriesItem, StringValue }
 import ru.maizy.influxdbclient.util.Dates
 import ru.maizy.influxdbclient.util.Escape.{ escapeValue, tagsToQueryCondition }
 import ru.maizy.influxdbclient.InfluxDbClient
+
+case class Co2LevelResult(ppm: Option[Int], from: ZonedDateTime, duration: Duration, aggregateType: AggregateType) {
+  def until: ZonedDateTime = from.plus(duration.toMillis, ChronoUnit.SECONDS)
+}
+
 
 object InfluxDbCo2Service extends LazyLogging {
 
@@ -93,6 +101,7 @@ object InfluxDbCo2Service extends LazyLogging {
     val agentNameEscaped = escapeValue(agentId.agentName)
     val untilTruncated = until.truncatedTo(ChronoUnit.DAYS)
 
+    // TODO: use InfluxDbUtils.getValuesForTimePeriod
     def buildQuery(lowerBound: ZonedDateTime, upperBound: ZonedDateTime): String = {
       "select time, max(ppm) as max_ppm " +
       "from co2 " +
@@ -189,4 +198,30 @@ object InfluxDbCo2Service extends LazyLogging {
 
       iter(startDate, ListMap.empty)
     }
+
+  def getValuesForTimePeriod(
+      client: InfluxDbClient,
+      agent: Co2Agent,
+      from: ZonedDateTime,
+      until: ZonedDateTime,
+      segment: Duration = 10.seconds,
+      aggregate: AggregateType = MAX)(implicit ex: ExecutionContext): Future[List[Co2LevelResult]] =
+  {
+    InfluxDbUtils.getValuesForTimePeriod[Int](
+      client,
+      from,
+      until,
+      "co2",
+      "ppm",
+      InfluxDbUtils.intExtractor,
+      aggregate,
+      segment,
+      condition = s"agent = ${escapeValue(agent.agentName)} and ${tagsToQueryCondition(agent.tags.asPairs)}"
+    ).map { results =>
+      results.map { case (time, mayBeValue) =>
+        Co2LevelResult(mayBeValue, time, segment, aggregate)
+      }
+    }
+
+  }
 }
