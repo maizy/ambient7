@@ -15,16 +15,19 @@ class DataPoints[T](val limit: Int)
   private val underlying = new mutable.ListBuffer[(ZonedDateTime, T)]
 
   def appendPoint(time: ZonedDateTime, value: T): Unit = {
-    val replaceElementIndex = underlying.indexWhere(pair => pair._1.compareTo(time) == 0)
-    if (replaceElementIndex != -1) {
-      underlying(replaceElementIndex) = (time, value)
-    } else {
-      val nextAfter = underlying.reverse.indexWhere(pair => pair._1.compareTo(time) < 0)
-      val appendPosition = if (nextAfter == -1) 0 else underlying.length - nextAfter
-      underlying.insert(appendPosition, (time, value))
-    }
-    if (underlying.length > limit) {
-      underlying.remove(0, underlying.length - limit)
+    // TODO: more precise locking
+    synchronized {
+      val replaceElementIndex = underlying.indexWhere(pair => pair._1.compareTo(time) == 0)
+      if (replaceElementIndex != -1) {
+        underlying(replaceElementIndex) = (time, value)
+      } else {
+        val nextAfter = underlying.reverse.indexWhere(pair => pair._1.compareTo(time) < 0)
+        val appendPosition = if (nextAfter == -1) 0 else underlying.length - nextAfter
+          underlying.insert(appendPosition, (time, value))
+      }
+      if (underlying.length > limit) {
+        underlying.remove(0, underlying.length - limit)
+      }
     }
     ()
   }
