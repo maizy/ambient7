@@ -6,7 +6,8 @@ package ru.maizy.ambient7.mt8057agent
  */
 
 import java.io.File
-import ru.maizy.ambient7.core.config.{ Ambient7Options, EnumerationMap, Mt8057AgentSpecificOptions, Writers }
+import ru.maizy.ambient7.core.config.options.{ EnumerationMap, Mt8057AgentSpecificOptions, Writers }
+import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, InfluxDbConfigReader, UniversalConfigReader }
 import ru.maizy.ambient7.core.data.DeviceType
 

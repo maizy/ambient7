@@ -5,7 +5,8 @@ package ru.maizy.ambient7.webapp
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, WebAppSpecificOptions }
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.config.options.WebAppSpecificOptions
 import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, MainDbConfigReader, UniversalConfigReader }
 
 object WebAppConfigReader

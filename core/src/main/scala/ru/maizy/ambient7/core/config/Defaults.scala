@@ -6,6 +6,8 @@ package ru.maizy.ambient7.core.config
  */
 
 import java.nio.file.{ FileSystems, Path }
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
 
 case object Defaults {
   val INFLUXDB_BASEURL = "http://localhost:8086/"
@@ -14,4 +16,5 @@ case object Defaults {
   val DB_PASSWORD = ""
   val DB_URL = "jdbc:h2:file:/var/ambient7/analysis;AUTO_SERVER=TRUE"
   val UNIVERSAL_CONFIG_PATH: Path = FileSystems.getDefault.getPath("/etc", "ambient7", "application.conf")
+  val NOTIFICATION_REFRESH_RATE = Duration(1, TimeUnit.MINUTES)
 }

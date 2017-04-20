@@ -5,7 +5,7 @@ package ru.maizy.ambient7.analysis
  * See LICENSE.txt for details.
  */
 
-import ru.maizy.ambient7.analysis.command.{ AggregateCo2Command, InitDbCommand }
+import ru.maizy.ambient7.analysis.command.{ AggregateCo2Command, InitDbCommand, NotificationCommand }
 import ru.maizy.ambient7.core.config.ParsingError
 
 
@@ -36,6 +36,9 @@ object AnalysisAppLauncher extends App {
         case Some("aggregate-co2") =>
           val res = AggregateCo2Command.run(opts)
           System.exit(res.systemExitCode)
+
+        case Some("notifications") =>
+          NotificationCommand.run(opts)
 
         case _ =>
           Console.err.println("Unknown command")

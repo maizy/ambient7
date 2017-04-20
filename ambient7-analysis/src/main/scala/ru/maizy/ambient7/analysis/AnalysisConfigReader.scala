@@ -1,18 +1,21 @@
 package ru.maizy.ambient7.analysis
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, AnalysisSpecificOptions }
-import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, InfluxDbConfigReader, MainDbConfigReader }
-import ru.maizy.ambient7.core.config.reader.UniversalConfigReader
-
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.config.options.AnalysisSpecificOptions
+import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, InfluxDbConfigReader, MainDbConfigReader }
+import ru.maizy.ambient7.core.config.reader.{ NotificationsConfigReader, UniversalConfigReader }
+
 object AnalysisConfigReader
   extends UniversalConfigReader
   with DevicesConfigReader
   with InfluxDbConfigReader
   with MainDbConfigReader
+  with NotificationsConfigReader
 {
   override def appName: String = "java -jar ambient7-analysis.jar"
 
@@ -22,10 +25,11 @@ object AnalysisConfigReader
   }
 
   override def fillReader(): Unit = {
-    fillDevicesOptions()
+    fillDevicesOptions(parseWatchersConfig = true)
     fillConfigOptions(requireConfig = true)
     fillInfluxDbOptions()
     fillDbOptions()
+    fillNotificationsOptions()
 
     cliParser.cmd("aggregate-co2")
       .action { (_, opts) => setCommand(opts, "aggregate-co2") }
@@ -34,6 +38,10 @@ object AnalysisConfigReader
     cliParser.cmd("init-db")
       .action { (_, opts) => setCommand(opts, "init-db") }
       .text("\tinitialize or upgrade db")
+
+    cliParser.cmd("notifications")
+      .action { (_, opts) => setCommand(opts, "notifications") }
+      .text("\twatch for data & send notifications (stand alone mode)")
 
     ()
   }

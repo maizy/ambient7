@@ -28,8 +28,7 @@ class DevicesServlet(val appConfig: Ambient7Options)
   }
 
   get("/:deviceId") {
-    import ru.maizy.ambient7.webapp.json.Co2DeviceProtocol
-    implicit val deviceFormat = Co2DeviceProtocol.deviceFormat
+    implicit val deviceFormat = ru.maizy.ambient7.webapp.json.Co2DeviceProtocol.Co2DeviceFormat
     val deviceId = params("deviceId")
     co2Devices.find(_.id == deviceId) match {
       case Some(device) => device.toJson

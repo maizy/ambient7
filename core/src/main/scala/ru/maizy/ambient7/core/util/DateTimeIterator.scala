@@ -7,6 +7,7 @@ package ru.maizy.ambient7.core.util
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import scala.concurrent.duration.Duration
 
 // TODO: generalize for any date order past->future, future->past
 class DateTimeIterator private (from: ZonedDateTime, to: ZonedDateTime, step: Long, stepUnit: ChronoUnit)
@@ -25,5 +26,10 @@ class DateTimeIterator private (from: ZonedDateTime, to: ZonedDateTime, step: Lo
 object DateTimeIterator {
   def apply(from: ZonedDateTime, to: ZonedDateTime, step: Long, stepUnit: ChronoUnit): DateTimeIterator = {
     new DateTimeIterator(from, to, step, stepUnit)
+  }
+
+  def apply(from: ZonedDateTime, to: ZonedDateTime, stepDuration: Duration): DateTimeIterator = {
+    require(stepDuration.isFinite)
+    new DateTimeIterator(from, to, stepDuration.toMicros, ChronoUnit.MICROS)
   }
 }
