@@ -15,7 +15,7 @@ import ru.maizy.ambient7.core.data.Co2Agent
 import ru.maizy.ambient7.core.util.{ DateTimeIterator, Dates }
 import ru.maizy.influxdbclient.InfluxDbClient
 
-class Co2Data(
+class Co2AgentData(
     val agent: Co2Agent,
     influxDbClient: InfluxDbClient,
     val refreshRate: Duration,
@@ -24,7 +24,7 @@ class Co2Data(
 {
 
   private val segment = 5.seconds min refreshRate
-  private val limit = Co2Data.computeLimit(segment, storeDuration)
+  private val limit = Co2AgentData.computeLimit(segment, storeDuration)
   val co2 = new DataPoints[Option[Int]](limit)
   val temp = new DataPoints[Option[Float]](limit)
   val availability = new DataPoints[Boolean](limit)
@@ -79,7 +79,7 @@ class Co2Data(
       s"co2=$co2,\ntemp=$temp,\navailability=$availability\n)"
 }
 
-object Co2Data {
+object Co2AgentData {
   def computeLimit(refreshRate: Duration, storeDuration: Duration): Int =
     (storeDuration.toSeconds.toDouble / refreshRate.toSeconds).floor.toInt + 1
 }

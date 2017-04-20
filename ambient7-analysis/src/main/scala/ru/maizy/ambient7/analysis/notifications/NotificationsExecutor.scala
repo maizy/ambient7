@@ -11,11 +11,13 @@ import scala.concurrent.duration.DurationInt
 import scala.util.{ Failure, Success }
 import ru.maizy.ambient7.core.config.Ambient7Options
 import ru.maizy.ambient7.analysis.influxdb
-import ru.maizy.ambient7.analysis.notifications.data.{ Co2Data, Data }
+import ru.maizy.ambient7.analysis.notifications.action.SlackAction
+import ru.maizy.ambient7.analysis.notifications.data.{ Co2AgentData, Data }
+import ru.maizy.ambient7.analysis.notifications.watcher.{ Co2LevelWatcher, Watcher }
 import ru.maizy.ambient7.core.data.Device
 
 class NotificationsExecutor(opts: Ambient7Options) {
-  private case class WatchedDevice(device: Device, data: Data)
+  private case class WatchedDevice(device: Device, data: Data, watchers: List[Watcher])
 
   private val logger = notificationsLogger
   private var watchedDevices: List[WatchedDevice] = List.empty
@@ -48,10 +50,16 @@ class NotificationsExecutor(opts: Ambient7Options) {
         // FIXME: tmp
         val maxRequestedDuration = 20.minutes
         val device = opts.co2Devices.head
+        val co2Watcher = new Co2LevelWatcher()
+        val action = new SlackAction
+        co2Watcher.subscribe(action)
+
         watchedDevices =
           WatchedDevice(
             device,
-            new Co2Data(device.agent, influxDbClient, refreshRate, maxRequestedDuration)
+            new Co2AgentData(device.agent, influxDbClient, refreshRate, maxRequestedDuration),
+            // FIXME: tmp
+            List(co2Watcher)
           ) :: watchedDevices
         Future.successful(())
       case _ => Future.failed(new Error("Some options required for notifications not provided"))
@@ -105,14 +113,14 @@ class NotificationsExecutor(opts: Ambient7Options) {
     val now = ZonedDateTime.of(2017, 3, 31, 16, 30, 13, 0, ZoneOffset.UTC)
       .withZoneSameInstant(ZoneId.systemDefault())
 
-    Future
-      .sequence(watchedDevices.map(_.data.update(now)))
-      .map { _ =>
-        // FIXME tmp
-        for (device <- watchedDevices) {
-          println(s"data for device ${device.device} updated\n ${device.data}")
-        }
-        ()
+    val updateFutures = watchedDevices.map { device =>
+      val future = device.data.update(now)
+      future foreach { _ =>
+        device.watchers.foreach(_.processData(device.data))
       }
+      future
+    }
+
+    Future.sequence(updateFutures).map(_ => ())
   }
 }

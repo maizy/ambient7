@@ -139,6 +139,10 @@ class InfluxDbClient(
   private def urlencode(value: String) = URLEncoder.encode(value, "UTF-8")
 
   private def logQuery(settings: InfluxDbConnectionSettings, query: String): Unit = {
-    logger.debug(s"${settings.user.map( _ + "@").getOrElse("")}${settings.baseUrl}/${settings.db}: $query")
+    logger.debug(
+      settings.user.map( _ + "@").getOrElse("") +
+        settings.baseUrl.stripSuffix("/") +
+        s"/${settings.db}: $query"
+    )
   }
 }
