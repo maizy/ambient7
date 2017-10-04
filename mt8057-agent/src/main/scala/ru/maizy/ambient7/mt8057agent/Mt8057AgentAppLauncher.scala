@@ -7,7 +7,8 @@ import ch.qos.logback.classic.{ Level, LoggerContext, Logger => LogbackLogger }
 import ch.qos.logback.core.{ ConsoleAppender, FileAppender, OutputStreamAppender }
 import com.google.common.collect.{ EvictingQueue, Queues }
 import org.slf4j.LoggerFactory
-import ru.maizy.ambient7.core.config.{ Ambient7Options, ParsingError, Writers }
+import ru.maizy.ambient7.core.config.options.Writers
+import ru.maizy.ambient7.core.config.{ Ambient7Options, ParsingError }
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017

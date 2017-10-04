@@ -1,11 +1,11 @@
-package ru.maizy.ambient7.core.config
-
-import java.io.File
+package ru.maizy.ambient7.core.config.options
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017
  * See LICENSE.txt for details.
  */
+
+import java.io.File
 
 // TODO: should be only in mt8057-agent submodule
 

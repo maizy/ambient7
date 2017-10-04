@@ -7,7 +7,8 @@ package ru.maizy.ambient7.core.config
 
 import java.nio.file.Path
 import java.time.ZoneId
-import ru.maizy.ambient7.core.data.{ AgentTags, Co2Agent, Co2Device, Device, DeviceType, Devices }
+import ru.maizy.ambient7.core.config.options._
+import ru.maizy.ambient7.core.data._
 
 case class FromCliDevice(
     agent: String = "main",

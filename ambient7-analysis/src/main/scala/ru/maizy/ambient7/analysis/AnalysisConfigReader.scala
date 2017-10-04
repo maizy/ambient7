@@ -1,13 +1,15 @@
 package ru.maizy.ambient7.analysis
 
-import ru.maizy.ambient7.core.config.{ Ambient7Options, AnalysisSpecificOptions }
-import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, InfluxDbConfigReader, MainDbConfigReader }
-import ru.maizy.ambient7.core.config.reader.UniversalConfigReader
-
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017
  * See LICENSE.txt for details.
  */
+
+import ru.maizy.ambient7.core.config.Ambient7Options
+import ru.maizy.ambient7.core.config.options.AnalysisSpecificOptions
+import ru.maizy.ambient7.core.config.reader.{ DevicesConfigReader, InfluxDbConfigReader, MainDbConfigReader }
+import ru.maizy.ambient7.core.config.reader.UniversalConfigReader
+
 object AnalysisConfigReader
   extends UniversalConfigReader
   with DevicesConfigReader

@@ -13,6 +13,7 @@ import scala.util.{ Success, Failure, Try }
 
 
 sealed trait ResultValue
+// TODO: use float
 case class Temp(celsius: Double) extends ResultValue
 case class Co2(ppm: Int, high: Boolean = false) extends ResultValue
 

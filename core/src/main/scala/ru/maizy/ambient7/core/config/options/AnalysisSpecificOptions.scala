@@ -1,4 +1,4 @@
-package ru.maizy.ambient7.core.config
+package ru.maizy.ambient7.core.config.options
 
 /**
  * Copyright (c) Nikita Kovaliov, maizy.ru, 2017
