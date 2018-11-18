@@ -1,0 +1,4 @@
+# thoose requirement for desktop not for MCU
+plumbum==1.6.7
+rshell==0.0.16
+adafruit-ampy==1.0.7
