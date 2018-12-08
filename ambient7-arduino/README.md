@@ -1,6 +1,8 @@
 # Ambient7 with Arduino compatible MCU
 
-## Wemos D1 setup for ArduinoIDE
+## Wemos D1 R1 setup
+
+### ArduinoIDE
 
 * install [USB-Serial driver](https://wiki.wemos.cc/downloads)
   * connect board
@@ -11,8 +13,25 @@
 * Arduino IDE -> Tools -> Board -> Boards Manager -> install
   `esp8266 by ESP8266 Community`
 
-## Reading from Serial Port
+### Reading from Serial Port
 
 * ArduinoIDE -> Serial Monitor
-* `screen /dev/tty.wchusbserial1410 9600`
+* macOS: `screen /dev/tty.wchusbserial1410 9600`
   * `Control-a k` to exit
+
+### Reset firmware, install micropython
+
+Erase flash:
+
+```
+esptool.py --port /dev/tty.wchusbserial1410 erase_flash
+```
+
+Install micropython firmware:
+
+```
+esptool.py --port /dev/tty.wchusbserial1410 \
+  --baud 115200 \
+  write_flash --flash_size=detect 0 \
+  /path/to/micropython/esp8266-20180511-v1.9.4.bin
+```
