@@ -105,13 +105,3 @@ lazy val ambient7Analysis = project
   .dependsOn(core)
   .dependsOn(rdbmsService)
   .dependsOn(influxDbClient)
-
-lazy val ambient7WebApp = project
-  .in(file("ambient7-webapp"))
-  .settings(commonSettings: _*)
-  .settings(commonDependencies: _*)
-  .settings(rdbmsDependencies: _*)
-  .settings(jsonDependencies: _*)
-  .dependsOn(core)
-  .dependsOn(rdbmsService)
-  .dependsOn(ambient7Analysis)

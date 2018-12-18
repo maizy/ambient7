@@ -4,13 +4,13 @@ Components:
 
 * [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
   measurements. Can be used sepparatly.
-* [ambient7-analysis](#ambient7-analysis)
-* ambient7-analysis - additional data analisis, scheduled by crontab or similar
-* ambient7-webapp - JSON APIs
-* ambient7-webui - Web based UI
+* [ambient7-analysis](#ambient7-analysis) - additional data analisis, scheduled by crontab or similar
 * influxdb-client, core, rdbms-service - code shared beetwen other components
 * [influxdb](influxdb/README.md) as a timeseries db
 * [grafana](grafana/README.md) for data explorations (optional)
+
+Abandoned modules:
+* [web ui](https://github.com/maizy/ambient7/tree/abandoned-ui)
 
 [![Build Status](https://travis-ci.org/maizy/ambient7.svg?branch=master)](https://travis-ci.org/maizy/ambient7)
 [![Coverage Status](https://coveralls.io/repos/github/maizy/ambient7/badge.svg?branch=master)](https://coveralls.io/github/maizy/ambient7?branch=master)

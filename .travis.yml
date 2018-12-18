@@ -11,16 +11,6 @@ jdk:
 scala:
   - 2.11.8
 script:
-  - nvm --version
-  - nvm install 4
-  - nvm use 4
-  - npm install -g npm@'>=2.5'
-  - node --version
-  - npm --version
-  - cd ambient7-webui && npm install
-  - npm run test
-  - npm run lint
-  - cd ..
   - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
   - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
 after_success:
