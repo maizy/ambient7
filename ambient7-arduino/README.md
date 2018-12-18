@@ -1,5 +1,23 @@
 # Ambient7 with Arduino compatible MCU
 
+## Hardware
+
+* MCU - Wemos D1 R1
+* Temperature/Humidity sensor – Asair (aka Aosong) AM2302 (DHT22)
+* CO2 Sensor – Winsen MH-Z19B
+
+All components may be replaced with analogues.
+
+## Implementations
+
+* [Arduino IDE based]()
+* [micropython](micropython-version/) – abandoned. lack of
+  software serial (UART) support.
+
+## Extra apps
+
+* [hello-world-led](hello-world-led/) – test arduino sketch
+
 ## Wemos D1 R1 setup
 
 ### ArduinoIDE
