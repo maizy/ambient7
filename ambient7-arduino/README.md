@@ -22,8 +22,10 @@ All components may be replaced with analogues.
 ## Wemos D1 R1 setup
 
 ### PlatformIO
-
-* install PlatformIO (`brew install platformio` on macOS)
+* install [USB-Serial driver](https://wiki.wemos.cc/downloads)
+  * connect board
+  * check tty at `ls /dev/*serial*`
+* [install PlatformIO](https://docs.platformio.org/en/latest/installation.html) (`brew install platformio` on macOS)
 * change `platformio.ini` if you use other hardware
 * setup `platformio-version/include/configs.h` (copy from `configs.h.example`)
 * build project and upload
@@ -52,7 +54,7 @@ platformio device monitor -b 115200
 ### Reading from Serial Port
 
 * ArduinoIDE -> Serial Monitor
-* macOS: `screen /dev/tty.wchusbserial1410 9600`
+* macOS: `screen /dev/tty.wchusbserial1410 115200`
   * `Control-a k` to exit
 
 ### Reset firmware, install micropython
