@@ -1,0 +1,14 @@
+/*
+
+Project configuration.
+
+Copy that file as configs.h
+
+TODO: generate that header from .ini configs
+      https://docs.platformio.org/en/latest/projectconf/advanced_scripting.html
+*/
+const char* WIFI_NETWORK = "my_network";
+const char* WIFI_PASSWORD = "pa$$word";
+
+const byte CO2_RX = D6; /* MCU UART RX = sensor TX */
+const byte CO2_TX = D7; /* MCU UART TX = sensor RX */

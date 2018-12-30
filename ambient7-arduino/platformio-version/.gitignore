@@ -1,0 +1,4 @@
+.pio
+.pioenvs
+.piolibdeps
+include/configs.h

@@ -10,7 +10,8 @@ All components may be replaced with analogues.
 
 ## Implementations
 
-* [Arduino IDE based]()
+* [PlatformIO based](platformio-version)
+* [Arduino IDE based](arduino-ide-version) – abandoned. Arduino IDE is ugly.
 * [micropython](micropython-version/) – abandoned. lack of
   software serial (UART) support.
 
@@ -19,6 +20,23 @@ All components may be replaced with analogues.
 * [hello-world-led](hello-world-led/) – test arduino sketch
 
 ## Wemos D1 R1 setup
+
+### PlatformIO
+
+* install PlatformIO (`brew install platformio` on macOS)
+* change `platformio.ini` if you use other hardware
+* setup `platformio-version/include/configs.h` (copy from `configs.h.example`)
+* build project and upload
+```
+cd platformio-version
+platformio run --target upload
+```
+* serial monitor:
+```
+cd platformio-version
+platformio device monitor -b 115200
+```
+
 
 ### ArduinoIDE
 
