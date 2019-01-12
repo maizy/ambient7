@@ -1,3 +1,4 @@
+#pragma once
 /*
 
 Project configuration.
@@ -10,5 +11,6 @@ TODO: generate that header from .ini configs
 const char* WIFI_NETWORK = "my_network";
 const char* WIFI_PASSWORD = "pa$$word";
 
-const byte CO2_RX = D6; /* MCU UART RX = sensor TX */
-const byte CO2_TX = D7; /* MCU UART TX = sensor RX */
+const byte CO2_RX = D6;  // UART RX pin = sensor TX
+const byte CO2_TX = D7;  // UART TX pin = sensor RX
+const byte DTH22_1WIRE = D5;  // DHT22 (AM2302) 1wire pin
