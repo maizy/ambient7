@@ -1,0 +1,3 @@
+[submodule "ambient7-arduino/platformio-version/EspArduinoExceptionDecoder"]
+	path = ambient7-arduino/platformio-version/EspArduinoExceptionDecoder
+	url = https://github.com/janLo/EspArduinoExceptionDecoder.git

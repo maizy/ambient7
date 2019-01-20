@@ -1,0 +1,3 @@
+WIFI_NETWORK = 'home-wifi'
+WIFI_PASSWORD = 'password'
+DHT_1WIRE_PIN = 14
