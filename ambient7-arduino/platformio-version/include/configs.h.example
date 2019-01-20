@@ -8,6 +8,7 @@ Copy that file as configs.h
 TODO: generate that header from .ini configs
       https://docs.platformio.org/en/latest/projectconf/advanced_scripting.html
 */
+const bool ENABLE_WIFI_CLIENT = true;
 const char* WIFI_NETWORK = "my_network";
 const char* WIFI_PASSWORD = "pa$$word";
 
