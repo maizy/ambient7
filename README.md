@@ -3,7 +3,9 @@
 Components:
 
 * [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
-  measurements. Can be used sepparatly.
+  measurements with Masterkit MT8057 (aka "Co2Meter RAD-030"). Can be used sepparatly.
+* [ambient7-arduino](ambient7-arduino) ESP8266 firmware for co2 concentration, temperature &
+   humidity measurements. May be used on Arduino compatible MCUs like Wemos D1.
 * [ambient7-analysis](#ambient7-analysis) - additional data analisis, scheduled by crontab or similar
 * influxdb-client, core, rdbms-service - code shared beetwen other components
 * [influxdb](influxdb/README.md) as a timeseries db
