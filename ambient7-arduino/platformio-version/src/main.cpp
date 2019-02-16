@@ -1,9 +1,12 @@
 #include "Arduino.h"
 #include <SoftwareSerial.h>
-//#include <ESP8266WebServer.h>
-//#include <ESP8266mDNS.h>
+#include <ESP8266WiFi.h>
 #include "configs.h"
-#include "Ambient7Wifi.h"
+#ifdef ONLINE_MODE
+  //#include <ESP8266WebServer.h>
+  //#include <ESP8266mDNS.h>
+  #include "Ambient7Wifi.h"
+#endif
 #include <DHT.h>
 #include <MHZ19_uart.h>
 
@@ -24,14 +27,15 @@ void setup()
   Serial.print("  CO2 RX Pin: "); Serial.println(CO2_RX);
   Serial.print("  CO2 TX Pin: "); Serial.println(CO2_TX);
   Serial.print("  DHT22 1wire Pin: "); Serial.println(DTH22_1WIRE);
-  Serial.print("  Wifi Client: "); Serial.println(ENABLE_WIFI_CLIENT ? "enabled" : "disabled");
-  if (ENABLE_WIFI_CLIENT) {
+  #ifdef ONLINE_MODE
     Serial.print("  Wifi network: "); Serial.println(WIFI_NETWORK);
     Serial.print("  Wifi password: ");
     for (unsigned int i = 0; i < strlen(WIFI_PASSWORD); i++) {
       Serial.print('*');
     }
-  }
+  #else
+    Serial.println("  Offline mode");
+  #endif
   Serial.println("");
   Serial.println("");
 
@@ -44,23 +48,27 @@ void setup()
   mhz19.setAutoCalibration(false);
   Serial.println("Done");
 
-  if (ENABLE_WIFI_CLIENT) {
+  #ifdef ONLINE_MODE
     setupWifi(WIFI_NETWORK, WIFI_PASSWORD);
     Serial.println("");
-  }
+  #else
+    WiFi.mode(WIFI_OFF);
+  #endif
+
+  Serial.println("");
+  Serial.println("");
 }
 
 void loop()
 {
-  Serial.print("Uptime: "); Serial.print((millis() - startTime) / 1000); Serial.println(" s");
-
-  Serial.print("MH-Z19 status: "); Serial.print(mhz19.getStatus());
-  Serial.print(" warming: "); Serial.println(mhz19.isWarming() ? "true" : "false");
+  Serial.print("DATA: uptime="); Serial.print((millis() - startTime) / 1000); Serial.println("s");
+  int mhZ19Status = mhz19.getStatus();
+  Serial.print("DATA: mh_z19_status="); Serial.println(mhZ19Status);
   int co2Ppm = mhz19.getPPM();
   if (co2Ppm < 0) {
     Serial.println("ERROR: failed to read from Co2 sensor");
   } else {
-    Serial.print("Co2: "); Serial.print(co2Ppm); Serial.println("PPM");
+    Serial.print("DATA: co2="); Serial.print(co2Ppm); Serial.println("PPM");
   }
 
   // TODO: to separete thread 
@@ -69,8 +77,8 @@ void loop()
   if (isnan(humidity) || isnan(tempCelcius)) {
     Serial.println("ERROR: failed to read from DHT sensor");
   } else {
-    Serial.print("Humidity: "); Serial.print(humidity); Serial.println(" %");
-    Serial.print("Temp: "); Serial.print(tempCelcius); Serial.println(" ˚C");
+    Serial.print("DATA: humidity="); Serial.print(humidity); Serial.println("%");
+    Serial.print("DATA: temperature="); Serial.print(tempCelcius); Serial.println("C");
   }
 
   delay(5000);
