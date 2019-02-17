@@ -1,0 +1,2 @@
+influxdb==5.2.1
+pyserial==3.4
