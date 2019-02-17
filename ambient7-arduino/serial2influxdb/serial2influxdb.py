@@ -127,7 +127,10 @@ def main(args):
 
                 data = collect_data(key, raw_value, tags)
                 if data is not None:
-                    influxdb_client.write_points(data)
+                    try:
+                        influxdb_client.write_points(data)
+                    except Exception as e:
+                        logger.warning("Unable to send data to influxdb: %s", e)
     except KeyboardInterrupt:
         return 1
     return 0
