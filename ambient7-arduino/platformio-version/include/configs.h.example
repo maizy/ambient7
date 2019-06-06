@@ -19,7 +19,7 @@ TODO: generate that header from .ini configs
 #define SEND_TO_INFLUXDB
 
 #ifdef SEND_TO_INFLUXDB
-  const char* INFLUXDB_HOST = "192.168.1.1"
+  const char* INFLUXDB_HOST = "192.168.1.1";
   const uint16_t INFLUXDB_PORT = 8086;
   const char* INFLUXDB_DATABASE = "ambient7";
   const char* INFLUXDB_DEVICE_NAME = "mydevice";  // not escaped, use only a-z 0-9 -.

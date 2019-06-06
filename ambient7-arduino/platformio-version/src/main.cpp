@@ -125,9 +125,7 @@ void loop()
     data += "\nco2,device=" + String(INFLUXDB_DEVICE_NAME);
     data += " status=" + String(mhZ19Status) + "i";
     if (co2Ppm > 0) {
-      data += ",ppm=" + String(co2Ppm, DEC);
-    } else {
-      data += ",ppm=0i";
+      data += ",ppm=" + String(co2Ppm, DEC)+"i";
     }
     influxDbClient.write(data);
   #endif
