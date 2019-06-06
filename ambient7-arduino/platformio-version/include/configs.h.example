@@ -16,6 +16,17 @@ TODO: generate that header from .ini configs
   const char* WIFI_PASSWORD = "pa$$word";
 #endif
 
+#define SEND_TO_INFLUXDB
+
+#ifdef SEND_TO_INFLUXDB
+  const char* INFLUXDB_HOST = "192.168.1.1";
+  const uint16_t INFLUXDB_PORT = 8086;
+  const char* INFLUXDB_DATABASE = "ambient7";
+  const char* INFLUXDB_DEVICE_NAME = "mydevice";  // not escaped, use only a-z 0-9 -.
+  const char* INFLUXDB_USER = "";  // leave empty if auth not used
+  const char* INFLUXDB_PASSWORD = "";
+#endif
+
 const byte CO2_RX = D6;  // UART RX pin = sensor TX
 const byte CO2_TX = D7;  // UART TX pin = sensor RX
 const byte DTH22_1WIRE = D4;  // DHT22 (AM2302) 1wire pin
