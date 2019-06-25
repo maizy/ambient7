@@ -99,7 +99,7 @@ void loop()
     Serial.print("DATA: co2="); Serial.print(co2Ppm); Serial.println("PPM");
   }
 
-  // TODO: to separete thread 
+  // TODO: to separete thread
   float humidity = dht.getHumidity();
   float tempCelsius = dht.getTemperature();
   if (isnan(humidity) || isnan(tempCelsius)) {
@@ -130,6 +130,6 @@ void loop()
     influxDbClient.write(data);
   #endif
 
-  delay(5000);
+  delay(15000);
   Serial.println("");
 }
