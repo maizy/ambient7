@@ -1,6 +1,6 @@
 .pio
 .pioenvs
 .piolibdeps
-include/configs.h
+include/configs.h*
 .vscode
 errors/

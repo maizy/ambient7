@@ -2,7 +2,7 @@
 
 ## Hardware
 
-* MCU - Wemos D1 R1
+* MCU - Wemos D1 R1/R2
 * Temperature/Humidity sensor – Asair (aka Aosong) AM2302 (DHT22)
 * CO2 Sensor – Winsen MH-Z19B
 
@@ -19,7 +19,7 @@ All components may be replaced with analogues.
 
 * [hello-world-led](extras/hello-world-led/) – test arduino sketch
 
-## Wemos D1 R1 setup
+## Wemos D1 R1/R2 setup
 
 * install [USB-Serial driver](https://wiki.wemos.cc/downloads)
   * connect board
@@ -30,10 +30,10 @@ All components may be replaced with analogues.
 * build project and upload
 ```
 cd ambient7-arduino
-platformio run --target upload
+platformio run --environment=r2 --target upload
 ```
 * serial monitor:
 ```
 cd ambient7-arduino
-platformio device monitor -b 9600
+platformio device monitor --environment=r2 -b 9600
 ```
