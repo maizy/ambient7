@@ -4,23 +4,24 @@
 #include <ESP8266WiFi.h>
 #include "configs.h"
 #ifdef ONLINE_MODE
-  //#include <ESP8266WebServer.h>
-  //#include <ESP8266mDNS.h>
   #include "Ambient7Wifi.h"
 #endif
 #include <DHT.h>
-#include <MHZ19_uart.h>
+#include <MHZ19.h>
 #ifdef SEND_TO_INFLUXDB
   #include <InfluxDb.h>
 #endif
 
 unsigned long startTime = millis();
 
-MHZ19_uart mhz19;
-DHT dht;
+MHZ19* mhz19;
+SoftwareSerial* mhz19Serial;
+DHT* dht;
 
+#ifdef ONLINE_MODE
 #ifdef SEND_TO_INFLUXDB
-  Influxdb influxDbClient(INFLUXDB_HOST, INFLUXDB_PORT);
+  Influxdb* influxDbClient;
+#endif
 #endif
 
 void setup()
@@ -46,13 +47,24 @@ void setup()
   Serial.println("");
   Serial.println("");
 
-  Serial.print("Setup DHT22: ...");
-  dht.setup(DTH22_1WIRE);
-  Serial.println(" done");
+  Serial.println("Setup MH-Z19 ...");
+  mhz19Serial = new SoftwareSerial(CO2_RX, CO2_TX);
+  mhz19 = new MHZ19();
+  mhz19->begin(*mhz19Serial);
+  if (CO2_AUTO_CALIBRATION) {
+    Serial.println("  Daily auto calibration: on");
+  } else {
+    Serial.println("  Daily auto calibration: off");
+  }
+  mhz19->autoCalibration(CO2_AUTO_CALIBRATION);
 
-  Serial.print("Setup MH-Z19 ...");
-  mhz19.begin(CO2_RX, CO2_TX);
-  mhz19.setAutoCalibration(false);
+  Serial.println("  Values filter enabled");
+  mhz19->setFilter(true, true);
+  Serial.println("Done");
+
+  Serial.print("Setup DHT22: ...");
+  dht = new DHT(DTH22_1WIRE, DHT22);
+  dht->begin();
   Serial.println(" done");
 
   #ifdef ONLINE_MODE
@@ -61,11 +73,12 @@ void setup()
 
     #ifdef SEND_TO_INFLUXDB
       Serial.println("Setup InfluxDB ... ");
+      influxDbClient = new Influxdb(INFLUXDB_HOST, INFLUXDB_PORT);
       Serial.print("  InfluxDB host: "); Serial.print(INFLUXDB_HOST);
       Serial.print(":"); Serial.print(INFLUXDB_PORT); Serial.println("");
       Serial.print("  InfluxDB database: "); Serial.println(INFLUXDB_DATABASE);
       if (strlen(INFLUXDB_USER) > 0) {
-        influxDbClient.setDbAuth(INFLUXDB_DATABASE, INFLUXDB_USER, INFLUXDB_PASSWORD);
+        influxDbClient->setDbAuth(INFLUXDB_DATABASE, INFLUXDB_USER, INFLUXDB_PASSWORD);
         Serial.print("  InfluxDB user: "); Serial.println(INFLUXDB_USER);
         Serial.print("  InfluxDB password: ");
         for (unsigned int i = 0; i < strlen(INFLUXDB_PASSWORD); i++) {
@@ -73,7 +86,7 @@ void setup()
         }
         Serial.println("");
       } else {
-        influxDbClient.setDb(INFLUXDB_DATABASE);
+        influxDbClient->setDb(INFLUXDB_DATABASE);
       }
       Serial.println("Done");
     #endif
@@ -89,47 +102,66 @@ void setup()
 void loop()
 {
   unsigned long uptime = millis() - startTime;
+
+  mhz19Serial->enableRx(true);
   Serial.print("DATA: uptime="); Serial.print(uptime / 1000); Serial.println("s");
-  int mhZ19Status = mhz19.getStatus();
+  int co2Ppm = mhz19->getCO2();
+  int mhZ19Status = mhz19->errorCode;
   Serial.print("DATA: mh_z19_status="); Serial.println(mhZ19Status);
-  int co2Ppm = mhz19.getPPM();
-  if (co2Ppm < 0) {
-    Serial.println("ERROR: failed to read from Co2 sensor");
+  if (co2Ppm <= 0 || mhZ19Status != RESULT_OK) {
+    Serial.print("ERROR: failed to read from Co2 sensor. Unfiltered value: ");
+    Serial.print(co2Ppm); Serial.println("");
   } else {
     Serial.print("DATA: co2="); Serial.print(co2Ppm); Serial.println("PPM");
   }
+  // disable Interrupt used in software serial,
+  // otherwise DHT won't work
+  mhz19Serial->enableRx(false);
 
-  // TODO: to separete thread
-  float humidity = dht.getHumidity();
-  float tempCelsius = dht.getTemperature();
+  delay(5000);
+
+  float humidity = dht->readHumidity();
+  float tempCelsius = dht->readTemperature();
+
+  int dhtStatus = 0;
   if (isnan(humidity) || isnan(tempCelsius)) {
     Serial.println("ERROR: failed to read from DHT sensor");
+    dhtStatus = 1;
+  } else if (humidity <= 1.0 && tempCelsius <= 1.0) {
+    Serial.print("ERROR: wrong data from DHT sensor. humidity=");
+    Serial.print(humidity); Serial.print(", temp=");
+    Serial.println(tempCelsius);
+    dhtStatus = 2;
   } else {
     Serial.print("DATA: humidity="); Serial.print(humidity); Serial.println("%");
     Serial.print("DATA: temperature="); Serial.print(tempCelsius); Serial.println("C");
   }
+  Serial.print("DATA: dht_status="); Serial.println(dhtStatus);
 
+  #ifdef ONLINE_MODE
   #ifdef SEND_TO_INFLUXDB
     String data = String("");
     data += "uptime,device=" + String(INFLUXDB_DEVICE_NAME);
     data += " millis=" + String(uptime, DEC) + "i";
 
-    if (!isnan(humidity)) {
+    if (dhtStatus == 0 && !isnan(humidity)) {
       data += "\nhumidity,device=" + String(INFLUXDB_DEVICE_NAME);
       data += " relative=" + String(humidity);
     }
-    if (!isnan(tempCelsius)) {
+    if (dhtStatus == 0 && !isnan(tempCelsius)) {
       data += "\ntemperature,device=" + String(INFLUXDB_DEVICE_NAME);
       data += " celsius=" + String(tempCelsius);
     }
     data += "\nco2,device=" + String(INFLUXDB_DEVICE_NAME);
     data += " status=" + String(mhZ19Status) + "i";
-    if (co2Ppm > 0) {
+    if (mhZ19Status == RESULT_OK) {
       data += ",ppm=" + String(co2Ppm, DEC)+"i";
     }
-    influxDbClient.write(data);
+    data += "\ndht_status,device=" + String(INFLUXDB_DEVICE_NAME);
+    data += " status=" + String(dhtStatus) + "i";
+    influxDbClient->write(data);
   #endif
-
-  delay(15000);
+  #endif
   Serial.println("");
+  delay(10000);
 }

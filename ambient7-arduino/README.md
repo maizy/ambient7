@@ -35,5 +35,6 @@ platformio run --environment=r2 --target upload
 * serial monitor:
 ```
 cd ambient7-arduino
-platformio device monitor --environment=r2 -b 9600
+platformio device monitor --environment=r2
 ```
+* (change `r2` to `r1` if you have Wemos D1 Revision 1)
