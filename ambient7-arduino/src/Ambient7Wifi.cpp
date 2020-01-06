@@ -1,6 +1,10 @@
 #include "Arduino.h"
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
+#ifndef ESP32
+    #include <ESP8266WiFi.h>
+    #include <WiFiClient.h>
+#else
+    #include <WiFi.h>
+#endif
 
 void setupWifi(const char* network, const char* password)
 {

@@ -1,7 +1,11 @@
 #include "Arduino.h"
 #include "String.h"
-#include <SoftwareSerial.h>
-#include <ESP8266WiFi.h>
+#ifndef ESP32
+  #include <SoftwareSerial.h>
+  #include <ESP8266WiFi.h>
+#else
+  #include <HardwareSerial.h>
+#endif
 #include "configs.h"
 #ifdef ONLINE_MODE
   #include "Ambient7Wifi.h"
@@ -15,7 +19,12 @@
 unsigned long startTime = millis();
 
 MHZ19* mhz19;
-SoftwareSerial* mhz19Serial;
+
+#ifndef ESP32
+  SoftwareSerial* mhz19Serial;
+#else
+  HardwareSerial* mhz19Serial;
+#endif
 DHT* dht;
 
 #ifdef ONLINE_MODE
@@ -27,13 +36,23 @@ DHT* dht;
 void setup()
 {
   Serial.begin(9600);
+  
+  #ifdef ESP32
+  Serial.println("Pre init pause: 3s");
+  delay(3000);
+  #endif
+
   Serial.println(""); Serial.println("");
   Serial.println("Ambient7");
   Serial.println("https://github.com/maizy/ambient7/");
   Serial.println("");
   Serial.println("Configs: ");
-  Serial.print("  CO2 RX Pin: "); Serial.println(CO2_RX);
-  Serial.print("  CO2 TX Pin: "); Serial.println(CO2_TX);
+  #ifndef ESP32
+    Serial.print("  CO2 RX Pin: "); Serial.println(CO2_RX);
+    Serial.print("  CO2 TX Pin: "); Serial.println(CO2_TX);
+  #else
+    Serial.print("  UART N: "); Serial.println(CO2_UART_NUM);
+  #endif
   Serial.print("  DHT22 1wire Pin: "); Serial.println(DTH22_1WIRE);
   #ifdef ONLINE_MODE
     Serial.print("  Wifi network: "); Serial.println(WIFI_NETWORK);
@@ -48,7 +67,12 @@ void setup()
   Serial.println("");
 
   Serial.println("Setup MH-Z19 ...");
-  mhz19Serial = new SoftwareSerial(CO2_RX, CO2_TX);
+  #ifndef ESP32
+    mhz19Serial = new SoftwareSerial(CO2_RX, CO2_TX);
+  #else
+    mhz19Serial = new HardwareSerial(CO2_UART_NUM);
+    mhz19Serial->begin(9600, SERIAL_8N1);
+  #endif
   mhz19 = new MHZ19();
   mhz19->begin(*mhz19Serial);
   if (CO2_AUTO_CALIBRATION) {
@@ -103,7 +127,10 @@ void loop()
 {
   unsigned long uptime = millis() - startTime;
 
-  mhz19Serial->enableRx(true);
+  #ifndef ESP32
+    mhz19Serial->enableRx(true);
+  #endif
+
   Serial.print("DATA: uptime="); Serial.print(uptime / 1000); Serial.println("s");
   int co2Ppm = mhz19->getCO2();
   int mhZ19Status = mhz19->errorCode;
@@ -114,9 +141,12 @@ void loop()
   } else {
     Serial.print("DATA: co2="); Serial.print(co2Ppm); Serial.println("PPM");
   }
-  // disable Interrupt used in software serial,
-  // otherwise DHT won't work
-  mhz19Serial->enableRx(false);
+
+  #ifndef ESP32
+    // disable Interrupt used in software serial,
+    // otherwise DHT won't work
+    mhz19Serial->enableRx(false);
+  #endif
 
   delay(5000);
 

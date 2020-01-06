@@ -27,7 +27,13 @@ TODO: generate that header from .ini configs
   const char* INFLUXDB_PASSWORD = "";
 #endif
 
-const byte CO2_RX = D6;  // UART RX pin = sensor TX
-const byte CO2_TX = D7;  // UART TX pin = sensor RX
+#ifndef ESP32
+  const byte CO2_RX = D6;  // UART RX pin = sensor TX
+  const byte CO2_TX = D7;  // UART TX pin = sensor RX
+  const byte DTH22_1WIRE = D4;  // DHT22 (AM2302) 1wire pin
+#else
+  const byte CO2_UART_NUM = 2;
+  const byte DTH22_1WIRE = 23;  // DHT22 (AM2302) 1wire pin
+#endif
+
 const boolean CO2_AUTO_CALIBRATION = true;
-const byte DTH22_1WIRE = D4;  // DHT22 (AM2302) 1wire pin
