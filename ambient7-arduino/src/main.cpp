@@ -81,6 +81,7 @@ void setup()
     Serial.println("  Daily auto calibration: off");
   }
   mhz19->autoCalibration(CO2_AUTO_CALIBRATION);
+  mhz19->setRange(2000);
 
   Serial.println("  Values filter enabled");
   mhz19->setFilter(true, true);
