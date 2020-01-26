@@ -4,8 +4,8 @@ Components:
 
 * [mt8057-agent](#mt8057-agent) agent for co2 concentration & temperature
   measurements with Masterkit MT8057 (aka "Co2Meter RAD-030"). Can be used sepparatly.
-* [ambient7-arduino](ambient7-arduino) ESP8266 firmware for co2 concentration, temperature &
-   humidity measurements. May be used on Arduino compatible MCUs like Wemos D1.
+* [ambient7-arduino](ambient7-arduino) ESP8266/ESP32 firmware for co2 concentration, temperature &
+   humidity measurements.
 * [ambient7-analysis](#ambient7-analysis) - additional data analisis, scheduled by crontab or similar
 * influxdb-client, core, rdbms-service - code shared beetwen other components
 * [influxdb](influxdb/README.md) as a timeseries db
@@ -14,8 +14,8 @@ Components:
 Abandoned modules:
 * [web ui](https://github.com/maizy/ambient7/tree/abandoned-ui)
 
-[![Build Status](https://travis-ci.org/maizy/ambient7.svg?branch=master)](https://travis-ci.org/maizy/ambient7)
-[![Coverage Status](https://coveralls.io/repos/github/maizy/ambient7/badge.svg?branch=master)](https://coveralls.io/github/maizy/ambient7?branch=master)
+<!-- [![Build Status](https://travis-ci.org/maizy/ambient7.svg?branch=master)](https://travis-ci.org/maizy/ambient7)
+[![Coverage Status](https://coveralls.io/repos/github/maizy/ambient7/badge.svg?branch=master)](https://coveralls.io/github/maizy/ambient7?branch=master) -->
 
 <a name="downloads"></a>
 ## Downloads
