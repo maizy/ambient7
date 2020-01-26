@@ -18,6 +18,7 @@ All components may be replaced with analogues.
 ## Extra apps
 
 * [hello-world-led](extras/hello-world-led/) – test arduino sketch
+* [manual-calibration](extras/manual-calibration/) – MH-Z19B Manual calibration
 
 ## Wemos D1 R1/R2 setup
 
